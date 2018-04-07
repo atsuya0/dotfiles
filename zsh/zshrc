@@ -1,0 +1,836 @@
+# =========================================================================
+# 環境変数
+# =========================================================================
+typeset -U path
+readonly path=(
+  ${GOPATH}/bin
+  #${HOME}/.anaconda3/bin
+  /usr/bin
+  /usr/bin/core_perl
+)
+export GREP_COLOR='1;33' # grep
+export LESS='-iMRgW -j10 -x2 --no-init --quit-if-one-screen +5' # less
+export LESS_TERMCAP_mb=$(echo -n '\e[34;1m')
+export LESS_TERMCAP_md=$(echo -n '\e[34;1m')
+export LESS_TERMCAP_me=$(echo -n '\e[37m')
+export LESS_TERMCAP_se=$(echo -n '\e[37m')
+export LESS_TERMCAP_so=$(echo -n '\e[35;40;1m')
+export LESS_TERMCAP_ue=$(echo -n '\e[32;1m')
+export LESS_TERMCAP_us=$(echo -n '\e[32;1m')
+export MANPAGER='less' # man
+# export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理
+# =========================================================================
+# その他
+# =========================================================================
+# 区切り文字として扱わない。
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+# 画面のロックと解除を無効(C-s,C-q)
+setopt no_flow_control
+# beep音停止
+setopt no_beep
+setopt no_list_beep
+setopt no_hist_beep
+# コマンドの打ち損じを修正
+setopt correct
+# 実行したプロセスの消費時間が3秒以上かかったら
+# 自動的に消費時間の統計情報を表示する。
+REPORTTIME=3
+# <C-d>でログアウトしないようにする。
+setopt ignore_eof
+# fishのようなsyntax-highlighting
+() {
+  typeset -r highlighting='/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'
+  [[ -s ${highlighting} ]] && source ${highlighting}
+}
+
+# =========================================================================
+# プロンプト
+# =========================================================================
+autoload -Uz colors && colors
+# カレントディレクトリのpathを画面の横幅に応じて短縮する。
+function __dirPrompt() {
+  typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
+  # 表示するディレクトリ名の文字数を決める
+  local num
+  let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c "test 1 -gt {} && echo 1 || echo {}")/$(echo ${pwd} | grep -o '[~/]' | wc -l)
+
+  # CUI と GUI で表示を変える
+  [[ -z ${WINDOWID} ]] && \
+    PROMPT="%n%m ${fg[blue]}$(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g")${reset_color} " || \
+    PROMPT="%{${fg[white]}${bg[black]}%}%n@%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd __dirPrompt
+
+# rangerでshellを起動したときにPROMPTの先頭にR__を付ける
+[[ -n ${RANGER_LEVEL} ]] && PROMPT="R__${PROMPT}"
+
+# コマンド実行後にRPROMPTを非表示
+# setopt transient_rprompt
+
+# =========================================================================
+# tmuxの左のステータスバー
+# =========================================================================
+# tmuxのSession番号を表示。commandがzshのときにはmodeも表示。
+function __tmuxStatus() {
+  [[ -z ${TMUX} ]] && return
+  typeset -r sep=''
+  [[ ${KEYMAP} == 'vicmd' ]] \
+  && typeset -r mode="#[fg=black,bg=green]#{?#{==:#{pane_current_command},zsh}, -- NORM -- #[default]#[fg=green]#[bg=blue]#{?client_prefix,#[bg=yellow],}${sep},}" \
+  || typeset -r mode="#[fg=blue,bg=black]#{?#{==:#{pane_current_command},zsh}, -- INS -- #[default]#[fg=black]#[bg=blue]#{?client_prefix,#[bg=yellow],}${sep},}"
+
+  tmux set -g status-left "${mode}#[fg=black,bg=blue]#{?client_prefix,#[bg=yellow],} S/#S #[default]#[fg=blue]#{?client_prefix,#[fg=yellow],}${sep}"
+}
+zle -N zle-line-init __tmuxStatus
+zle -N zle-keymap-select __tmuxStatus
+
+# =========================================================================
+# ディレクトリ移動
+# =========================================================================
+# cdでディレクトリ名を指定するだけで移動できるpath
+# cdpath=( ${HOME} )
+
+# cdをpushdにする
+# setopt auto_pushd
+# pushdのスタックを重複しない
+# setopt pushd_ignore_dups
+
+# =========================================================================
+# 補完
+# =========================================================================
+autoload -Uz compinit && compinit
+# 補完時にハイライト tab,C-n,C-f,C-p,C-b
+zstyle ':completion:*:default' menu select
+# 補完で大文字にも一致
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# 区切り文字
+zstyle ':completion:*' list-separator '->'
+# 上記を有効
+zstyle ':completion:*:manuals' separate-sections true
+# 補完候補に色を付ける
+zstyle ':completion:*' list-colors eval $(dircolors -b)
+# 説明を緑の太字で表示
+zstyle ':completion:*' format '%B%F{green}%d%f%b'
+# 補完しないファイル
+zstyle ':completion:*:*files' ignored-patterns '*mp3' '.mp4'
+# グループ名を表示
+#zstyle ':completion:*' group-name ''
+# キャッシュ
+zstyle ':completion:*' use-cache yes
+# 詳細
+zstyle ':completion:*' verbose yes
+#cd は親ディレクトリからカレントディレクトリを選択しないので表示させないようにする (例: cd ../<TAB>):
+# zstyle ':completion:*:cd:*' ignore-parents parent pwd
+# zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+# zstyle ':completion:*:options' description 'yes'
+# 補完結果をできるだけ詰める
+setopt list_packed
+# カッコの対応などを自動的に補完
+setopt auto_param_keys
+# ディレクトリ名の補完で末尾の/を自動的に付加し次の補完に備える
+setopt auto_param_slash
+# ファイル名の展開でディレクトリに一致した場合末尾に/を付加する
+setopt mark_dirs
+# カーソル位置で補完する。
+setopt complete_in_word
+# globを展開しないで候補の一覧から補完する。
+setopt glob_complete
+# 辞書順ではなく数字順に並べる。
+setopt numeric_glob_sort
+# --prefix=~/localというように「=」の後でも
+# 「~」や「=コマンド」などのファイル名展開を行う。
+setopt magic_equal_subst
+
+# =========================================================================
+# 履歴
+# =========================================================================
+# 直前と同じコマンドを記録しない
+setopt hist_ignore_dups
+# コマンド履歴を重複させない
+setopt hist_ignore_all_dups
+# spaceで始まるコマンドを記録しない
+setopt hist_ignore_space
+# spaceを詰めて記録
+setopt hist_reduce_blanks
+# 他のターミナルとコマンド履歴を共有
+setopt share_history
+# コマンド履歴に時間を追加
+setopt extended_history
+# historyコマンドを履歴に登録しない
+setopt hist_no_store
+# 補完時に履歴を自動展開
+setopt hist_expand
+# 対話検索
+setopt inc_append_history
+# 履歴の保存場所
+[[ -n ${ZDOTDIR} ]] && HISTFILE="${ZDOTDIR}/.zsh_history" || HISTFILE="${HOME}/.zsh_history"
+# 履歴をメモリに保存する数
+HISTSIZE=100000
+# 履歴をファイルに保存する数
+SAVEHIST=100000
+# 入力に対して履歴に一致したコマンドを表示
+autoload -Uz history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+
+# =========================================================================
+# キーバインド
+# =========================================================================
+# プロンプトでviのキーバインドを使う。
+bindkey -v
+# 挿入モードをemacsにする
+bindkey -M viins '^f'  forward-char
+bindkey -M viins '^b'  backward-char
+bindkey -M viins '^a'  beginning-of-line
+bindkey -M viins '^e'  end-of-line
+bindkey -M viins '^d'  delete-char-or-list
+bindkey -M viins '^h'  backward-delete-char
+bindkey -M viins '^w'  backward-kill-word
+bindkey -M viins '^u'  backward-kill-line
+bindkey -M viins '^k'  kill-line
+bindkey -M viins '^y'  yank
+bindkey -M viins '^n'  down-line-or-history
+bindkey -M viins '^p'  up-line-or-history
+bindkey -M viins '^s' history-incremental-search-forward
+bindkey -M viins '^r' history-incremental-search-backward
+# bindkey -M viins '^s' history-incremental-pattern-search-forward
+# bindkey -M viins '^r'  history-incremental-pattern-search-backward
+bindkey -M viins '\ef' forward-word #ALT : \e ^[
+bindkey -M viins '\eb' backward-word
+bindkey -M viins '\ed' kill-word
+bindkey -M viins '\e.' insert-last-word
+# 入力に対して履歴に一致したコマンドを表示する機能をバインド
+bindkey -M viins '\en' history-beginning-search-forward-end
+bindkey -M viins '\ep' history-beginning-search-backward-end
+
+# =========================================================================
+# fzf (A command-line fuzzy finder) 用の設定
+# =========================================================================
+# <C-y>で文字列をコピー
+export FZF_DEFAULT_OPTS="-m --height=90% --reverse --exit-0 --bind 'ctrl-y:execute-silent(echo {} | xsel -ib)+abort'"
+# <C-v>で見切れたコマンドを表示
+export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap --bind 'ctrl-v:toggle-preview'"
+# FZF_DEFAULT_COMMAND FZF_ALT_C_COMMAND FZF_ALT_C_OPTS
+
+# fzfの拡張を読み込む
+() {
+  typeset -r fzf_dir='/usr/share/fzf/'
+  readonly local  keybind="${fzf_dir}key-bindings.zsh"
+  typeset -r completion="${fzf_dir}completion.zsh"
+  [[ -s ${keybind} ]] && source ${keybind}
+  [[ -s ${completion} ]] && source ${completion}
+}
+
+# __fzf-cd-widget(), vim() で用いる。無視するディレクトリを絶対パスで指定する。
+typeset -r ignore_absolute_pathes=(
+  ${HOME}/.cache/dein/repos
+  ${HOME}/.cache/dein/.cache
+  ${HOME}/.cache/pip
+  ${HOME}/.cache/jedi
+  ${HOME}/.cache/yarn
+  ${HOME}/.cache/go-build
+  ${HOME}/.cache/fontconfig
+  ${HOME}/.cache/neosnippet
+  ${HOME}/.cache/typescript/2.6
+  ${HOME}/.cache/chromium
+  ${HOME}/.config/chromium
+  ${HOME}/.config/pulse
+  ${HOME}/.config/VirtualBox
+  ${HOME}/.config/fcitx
+  ${HOME}/.config/Code
+  ${HOME}/.config/undo
+  ${HOME}/.anaconda3
+  ${HOME}/.cache/mozilla
+  ${HOME}/.mozilla
+  # ${HOME}/.nvm
+  ${HOME}/.node-gyp
+  ${HOME}/.vscode/extensions
+  ${HOME}/.npm/_cacache
+  ${HOME}/.Trash
+  ${HOME}/Documents/go-programming-blueprints-master
+  ${GOPATH}/pkg
+  ${GOPATH}/src/gopkg.in
+  ${GOPATH}/src/github.com
+)
+
+# ALT_Cにbindされてるwidgetを上書きしている。
+# 現階層以下のディレクトリからfzfを使って選び移動する。
+function __fzf-cd-widget() {
+  local dir
+  for dir in ${ignore_absolute_pathes}; do
+    local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
+  done
+  dir=$(eval find -mindepth 1 ${argument} -type d -print | \
+    cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  eval builtin cd ${dir:-.}
+
+  __dirPrompt
+  zle reset-prompt
+
+  return
+}
+zle   -N  __fzf-cd-widget
+bindkey '\ec' __fzf-cd-widget
+
+
+# =========================================================================
+# 関数
+# =========================================================================
+
+# bash終了時に.bash_historyを削除する。
+# .bash_history を作成しない設定の仕方がわからないため。
+function bash() {
+  cmdExists bash || return
+  command bash
+  trap "command rm ${HOME}/.bash_history" EXIT
+
+  return
+}
+# 何も表示されないならば隠しファイルの表示を試みる。
+function ls() {
+  [[ $(command ls $@) == "" ]] && command ls -FA --color=auto $@ || command ls -F --color=auto $@
+  return
+}
+
+# 引数が指定されていないなら選択的インターフェースで選択する
+# 1回目の選択でコピー元を選択する。複数選択可。
+# 2回目でコピー先を選択する。ヘッダにコピー元のファイル・ディレクトリが表示される。
+function cp() {
+  [[ $# -ne 0 ]] && command cp -i $@ && return
+  local dir
+  for dir in ${ignore_absolute_pathes}; do
+    local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
+  done
+  # 元
+  source=($(eval find -mindepth 1 ${argument} -print | \
+    cut -c3- | fzf --select-1 --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
+  [[ ${#source[@]} -eq 0 ]] && return
+  # 宛先
+  destination=$(eval find -mindepth 1 ${argument} -print | \
+    cut -c3- | fzf --select-1 --header="${source}" --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  [[ -n ${destination} ]] && command cp -ri ${source} -t ${destination}
+
+  return
+}
+
+# cp と同じ
+function mv() {
+  [[ $# -ne 0 ]] && command mv -i $@ && return
+  local dir
+  for dir in ${ignore_absolute_pathes}; do
+    local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
+  done
+  source=($(eval find -mindepth 1 ${argument} -print | \
+    cut -c3- | fzf --select-1 --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
+  [[ ${#source[@]} -eq 0 ]] && return
+  destination=$(eval find -mindepth 1 ${argument} -print | \
+    cut -c3- | fzf --select-1 --header="${source}" --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  [[ -n ${destination} ]] && command mv -i ${source} -t ${destination}
+
+  return
+}
+
+function cat() {
+  if type fzf > /dev/null 2>&1 && [[ $# -eq 0 ]]; then
+    command cat $(command ls -A | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  else
+    command cat $@
+  fi
+
+  return
+}
+
+# fat32なら現在のユーザで弄れるようにする
+# ディレクトリを省略すると~/mntにマウントする
+function mount() {
+  [[ $# -eq 0 ]] && \
+    command mount && \
+    return
+
+  local mnt="${HOME}/mnt"
+  [[ $# -eq 1 ]] && \
+    set $1 ${mnt} && \
+    [[ -e ${mnt} ]] || \
+    mkdir ${mnt}
+
+  [[ $(sudo file -s $1 | cut -d' ' -f2) == 'DOS/MBR' ]] \
+    && sudo \mount -o uid=$(id -u),gid=$(id -g) $1 $2 \
+    || sudo \mount $1 $2
+
+  return
+}
+
+function umount() {
+  [[ $# -eq 0 ]] && local mnt="${HOME}/mnt" && sudo \umount ${mnt} && rmdir ${mnt} && return
+  command umount $@
+
+  return
+}
+
+
+# historyの実行時に引数を指定しないなら全ての履歴を表示。
+# -gは文字列を引数にとり検索する。
+function history() {
+  [[ $# -eq 0 ]] && builtin history -i 1 && return
+  [[ $1 == '-g' && -n $2 ]] && builtin history -i 1 | grep $2 || builtin history $@
+
+  return
+}
+
+# cd するとディレクトリをファイルに記録する。~, / は記録しない。
+[[ -e ${_DIRLIST} ]] || export _DIRLIST=$(mktemp)
+function savePwd() {
+  typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
+  [[ ${#pwd} -gt 2 ]] && echo ${pwd} >> ${_DIRLIST} && __adjustToFile ${_DIRLIST}
+
+  return
+}
+add-zsh-hook chpwd savePwd
+
+function cd() {
+  local dir
+  if [[ $1 == '-l' ]]; then # 記録しているディレクトリを表示
+    dir=$(command cat ${_DIRLIST} | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+    eval builtin cd ${dir:-.}
+  elif [[ $1 == '-c' ]]; then # 記録の全消去
+    : > ${_DIRLIST}
+  elif [[ $1 == '-d' ]]; then # 記録の消去
+    local opt
+    [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
+    cat ${_DIRLIST} | \
+      fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
+      xargs -I{} sed -i ${opt} 's@^{}$@@;/^$/d' ${_DIRLIST}
+  else
+    builtin cd $@
+  fi
+
+  return
+}
+
+function vim(){
+  # nvim > vim > vi の優先度で起動する。
+  if cmdExists nvim; then
+    typeset -r editor='nvim'
+  elif cmdExists vim; then
+    typeset -r editor='vim'
+  else
+    typeset -r editor='vi'
+  fi
+
+  if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
+
+    # 無視するディレクトリ(絶対path指定)
+    local arg dir
+    for dir in ${ignore_absolute_pathes}; do
+      arg="${arg} -path ${dir/$(pwd)/.} -prune -o"
+    done
+    # 無視する拡張子
+    local ignore_filetypes=( pdf png jpg jpeg mp3 mp4 tar.gz zip )
+    local ftype
+    for ftype in ${ignore_filetypes}; do
+      arg="${arg} -path "\'\*${ftype}\'" -prune -o"
+    done
+
+    # 無視するディレクトリ(ディレクトリ名指定)
+    local ignore_dirs=( node_modules )
+    for dir in ${ignore_dirs}; do
+      arg="${arg} -path "\'\*${dir}\*\'" -prune -o"
+    done
+
+    local file=$( \
+      eval find ${arg} -type f -print | cut -c3- | \
+      fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' \
+    )
+    [[ -n ${file} ]] && command ${editor} ${file}
+  else
+    command ${editor} $@
+  fi
+
+  return
+}
+
+# 簡単にフォントサイズを指定して起動する。
+function urxvt() {
+  [[ $# -eq 0 ]] && command urxvt $@ && return
+  expr $1 + 1 > /dev/null 2>&1
+  [[ $? -ne 2 ]] && command urxvt --font "xft:Ricty Discord:size=$1"
+
+  return
+}
+
+# rangerのサブシェルでネストしないようにする。
+function ranger() {
+  [[ -z $RANGER_LEVEL ]] && command ranger $@ || exit
+
+  return
+}
+
+# 引数に検索したい単語を渡せばgoogle検索を行う
+# w3m search windows bsd linux
+function w3m(){
+  [[ $1 == 'search' && $# -ge 2 ]] && { \
+    local i parameter="search?&q=$2"
+    for (( i=3 ; i <= $# ; i++ )); do
+      parameter="${parameter}+$argv[$i]"
+    done
+    parameter="http://www.google.co.jp/${parameter}&ie=UTF-8"
+    command w3m ${parameter}
+  } || command w3m $@
+
+  return
+}
+
+# Node.jsのversion管理
+# nvmを使用したときに初期設定を読み込む
+# function nvm() {
+#   unset -f nvm
+#   source /usr/share/nvm/nvm.sh
+#   source /usr/share/nvm/bash_completion
+#   nvm $@
+# }
+
+function pactl() {
+  typeset -r pactl='/usr/bin/pactl'
+  function get_index() {
+    [[ $(${pactl} list sinks | grep 'RUNNING') != '' ]] && \
+        ${pactl} list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]' || \
+        ${pactl} list sinks | head -1 | grep -o '[0-9]'
+  }
+  if [[ $# -eq 0 ]]; then
+    local run
+    [[ $(pactl list sinks | grep 'RUNNING') != '' ]] && run="grep -A 10 'RUNNING'" || run='tee'
+    pactl list sinks | eval ${run} | grep -o '[0-9]*%' | head -1
+  elif [[ $1 == up ]]; then
+    ${pactl} set-sink-volume $(get_index) +5%
+  elif [[ $1 == down ]]; then
+    ${pactl} set-sink-volume $(get_index) -5%
+  elif [[ $1 == mute ]]; then
+    ${pactl} set-sink-mute $(get_index) toggle
+  else
+    ${pactl} $@
+  fi
+
+  return
+}
+
+function paplay() {
+  [[ $# -eq 0 ]] && command paplay /usr/share/sounds/alsa/Noise.wav && return
+  command paplay $@
+
+  return
+}
+
+# wifi
+function netctl() {
+  cmdExists netctl || return
+  if type fzf > /dev/null 2>&1 && [[ $# -eq 0 ]]; then
+    command netctl list | fzf --select-1 | xargs sudo \netctl start
+  elif [[ $1 == '-r' ]]; then
+    command netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo \netctl restart
+  else
+    sudo \netctl $@
+  fi
+
+  return
+}
+
+function colors(){
+  for ((fore=30; fore<38; fore++)); do
+    echo "\e[${fore}m \\\e[${fore}m \e[m"
+    for mode in 1 4 5; do
+      echo -n "\e[${fore};${mode}m \\\e[${fore};${mode}m \e[m"
+      for ((back=40; back<48; back++)); do
+        echo -n "\e[${fore};${back};${mode}m \\\e[${fore};${back};${mode}m \e[m"
+      done
+      echo
+    done
+    echo
+  done
+
+  return
+}
+
+# 関数やaliasに囚われないtype,which。 vim()で使う。
+function cmdExists(){
+  [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] && return 0 || return 1
+}
+
+# ファイルの中身を昇順に並べ替え、重複を削除する
+function __adjustToFile() {
+  typeset -r tmpFile=$(mktemp)
+  command cat ${1} | sort | uniq > ${tmpFile}
+  command cat ${tmpFile} > ${1}
+  trap "command rm ${tmpFile}" EXIT
+
+  return
+}
+
+# 親階層に移動。 自然数を引数にとり、何層上に行くのかを指定する。 引数なしは選択的インターフェースを使う。
+function up() {
+  local str
+  [[ $# -eq 0 ]] && { \
+    str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d' | \
+      fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  } || { \
+    [[ $1 -lt 1 ]] && set 1
+    str=$(seq -s: $1 | sed 's/://g;s@.@\.\./@g')
+  }
+  builtin cd ${str:-.}
+
+  return
+}
+
+# 予めディレクトリをファイルに記しておき、fzfで選択して移動する。
+function cdr() {
+  type fzf > /dev/null 2>&1 || return
+  local dir
+
+  [[ -n ${ZDOTDIR} ]] && local file=${ZDOTDIR}/.saved_dirs || local file=${HOME}/.saved_dirs
+
+  # ファイルが存在しない場合はホームディレクトリ配下のディレクトリを登録する。
+  [[ ! -e ${file} ]] && find . -maxdepth 1 -type d -not -name '.*' -printf '~/%f\n' > ${file}
+
+  if [[ $1 == '-e' ]]; then
+    ${EDITOR} ${file} && __adjustToFile ${file}
+  elif [[ $1 == '-s' ]]; then
+    pwd | sed "s@${HOME}@~@" >> ${file} && __adjustToFile ${file}
+  elif [[ $1 == '-c' ]]; then
+    : > ${file}
+  elif [[ $1 == '-d' ]]; then
+    local opt
+    [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
+    cat ${file} | \
+      fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
+      xargs -I{} sed -i ${opt} 's@^{}$@@;/^$/d' ${file}
+  else
+    dir=$(command cat ${file} | fzf --header='change directory' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+    eval builtin cd ${dir:-.}
+  fi
+
+  return
+}
+
+# 電源を入れてからのネットワークのデータ転送量を表示。
+function dtr() {
+  command cat /proc/net/dev | awk \
+    '{if(match($0, /wlp4s0/)!=0) print "Wifi        : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"} \
+    {if(match($0, /bnep0/)!=0) print "Bluetooth Tethering : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"}'
+  return
+}
+
+# ファイルをゴミ箱に入れる。
+function mt() {
+  typeset -r trash="${HOME}/.Trash"
+   local fzf="fzf \
+     --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
+     --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
+  [[ -s ${trash} ]] || mkdir ${trash}
+  typeset -r size=$(du -s ${trash} | cut -f1)
+
+  if [[ $1 == '-r' ]]; then
+    type fzf > /dev/null 2>&1 || return
+    command ls -r ${trash} | eval "${fzf} --header='move files in the trash to the current directory / ${size}'" | \
+      xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
+  elif [[ $1 == '-d' ]]; then
+    type fzf > /dev/null 2>&1 || return
+    command ls -r ${trash} | eval "${fzf} --header='delete files in the trash / ${size}'" | xargs -p -I{} rm -r "${trash}/{}"
+  else
+    [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 && \
+      set $(command ls ./ | sed "/^${trash##*/}$/"d | eval "${fzf} --header='move files in the current directory to the trash / ${size}'") \
+      > /dev/null && [[ $# -eq 0 ]] && return
+    echo $@ | tr -d '\n' |  xargs -d' ' -I{} sh -c "mv {} \"${trash}/\$(date +%F_%T_)\$(basename {})\""
+  fi
+
+  return
+}
+
+function _mt() {
+  _files
+}
+
+# 引数に指定したコマンドを実行するのに確認をとる。
+function interactive() {
+  local input
+  echo 'yes / no'
+  read input
+  while [[ $input != 'yes' && $input != 'no' ]]; do
+    echo 'yes / no'
+    read input
+  done
+  [[ $input == 'yes' ]] && command $@
+
+  return
+}
+
+# OSとKernelの情報を表示 別ファイル(cat /etc/issue)
+function os() {
+  echo -n 'OS\t'
+  uname -o | tr -d '\n'
+  cat /etc/os-release | sed '/^PRETTY_NAME/!d;s/.*"\(.*\)".*/(\1)/'
+  uname -sr | sed 's/\(.*\) \(.*\)/Kernel\t\1(\2)/'
+
+  return
+}
+
+# 電池残量
+function bat() {
+  typeset -r bat='/sys/class/power_supply/BAT1'
+  [[ -e ${bat} ]] && cat "${bat}/capacity" | sed 's/$/%/' || echo 'No Battery'
+
+  return
+}
+
+# バックアップをとる
+function bak() {
+  for file in $@; do
+    command cp -i ${file} "${file}.bak"
+  done
+}
+
+# bluetoothテザリング。
+# anacondaのdbus-sendを使わないようにする。AC_CF_85_B7_9D_9Aはスマホのmacアドレス。
+function bt() {
+  typeset -r addr='AC:CF:85:B7:9D:9A'
+
+  [[ $(systemctl status bluetooth | sed '/Active:/!d;s/[^:]*: //;s/ .*//') == 'inactive' ]] && sudo systemctl start bluetooth.service
+  (){ echo 'power on'; sleep 1; echo "connect $1"; sleep 3; echo 'quit'; } ${addr} | bluetoothctl
+  /usr/bin/dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_${addr//:/_} org.bluez.Network1.Connect string:'nap'
+  sudo dhcpcd bnep0
+
+  return
+}
+
+# コマンドが終了したことを知らせる(ex: command ; fin)
+function fin() {
+  type i3-nagbar > /dev/null 2>&1 && i3-nagbar -t warning -m 'finish' -f 'pango:IPAGothic Regular 10' > /dev/null 2>&1
+  return
+}
+
+# コマンドの終了ステータスを見てファイルに記録するか否かを決めたいので、
+# ここではファイルには記録しない。
+# 0 記録する, 1 記録しない, 2 メモリにだけ記録する
+function __recordCmd() {
+  typeset -g _cmd=${1%%$'\n'}
+  return 2
+}
+add-zsh-hook zshaddhistory __recordCmd
+
+function __saveCmd() {
+  local exitStatus="$?"
+  _cmd=$(echo ${_cmd} | tr -s ' ') # 連続する空白を1つにする
+  # 引数やオプションを指定していない場合は記録しない
+  [[ ! ${_cmd} =~ ' ' ]] && return
+
+  # 履歴に記録しないコマンドを記述
+  local ignore_cmds=(\
+    ll up cdr mt ls cd mv cp rm mkdir rmdir touch man less history source '\.' export type which file stat \
+    vi vim sudoedit command builtin chromium unzip feh tree test '\[' '\[\[' \
+    nvim code python go \
+  )
+
+  local ignore_cmd
+  for ignore_cmd in ${ignore_cmds}; do
+    [[ ${_cmd} =~ "^${ignore_cmd}" ]] && return
+  done
+  # コマンドが正常終了した場合はファイルに記録する
+  [[ ${exitStatus} == 0 ]] && print -sr -- "${_cmd}"
+
+  return
+}
+add-zsh-hook precmd __saveCmd
+
+# docker daemonが起動しているか
+function isDockerRunning() {
+  docker info > /dev/null 2>&1 && return 0
+  echo 'Is the docker daemon running?'
+  print -z 'sudo systemctl start docker'
+
+  return 1
+}
+
+# --privileged は chromiumを起動するため。
+# chromium -no-sandbox でも起動する。プロセスを隔離しない。
+# どちらにせよ安全性が下がる。
+function ubuntu() {
+  isDockerRunning || return
+  [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1 &
+
+  docker run \
+    --privileged \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -v /run/user/$UID/pulse/native:/tmp/pulse/native \
+    -v $HOME/.config/pulse/cookie:/tmp/pulse/cookie \
+    -it --rm $USER/jwm $1
+
+  [[ -z ${exists} ]] && pkill Xephyr
+
+  return
+}
+
+# dockerのコンテナを選択して破棄
+function drm() {
+  isDockerRunning && \
+    typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
+    [[ -n ${container} ]] && echo ${container} | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
+
+  return
+}
+
+# dockerのimageを選択して破棄
+function drmi() {
+  isDockerRunning && \
+    typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
+    [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
+
+  return
+}
+
+# スクリーンショット
+function scrot() {
+  [[ $# -eq 0 ]] \
+    && command scrot -q 100 '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/Content/pictures/screenshot/ ]] && mv $f ~/Content/pictures/screenshot/' \
+    || command scrot $@
+
+  return
+}
+
+# =========================================================================
+# alias
+# =========================================================================
+alias ll='command ls -FAlht --color=auto'
+alias grep='grep -i --color=auto'
+# alias mv='mv -i'
+# alias cp='cp -i'
+alias ln='ln -i'
+alias rm='echo "zsh: command not found: rm"'
+alias mkdir='mkdir -vp'
+alias free='free -wh'
+alias du='du -h'
+alias df='df -hT'
+alias ip='ip -c'
+alias nano='nano -$ -l -i -O -m -c' # オブションは個々に指定する
+# alias dirs='dirs -v'
+alias tree='tree -C'
+alias xbg="xbacklight -get | xargs printf '%.0f%%'"
+alias xephyr='Xephyr -wr -resizeable :1' # x serverのネスト。白背景。window可変。
+alias open='xdg-open'
+alias poweroff='interactive systemctl poweroff'
+alias reboot='interactive systemctl reboot'
+alias logout='interactive i3-msg exit'
+
+# =========================================================================
+# [[ tmuxがインストールされている && GUI && sessionが存在しない ]] && tmux起動
+# =========================================================================
+() {
+  ! type tmux > /dev/null 2>&1 || [[ -z ${WINDOWID} || -n ${TMUX} ]] && return
+  local new='new-session'
+  id=$(echo "$(tmux list-sessions 2> /dev/null)\n${new}:" | sed /^$/d | fzf --select-1 | cut -d: -f1)
+
+  if [[ ${id} = ${new} ]]; then
+    tmux -2 new-session && exit
+  elif [[ -n ${id} ]]; then
+    tmux attach-session -t ${id}
+  fi
+
+  return
+}

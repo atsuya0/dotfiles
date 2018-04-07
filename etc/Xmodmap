@@ -1,0 +1,9 @@
+clear lock
+keycode  66 = Alt_L Meta_L Alt_L Meta_L
+keycode 100 = Super_L NoSymbol Super_L
+keycode 101 = Alt_R Meta_R Alt_R Meta_R
+keycode 102 = Super_R NoSymbol Super_R
+keycode 127 = plus
+keycode 135 = Control_R NoSymbol Control_R
+add mod1 = Alt_L
+add control = Control_R

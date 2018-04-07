@@ -1,0 +1,48 @@
+[[plugins]] # plugin manager
+repo = 'Shougo/dein.vim'
+
+[[plugins]] # unite all interfaces
+repo = 'Shougo/denite.nvim'
+if = 'has("nvim")'
+
+[[plugins]] # completion framework
+repo = 'Shougo/deoplete.nvim'
+if = 'has("nvim")'
+hook_add = 'let g:deoplete#enable_at_startup = 1'
+
+[[plugins]] # snippet
+repo = 'Shougo/neosnippet.vim'
+
+[[plugins]] # The standard snippets repository for neosnippet.
+repo = 'Shougo/neosnippet-snippets'
+
+[[plugins]] # visually displaying indent levels
+repo = 'Yggdroot/indentLine'
+hook_add = 'let g:indentLine_char = "¦"'
+
+[[plugins]] # color scheme
+repo = 'cocopon/iceberg.vim'
+
+[[plugins]] # color scheme
+repo = 'KeitaNakamura/neodark.vim'
+
+[[plugins]] # color scheme
+repo = 'rakr/vim-one'
+
+[[plugins]] # status line
+repo = 'vim-airline/vim-airline'
+hook_add = '''
+  let g:airline_symbols = {}
+  let g:airline_symbols.maxlinenr = ''
+  let g:airline_symbols.linenr = ''
+  let g:airline_symbols.notexists = '∄'
+  let g:airline_symbols.whitespace = 'Ξ'
+  let g:airline_symbols.branch = ''
+  let g:airline#extensions#tabline#enabled = 1
+'''
+
+[[plugins]] # status line themes
+repo = 'vim-airline/vim-airline-themes'
+hook_add = '''
+  let g:airline_theme='deus'
+'''
