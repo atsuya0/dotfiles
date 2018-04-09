@@ -1,10 +1,22 @@
 # =========================================================================
+# tmuxがインストールされている && sessionが存在しない && GUI && True Color対応の仮想端末 && tmux起動
+# =========================================================================
+type tmux > /dev/null 2>&1 && [[ -z ${TMUX} && -n ${WINDOWID} && $(ps -ho args ${PPID}) == 'mlterm' ]] > /dev/null 2>&1 && () {
+  local new='new-session'
+  id=$(echo "$(tmux list-sessions 2> /dev/null)\n${new}:" | sed /^$/d | fzf --select-1 --reverse | cut -d: -f1)
+
+  if [[ ${id} = ${new} ]]; then
+    tmux -2 new-session && exit
+  elif [[ -n ${id} ]]; then
+    tmux attach-session -t ${id}
+  fi
+} && return
+# =========================================================================
 # 環境変数
 # =========================================================================
 typeset -U path
 readonly path=(
   ${GOPATH}/bin
-  #${HOME}/.anaconda3/bin
   /usr/bin
   /usr/bin/core_perl
 )
@@ -32,13 +44,11 @@ setopt no_list_beep
 setopt no_hist_beep
 # コマンドの打ち損じを修正
 setopt correct
-# 実行したプロセスの消費時間が3秒以上かかったら
-# 自動的に消費時間の統計情報を表示する。
+# 実行したプロセスの消費時間が3秒以上かかったら、消費時間の統計情報を表示する。
 REPORTTIME=3
 # <C-d>でログアウトしないようにする。
 setopt ignore_eof
-# fishのようなsyntax-highlighting
-() {
+() { # fishのようなsyntax-highlighting
   typeset -r highlighting='/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'
   [[ -s ${highlighting} ]] && source ${highlighting}
 }
@@ -89,7 +99,6 @@ zle -N zle-keymap-select __tmuxStatus
 # =========================================================================
 # cdでディレクトリ名を指定するだけで移動できるpath
 # cdpath=( ${HOME} )
-
 # cdをpushdにする
 # setopt auto_pushd
 # pushdのスタックを重複しない
@@ -212,8 +221,7 @@ export FZF_DEFAULT_OPTS="-m --height=90% --reverse --exit-0 --bind 'ctrl-y:execu
 export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap --bind 'ctrl-v:toggle-preview'"
 # FZF_DEFAULT_COMMAND FZF_ALT_C_COMMAND FZF_ALT_C_OPTS
 
-# fzfの拡張を読み込む
-() {
+() { # fzfの拡張を読み込む
   typeset -r fzf_dir='/usr/share/fzf/'
   readonly local  keybind="${fzf_dir}key-bindings.zsh"
   typeset -r completion="${fzf_dir}completion.zsh"
@@ -276,18 +284,15 @@ bindkey '\ec' __fzf-cd-widget
 # =========================================================================
 # 関数
 # =========================================================================
-
-# bash終了時に.bash_historyを削除する。
-# .bash_history を作成しない設定の仕方がわからないため。
-function bash() {
+function bash() { # bash終了時に.bash_historyを削除する。
   cmdExists bash || return
   command bash
   trap "command rm ${HOME}/.bash_history" EXIT
 
   return
 }
-# 何も表示されないならば隠しファイルの表示を試みる。
-function ls() {
+
+function ls() { # 何も表示されないならば隠しファイルの表示を試みる。
   [[ $(command ls $@) == "" ]] && command ls -FA --color=auto $@ || command ls -F --color=auto $@
   return
 }
@@ -332,7 +337,7 @@ function mv() {
 
 function cat() {
   if type fzf > /dev/null 2>&1 && [[ $# -eq 0 ]]; then
-    command cat $(command ls -A | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+    command cat $(ls -A | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   else
     command cat $@
   fi
@@ -390,7 +395,7 @@ add-zsh-hook chpwd savePwd
 function cd() {
   local dir
   if [[ $1 == '-l' ]]; then # 記録しているディレクトリを表示
-    dir=$(command cat ${_DIRLIST} | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+    dir=$(cat ${_DIRLIST} | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
     eval builtin cd ${dir:-.}
   elif [[ $1 == '-c' ]]; then # 記録の全消去
     : > ${_DIRLIST}
@@ -555,11 +560,10 @@ function cmdExists(){
   [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] && return 0 || return 1
 }
 
-# ファイルの中身を昇順に並べ替え、重複を削除する
-function __adjustToFile() {
+function __adjustToFile() { # ファイルの中身の重複を削除する
   typeset -r tmpFile=$(mktemp)
-  command cat ${1} | sort | uniq > ${tmpFile}
-  command cat ${tmpFile} > ${1}
+  cat ${1} | sort | uniq > ${tmpFile}
+  cat ${tmpFile} > ${1}
   trap "command rm ${tmpFile}" EXIT
 
   return
@@ -580,63 +584,121 @@ function up() {
   return
 }
 
-# 予めディレクトリをファイルに記しておき、fzfで選択して移動する。
-function cdr() {
-  type fzf > /dev/null 2>&1 || return
-  local dir
-
+function cds() { # directoryのpathに別名をつけて、その別名を指定することでcdする。
   [[ -n ${ZDOTDIR} ]] && local file=${ZDOTDIR}/.saved_dirs || local file=${HOME}/.saved_dirs
+  [[ ! -e ${file} ]] && find . -maxdepth 1 -type d -not -name '.*' -printf '%f ~/%f\n' > ${file}
 
-  # ファイルが存在しない場合はホームディレクトリ配下のディレクトリを登録する。
-  [[ ! -e ${file} ]] && find . -maxdepth 1 -type d -not -name '.*' -printf '~/%f\n' > ${file}
+  function nameExists() { # 既に登録されている別名か
+    local name
+    for name in $(cat ${file} | cut -d' ' -f1); do
+      [[ $1 == ${name} ]] && echo 'name already used' && return 1
+    done
+    return 0
+  }
 
-  if [[ $1 == '-e' ]]; then
-    ${EDITOR} ${file} && __adjustToFile ${file}
-  elif [[ $1 == '-s' ]]; then
-    pwd | sed "s@${HOME}@~@" >> ${file} && __adjustToFile ${file}
-  elif [[ $1 == '-c' ]]; then
-    : > ${file}
-  elif [[ $1 == '-d' ]]; then
-    local opt
-    [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
-    cat ${file} | \
-      fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
-      xargs -I{} sed -i ${opt} 's@^{}$@@;/^$/d' ${file}
-  else
-    dir=$(command cat ${file} | fzf --header='change directory' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-    eval builtin cd ${dir:-.}
+  function directoryExists() { # 既に登録されているdirectoryか
+    local dir
+    for dir in $(cat ${file} | cut -d' ' -f2); do
+      [[ $1 == ${dir} ]] && echo 'directory already exists' && return 1
+    done
+    return 0
+  }
+
+  function checkFile() { # ファイルを直接編集した場合、整合性がとれているか確認する。
+    # 別名が重複
+    local duplicateNames=$(cat ${file} | cut -d' ' -f1 | sort | uniq -d)
+    [[ -n ${duplicateNames} ]] && echo "[Duplicate name]\n${duplicateNames}\n"
+
+    # directoryが重複
+    local duplicateDirectories=$(cat ${file} | cut -d' ' -f2 | sort | uniq -d)
+    [[ -n ${duplicateDirectories} ]] && echo "[Duplicate directory]\n${duplicateDirectories}\n"
+
+    local flag
+    local dir
+    # directoryではないものを登録していないか
+    for dir in $(cat ${file} | cut -d' ' -f2 | sort | uniq); do
+      [[ -d $(echo ${dir} | sed "s@~@${HOME}@") ]] || { echo "${dir} is not directory." && flag=1 }
+    done
+    [[ -n ${flag} ]] && echo
+
+    local name
+    # 別名に/が含まれているか
+    for name in $(cat ${file} | cut -d' ' -f1 | sort | uniq); do
+      [[ ${name} =~ '/' ]] && echo "${name}: / cannot be used."
+    done
+  }
+
+  if [[ $1 == '-s' ]]; then # 登録
+    [[ -z $2 ]] && echo "\"-s\" requires at least 1 argument." && return
+    nameExists $2 || return
+    [[ $2 =~ '/' ]] && echo '/ cannot be used' && return
+    [[ -d $3 ]] && set -- $1 $2 $(readlink -f $3 | sed "s@${HOME}@~@") || set -- $1 $2 $(pwd | sed "s@${HOME}@~@")
+    directoryExists $3 || return
+    echo "$2 $3" >> ${file}
+  elif [[ $1 == '-l' ]]; then # 表示
+    cat ${file} | xargs printf '\e[37;1m%s\e[m \e[34;1m%s\e[m\n'
+  elif [[ $1 == '-e' ]]; then # 直接編集
+    ${EDITOR} ${file}
+    checkFile
+  elif [[ $1 == '--delete-all' ]]; then # 全削除
+    echo 'delete all? (y/n)' && read input && [[ ${input} == 'y' ]] && : > ${file}
+  elif [[ $1 == '-d' ]]; then # 削除
+    [[ -z $2 ]] \
+      && { type fzf > /dev/null 2>&1 \
+      && cat ${file} | fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
+        xargs -I{} sed -i 's@^{}$@@;/^$/d' ${file} } \
+      || sed -i "/^$2 /d" ${file}
+  else # 移動
+    [[ $# -eq 0 ]] \
+      && { type fzf > /dev/null 2>&1 \
+        && local dir=$(cat ${file} | fzf --header='change directory' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview') } \
+      || local dir=$(cat ${file} | grep "^$1" | head -1)
+    [[ -n ${dir} ]] && eval cd $(echo ${dir} | cut -d' ' -f2)
   fi
-
-  return
 }
 
-# 電源を入れてからのネットワークのデータ転送量を表示。
-function dtr() {
-  command cat /proc/net/dev | awk \
+function _cds() {
+  function _cds_list(){
+    [[ -n ${ZDOTDIR} ]] && local file=${ZDOTDIR}/.saved_dirs || local file=${HOME}/.saved_dirs
+    _values \
+      'list' \
+      $(cat ${file} | cut -d' ' -f1)
+  }
+  _arguments \
+    '-s[save]' \
+    '-l[list]' \
+    '-e[edit]' \
+    '-d[delete]' \
+    '--delete-all[delete all]' \
+    '1: :_cds_list'
+}
+compdef _cds cds
+
+function dtr() { # 電源を入れてからのネットワークのデータ転送量を表示。
+  cat /proc/net/dev | awk \
     '{if(match($0, /wlp4s0/)!=0) print "Wifi        : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"} \
     {if(match($0, /bnep0/)!=0) print "Bluetooth Tethering : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"}'
   return
 }
 
-# ファイルをゴミ箱に入れる。
-function mt() {
+function mt() { # ファイルをゴミ箱に入れる。
   typeset -r trash="${HOME}/.Trash"
-   local fzf="fzf \
-     --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
-     --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
+  local fzf="fzf \
+    --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
+    --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
   [[ -s ${trash} ]] || mkdir ${trash}
   typeset -r size=$(du -s ${trash} | cut -f1)
 
   if [[ $1 == '-r' ]]; then
     type fzf > /dev/null 2>&1 || return
-    command ls -r ${trash} | eval "${fzf} --header='move files in the trash to the current directory / ${size}'" | \
+    ls -r ${trash} | eval "${fzf} --header='move files in the trash to the current directory / ${size}'" | \
       xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
   elif [[ $1 == '-d' ]]; then
     type fzf > /dev/null 2>&1 || return
-    command ls -r ${trash} | eval "${fzf} --header='delete files in the trash / ${size}'" | xargs -p -I{} rm -r "${trash}/{}"
+    ls -r ${trash} | eval "${fzf} --header='delete files in the trash / ${size}'" | xargs -p -I{} rm -r "${trash}/{}"
   else
     [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 && \
-      set $(command ls ./ | sed "/^${trash##*/}$/"d | eval "${fzf} --header='move files in the current directory to the trash / ${size}'") \
+      set $(ls ./ | sed "/^${trash##*/}$/"d | eval "${fzf} --header='move files in the current directory to the trash / ${size}'") \
       > /dev/null && [[ $# -eq 0 ]] && return
     echo $@ | tr -d '\n' |  xargs -d' ' -I{} sh -c "mv {} \"${trash}/\$(date +%F_%T_)\$(basename {})\""
   fi
@@ -647,9 +709,9 @@ function mt() {
 function _mt() {
   _files
 }
+compdef _mt mt
 
-# 引数に指定したコマンドを実行するのに確認をとる。
-function interactive() {
+function interactive() { # 引数に指定したコマンドを実行するのに確認をとる。
   local input
   echo 'yes / no'
   read input
@@ -662,8 +724,7 @@ function interactive() {
   return
 }
 
-# OSとKernelの情報を表示 別ファイル(cat /etc/issue)
-function os() {
+function os() { # OSとKernelの情報を表示 別ファイル(cat /etc/issue)
   echo -n 'OS\t'
   uname -o | tr -d '\n'
   cat /etc/os-release | sed '/^PRETTY_NAME/!d;s/.*"\(.*\)".*/(\1)/'
@@ -683,7 +744,7 @@ function bat() {
 # バックアップをとる
 function bak() {
   for file in $@; do
-    command cp -i ${file} "${file}.bak"
+    cp -i ${file} "${file}.bak"
   done
 }
 
@@ -723,7 +784,7 @@ function __saveCmd() {
 
   # 履歴に記録しないコマンドを記述
   local ignore_cmds=(\
-    ll up cdr mt ls cd mv cp rm mkdir rmdir touch man less history source '\.' export type which file stat \
+    ll up cds mt ls cd mv cp rm mkdir rmdir touch man less history source '\.' export type which file stat \
     vi vim sudoedit command builtin chromium unzip feh tree test '\[' '\[\[' \
     nvim code python go \
   )
@@ -769,18 +830,16 @@ function ubuntu() {
 
 # dockerのコンテナを選択して破棄
 function drm() {
-  isDockerRunning && \
-    typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
-    [[ -n ${container} ]] && echo ${container} | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
+  isDockerRunning && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
+  [[ -n ${container} ]] && echo ${container} | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
 
   return
 }
 
 # dockerのimageを選択して破棄
 function drmi() {
-  isDockerRunning && \
-    typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
-    [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
+  isDockerRunning && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
+  [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
 
   return
 }
@@ -797,7 +856,7 @@ function scrot() {
 # =========================================================================
 # alias
 # =========================================================================
-alias ll='command ls -FAlht --color=auto'
+alias ll='ls -FAlht --color=auto'
 alias grep='grep -i --color=auto'
 # alias mv='mv -i'
 # alias cp='cp -i'
@@ -809,7 +868,6 @@ alias du='du -h'
 alias df='df -hT'
 alias ip='ip -c'
 alias nano='nano -$ -l -i -O -m -c' # オブションは個々に指定する
-# alias dirs='dirs -v'
 alias tree='tree -C'
 alias xbg="xbacklight -get | xargs printf '%.0f%%'"
 alias xephyr='Xephyr -wr -resizeable :1' # x serverのネスト。白背景。window可変。
@@ -817,20 +875,3 @@ alias open='xdg-open'
 alias poweroff='interactive systemctl poweroff'
 alias reboot='interactive systemctl reboot'
 alias logout='interactive i3-msg exit'
-
-# =========================================================================
-# [[ tmuxがインストールされている && GUI && sessionが存在しない ]] && tmux起動
-# =========================================================================
-() {
-  ! type tmux > /dev/null 2>&1 || [[ -z ${WINDOWID} || -n ${TMUX} ]] && return
-  local new='new-session'
-  id=$(echo "$(tmux list-sessions 2> /dev/null)\n${new}:" | sed /^$/d | fzf --select-1 | cut -d: -f1)
-
-  if [[ ${id} = ${new} ]]; then
-    tmux -2 new-session && exit
-  elif [[ -n ${id} ]]; then
-    tmux attach-session -t ${id}
-  fi
-
-  return
-}

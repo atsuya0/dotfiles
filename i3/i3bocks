@@ -35,8 +35,8 @@ command=[[ $(pactl list sinks | grep 'Mute:' | cut -d' ' -f2) == 'no' ]] && colo
 interval=once
 signal=1
 
-[time]
-command=date +'%H:%M'
+[date]
+command=date +'%m/%d %H:%M'
 color=#9ee3e5
 interval=1
 
