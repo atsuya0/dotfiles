@@ -11,7 +11,6 @@ local color='#439ad3'
     color='#08d137'
   elif [[ ${battery} -lt 21 ]];then
     color='#f73525'
-    i3-nagbar -t warning -m 'バッテリーが低下しています' -f 'pango:IPAGothic Regular 10' > /dev/null 2>&1
   fi
   echo "${battery}% "
 } || echo

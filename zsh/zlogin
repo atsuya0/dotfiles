@@ -3,9 +3,9 @@
 
 # 存在しないディレクトリの記録を.saved_dirsから削除する
 () {
-  [[ -n ${ZDOTDIR} ]] && local file=${ZDOTDIR}/.saved-dirs || local file=${HOME}/.saved-dirs
+  [[ -n ${ZDOTDIR} ]] && local file=${ZDOTDIR}/.saved_dirs || local file=${HOME}/.saved_dirs
   [[ ! -s ${file} ]] && return
-  cat ${file} | cut -d' ' -f3 | sed "s@~@${HOME}@g" | xargs -I{} sh -c "test -e {} || echo {}" | xargs -I{} sed -i 's@.* {}$@@;/^$/d' ${file}
+  cat ${file} | cut -d' ' -f3 | xargs -I{} sh -c "test -e {} || echo {}" | sed "s@${HOME}@~@" | xargs -I{} sed -i 's@.* {}$@@;/^$/d' ${file}
 }
 
 # ゴミ箱に移動してから1ヶ月経つファイル・ディレクトリを削除

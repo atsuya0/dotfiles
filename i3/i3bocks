@@ -1,5 +1,5 @@
 [uptime]
-label=uptime
+label=UT
 command=uptime | sed 's/.*up \([^,]*\),.*/\1/'
 color=#9ee3e5
 interval=1

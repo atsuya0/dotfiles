@@ -1,3 +1,4 @@
+[[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp)
 # =========================================================================
 # installed tmux && installed fzf && sessionが存在しない && GUI && True Color対応の仮想端末 && tmux起動
 # =========================================================================
@@ -58,7 +59,7 @@ setopt ignore_eof
 # =========================================================================
 autoload -Uz colors && colors
 # カレントディレクトリのpathを画面の横幅に応じて短縮する。
-function __dirPrompt() {
+function _dir_prompt() {
   typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
   # 表示するディレクトリ名の文字数を決める
   local num
@@ -70,10 +71,10 @@ function __dirPrompt() {
     PROMPT="%{${fg[white]}${bg[black]}%}%n@%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
 }
 autoload -Uz add-zsh-hook
-add-zsh-hook precmd __dirPrompt
+add-zsh-hook precmd _dir_prompt
 
-# rangerでshellを起動したときにPROMPTの先頭にR__を付ける
-[[ -n ${RANGER_LEVEL} ]] && PROMPT="R__${PROMPT}"
+# rangerでshellを起動したときにPROMPTの先頭にR_を付ける
+[[ -n ${RANGER_LEVEL} ]] && PROMPT="R_${PROMPT}"
 
 # コマンド実行後にRPROMPTを非表示
 # setopt transient_rprompt
@@ -82,7 +83,7 @@ add-zsh-hook precmd __dirPrompt
 # tmuxの左のステータスバー
 # =========================================================================
 # tmuxのSession番号を表示。commandがzshのときにはmodeも表示。
-function __tmuxStatus() {
+function _tmux_status() {
   [[ -z ${TMUX} ]] && return
   typeset -r sep=''
   [[ ${KEYMAP} == 'vicmd' ]] \
@@ -91,8 +92,8 @@ function __tmuxStatus() {
 
   tmux set -g status-left "${mode}#[fg=black,bg=blue]#{?client_prefix,#[bg=yellow],} S/#S #[default]#[fg=blue]#{?client_prefix,#[fg=yellow],}${sep}"
 }
-zle -N zle-line-init __tmuxStatus
-zle -N zle-keymap-select __tmuxStatus
+zle -N zle-line-init _tmux_status
+zle -N zle-keymap-select _tmux_status
 
 # =========================================================================
 # ディレクトリ移動
@@ -229,7 +230,7 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
   [[ -s ${completion} ]] && source ${completion}
 }
 
-# __fzf-cd-widget(), vim() で用いる。無視するディレクトリを絶対パスで指定する。
+# _fzf_cd_widget(), vim() で用いる。無視するディレクトリを絶対パスで指定する。
 typeset -r ignore_absolute_pathes=(
   ${HOME}/.cache/dein/repos
   ${HOME}/.cache/dein/.cache
@@ -263,7 +264,7 @@ typeset -r ignore_absolute_pathes=(
 
 # ALT_Cにbindされてるwidgetを上書きしている。
 # 現階層以下のディレクトリからfzfを使って選び移動する。
-function __fzf-cd-widget() {
+function _fzf_cd_widget() {
   local dir
   for dir in ${ignore_absolute_pathes}; do
     local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
@@ -272,18 +273,18 @@ function __fzf-cd-widget() {
     cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
 
-  __dirPrompt
+  _dir_prompt
   zle reset-prompt
 }
-zle   -N  __fzf-cd-widget
-bindkey '\ec' __fzf-cd-widget
+zle   -N  _fzf_cd_widget
+bindkey '\ec' _fzf_cd_widget
 
 
 # =========================================================================
 # 関数
 # =========================================================================
 function bash() { # bash終了時に.bash_historyを削除する。
-  cmdExists bash || return
+  cmd_exists bash || return
   command bash
   trap "command rm ${HOME}/.bash_history" EXIT
 }
@@ -328,7 +329,7 @@ function mv() {
 
 function cat() {
   if type fzf > /dev/null 2>&1 && [[ $# -eq 0 ]]; then
-    command cat $(ls -A | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+    command cat $(command ls -A | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   else
     command cat $@
   fi
@@ -359,37 +360,11 @@ function history() {
   [[ $# -eq 0 ]] && builtin history -i 1 || builtin history $@
 }
 
-# cd するとディレクトリをファイルに記録する。~, / は記録しない。
-[[ -e ${_DIRLIST} ]] || export _DIRLIST=$(mktemp)
-function savePwd() {
-  typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
-  [[ ${#pwd} -gt 2 ]] && echo ${pwd} >> ${_DIRLIST} && __adjustToFile ${_DIRLIST}
-}
-add-zsh-hook chpwd savePwd
-
-function cd() {
-  local dir
-  if [[ $1 == '-l' ]]; then # 記録しているディレクトリを表示
-    dir=$(cat ${_DIRLIST} | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-    eval builtin cd ${dir:-.}
-  elif [[ $1 == '-c' ]]; then # 記録の全消去
-    : > ${_DIRLIST}
-  elif [[ $1 == '-d' ]]; then # 記録の消去
-    local opt
-    [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
-    cat ${_DIRLIST} | \
-      fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
-      xargs -I{} sed -i ${opt} 's@^{}$@@;/^$/d' ${_DIRLIST}
-  else
-    builtin cd $@
-  fi
-}
-
 function vim(){
   # nvim > vim > vi の優先度で起動する。
-  if cmdExists nvim; then
+  if cmd_exists nvim; then
     typeset -r editor='nvim'
-  elif cmdExists vim; then
+  elif cmd_exists vim; then
     typeset -r editor='vim'
   else
     typeset -r editor='vi'
@@ -442,7 +417,7 @@ function ranger() {
 function w3m(){
   [[ $1 == 'search' && $# -ge 2 ]] && { \
     local i parameter="search?&q=$2"
-    for (( i=3 ; i <= $# ; i++ )); do
+    for i in {3..$#}; do
       parameter="${parameter}+$argv[$i]"
     done
     parameter="http://www.google.co.jp/${parameter}&ie=UTF-8"
@@ -487,7 +462,7 @@ function paplay() {
 
 # wifi
 function netctl() {
-  cmdExists netctl || return
+  cmd_exists netctl || return
   if type fzf > /dev/null 2>&1 && [[ $# -eq 0 ]]; then
     command netctl list | fzf --select-1 | xargs sudo \netctl start
   elif [[ $1 == '-r' ]]; then
@@ -498,11 +473,11 @@ function netctl() {
 }
 
 function colors(){
-  for ((fore=30; fore<38; fore++)); do
+  for fore in {30..37}; do
     echo "\e[${fore}m \\\e[${fore}m \e[m"
     for mode in 1 4 5; do
       echo -n "\e[${fore};${mode}m \\\e[${fore};${mode}m \e[m"
-      for ((back=40; back<48; back++)); do
+      for back in {40..47}; do
         echo -n "\e[${fore};${back};${mode}m \\\e[${fore};${back};${mode}m \e[m"
       done
       echo
@@ -512,15 +487,8 @@ function colors(){
 }
 
 # 関数やaliasに囚われないtype,which。 vim()で使う。
-function cmdExists(){
+function cmd_exists(){
   [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] && return 0 || return 1
-}
-
-function __adjustToFile() { # ファイルの中身の重複を削除する
-  typeset -r tmpFile=$(mktemp)
-  cat ${1} | sort | uniq > ${tmpFile}
-  cat ${tmpFile} > ${1}
-  trap "command rm ${tmpFile}" EXIT
 }
 
 # 親階層に移動。 自然数を引数にとり、何層上に行くのかを指定する。 引数なしは選択的インターフェースを使う。
@@ -544,9 +512,55 @@ function _up() {
 }
 compdef _up up
 
+# cd するとディレクトリをファイルに記録する。~, / は記録しない。
+function _save_pwd() {
+  typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
+  [[ ${#pwd} -gt 2 ]] && echo ${pwd} >> ${_CD_FILE}
+}
+add-zsh-hook chpwd _save_pwd
+
+function cdh() {
+  local dir
+  case $1 in
+    '-l' ) cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' ;;
+    '--delete-all' ) : > ${_CD_FILE} ;; # 記録の全消去
+    '-d' ) # 記録の消去
+      type fzf > /dev/null 2>&1 || return 1
+      local opt
+      [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
+      cat ${_CD_FILE} | \
+        fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
+        xargs -I{} sed -i ${opt} 's@^{}$@@;/^$/d' ${_CD_FILE}
+    ;;
+    * ) # 記録しているディレクトリを表示 使用頻度順
+      if [[ $# -eq 0 ]]; then
+        type fzf > /dev/null 2>&1 || return 1
+        dir=$(cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' | cut -d' ' -f3 | \
+          fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+        [[ -z ${dir} ]] && return 1
+      fi
+      eval cd ${dir:-$1}
+    ;;
+  esac
+}
+
+function _cdh() {
+  function visited() {
+    _values 'visited' \
+      $(cat ${_CD_FILE} | sort | uniq -c | sort -r | awk '{print $2}')
+  }
+  _arguments \
+    '-l[list]' \
+    '-d[delete]' \
+    '--delete-all[delete all]' \
+    '1: :visited'
+}
+compdef _cdh cdh
+
 function cds() {
-  [[ -n ${ZDOTDIR} ]] && local fileName=${ZDOTDIR}/.saved-dirs || local fileName=${HOME}/.saved-dirs
-  [[ ! -e ${fileName} ]] && find . -maxdepth 1 -type d -not -name '.*' -printf 'default %f ~/%f\n' > ${fileName}
+  [[ -n ${ZDOTDIR} ]] && local file_name=${ZDOTDIR}/.saved_dirs || local file_name=${HOME}/.saved_dirs
+  # 記録ファイルがなければ作成
+  [[ ! -e ${file_name} ]] && find . -maxdepth 1 -type d -not -name '.*' -printf 'default %f ~/%f\n' > ${file_name}
   local dir alias i action='change'
 
   for (( i=1; i <= $#; i++ )); do
@@ -557,7 +571,7 @@ function cds() {
       ;;
       '-s' )
         local skip=0
-        [[ ${action} != 'change' ]] && echo 'option error' && return 1
+        [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='save'
 
         if [[ -n ${argv[$i+1]} && ${argv[$i+1]} != -* ]]; then
@@ -571,24 +585,23 @@ function cds() {
         else
           dir=$(pwd)
         fi
-
-        i=$(( $i + ${skip} ))
+        i=$(( $i + ${skip} )) # -s の引数の数だけループを飛ばす
       ;;
       '-l' )
-        [[ ${action} != 'change' ]] && echo 'option error' && return 1
+        [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='list'
       ;;
       '-d' )
-        [[ ${action} != 'change' ]] && echo 'option error' && return 1
+        [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='delete'
         [[ -n ${argv[$i+1]} && ${argv[$i+1]} != -* ]] && alias=${argv[$i+1]} && (( i++ ))
       ;;
       '--delete-all' )
-        [[ ${action} != 'change' ]] && echo 'option error' && return 1
+        [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='delete-all'
       ;;
       '-e' )
-        [[ ${action} != 'change' ]] && echo 'option error' && return 1
+        [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='edit'
       ;;
       * )
@@ -600,46 +613,46 @@ function cds() {
   if [[ ${action} == 'change' || ${action} == 'list' || ${action} == 'delete' ]]; then
     local file
     [[ -z ${tag} ]] \
-      && file=$(cat ${fileName} | cut -d' ' -f2-3) \
-      || file=$(cat ${fileName} | grep "^${tag} " | cut -d' ' -f2-3)
+      && file=$(cat ${file_name} | cut -d' ' -f2-3) \
+      || file=$(cat ${file_name} | grep "^${tag} " | cut -d' ' -f2-3)
   fi
 
-  function aliasExists() { # 既に登録されている別名か
+  function alias_exists() { # 既に登録されている別名か
     local alias
-    for alias in $(cat ${fileName} | cut -d' ' -f2); do
-      [[ $1 == ${alias} ]] && echo 'alias already used' && return 1
+    for alias in $(cat ${file_name} | cut -d' ' -f2); do
+      [[ $1 == ${alias} ]] && echo 'alias already used' >&2 && return 1
     done
     return 0
   }
 
-  function directoryExists() { # 既に登録されているdirectoryか
+  function directory_exists() { # 既に登録されているdirectoryか
     local dir
-    for dir in $(cat ${fileName} | cut -d' ' -f3); do
-      [[ $(echo $1 | sed "s@${HOME}@~@") == ${dir} ]] && echo 'directory already exists' && return 1
+    for dir in $(cat ${file_name} | cut -d' ' -f3); do
+      [[ $(echo $1 | sed "s@${HOME}@~@") == ${dir} ]] && echo 'directory already exists' >&2 && return 1
     done
     return 0
   }
 
-  function checkFile() { # ファイルを直接編集した場合、整合性がとれているか確認する。
+  function check_file() { # ファイルを直接編集した場合、整合性がとれているか確認する。
     # 別名が重複
-    local duplicateAliases=$(cat ${fileName} | cut -d' ' -f2 | sort | uniq -d)
-    [[ -n ${duplicateAliases} ]] && echo "[Duplicate aliases]\n${duplicateAliases}\n"
+    local duplicateAliases=$(cat ${file_name} | cut -d' ' -f2 | sort | uniq -d)
+    [[ -n ${duplicateAliases} ]] && echo "[Duplicate aliases]\n${duplicateAliases}\n" >&2
 
     # directoryが重複
-    local duplicateDirectories=$(cat ${fileName} | cut -d' ' -f3 | sort | uniq -d)
-    [[ -n ${duplicateDirectories} ]] && echo "[Duplicate directory]\n${duplicateDirectories}\n"
+    local duplicateDirectories=$(cat ${file_name} | cut -d' ' -f3 | sort | uniq -d)
+    [[ -n ${duplicateDirectories} ]] && echo "[Duplicate directory]\n${duplicateDirectories}\n" >&2
 
     local dir flag
     # directoryではないものを登録していないか
-    for dir in $(cat ${fileName} | cut -d' ' -f3 | sort | uniq); do
-      [[ -d $(echo ${dir} | sed "s@~@${HOME}@") ]] || { echo "${dir} is not directory." && flag=1 ;}
+    for dir in $(cat ${file_name} | cut -d' ' -f3 | sort | uniq); do
+      [[ -d ${dir} ]] || { echo "${dir} is not directory." >&2 && flag=1 ;}
     done
     [[ -n ${flag} ]] && echo
 
     local alias
     # 別名に/が含まれているか
-    for alias in $(cat ${fileName} | cut -d' ' -f2 | sort | uniq); do
-      [[ ${alias} =~ '/' ]] && echo "${alias}: / cannot be used."
+    for alias in $(cat ${file_name} | cut -d' ' -f2 | sort | uniq); do
+      [[ ${alias} =~ '/' ]] && echo "${alias}: / cannot be used." >&2
     done
   }
 
@@ -654,16 +667,16 @@ function cds() {
       [[ -n ${dir} ]] && eval cd $(echo ${dir} | cut -d' ' -f2)
     ;;
     'save' )
-      [[ ${alias} =~ '/' ]] && echo 'alias: / cannot be used' && return 1
-      aliasExists ${alias} || return 1
+      [[ ${alias} =~ '/' ]] && echo 'alias: / cannot be used' >&2 && return 1
+      alias_exists ${alias} || return 1
       [[ -d ${dir} ]] && dir=$(readlink -f ${dir}) || dir=$(pwd)
-      directoryExists ${dir} || return 1
-      echo "${tag:-default} ${alias} $(echo ${dir} | sed "s@${HOME}@~@")" >> ${fileName}
+      directory_exists ${dir} || return 1
+      echo "${tag:-default} ${alias} $(echo ${dir} | sed "s@${HOME}@~@")" >> ${file_name}
     ;;
     'list' )
       [[ -z ${tag} ]] \
-        && cat ${fileName} | xargs printf '\e[32m%s\e[m \e[37;1m%s\e[m \e[34m%s\e[m\n' \
-        || echo ${file} | xargs printf '\e[37;1m%s\e[m \e[34m%s\e[m\n'
+        && cat ${file_name} | sort | xargs printf '\e[32m%s\e[m \e[37;1m%s\e[m \e[34m%s\e[m\n' \
+        || echo ${file} | sort | xargs printf '\e[37;1m%s\e[m \e[34m%s\e[m\n'
     ;;
     'delete' )
       if [[ -z ${alias} ]]; then
@@ -672,40 +685,39 @@ function cds() {
           fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
           cut -d' ' -f1)
       fi
-      sed -i "/ ${alias} /d" ${fileName}
+      sed -i "/ ${alias} /d" ${file_name}
     ;;
     'delete-all' )
-      echo 'delete all? (y/n)' && read input && [[ ${input} == 'y' ]] && : > ${fileName}
+      echo 'delete all?'
+      select input in 'no' 'yes'; do
+        case ${input} in
+          'no' ) break ;;
+          'yes' ) : > ${file_name} && break ;;
+        esac
+      done
     ;;
     'edit' )
-      ${EDITOR} ${fileName}
-      checkFile
+      ${EDITOR} ${file_name}
+      check_file
     ;;
   esac
 }
 
 function _cds() {
-  [[ -n ${ZDOTDIR} ]] && local file=${ZDOTDIR}/.saved-dirs || local file=${HOME}/.saved-dirs
+  [[ -n ${ZDOTDIR} ]] && local file=${ZDOTDIR}/.saved_dirs || local file=${HOME}/.saved_dirs
 
   _arguments \
-    '-s[save]: :->save' \
-    '-l[list]: :->list' \
-    '-e[edit]: :->edit' \
+    '-s[save]: :->t' \
+    '-l[list]: :->t' \
+    '-e[edit]: :->none' \
     '-d[delete]: :->alias' \
-    '--delete-all[delete all]: :->delete-all' \
+    '--delete-all[delete all]: :->none' \
     '-t[tag]: :->tag' \
     '*: :->alias'
 
   case "${state}" in
-    save )
+    t )
       _arguments '-t[tag]: :->tag'
-    ;;
-    list )
-      _arguments '-t[tag]: :->tag'
-    ;;
-    delete-all )
-    ;;
-    edit )
     ;;
     tag )
       _values 'tags' $(cat ${file} | cut -d' ' -f1 | sort | uniq)
@@ -734,35 +746,38 @@ function mt() { # ファイルをゴミ箱に入れる。
 
   if [[ $1 == '-r' ]]; then
     type fzf > /dev/null 2>&1 || return
-    ls -r ${trash} | eval "${fzf} --header='move files in the trash to the current directory / ${size}'" | \
+    command ls -r ${trash} | eval "${fzf} --header='move files in the trash to the current directory / ${size}'" | \
       xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
   elif [[ $1 == '-d' ]]; then
     type fzf > /dev/null 2>&1 || return
-    ls -r ${trash} | eval "${fzf} --header='delete files in the trash / ${size}'" | xargs -p -I{} rm -r "${trash}/{}"
+    command ls -r ${trash} | eval "${fzf} --header='delete files in the trash / ${size}'" | xargs -p -I{} rm -r "${trash}/{}"
+  elif [[ $1 == '-l' ]]; then
+    ls -r ${trash}
   else
     [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 && \
-      set $(ls ./ | sed "/^${trash##*/}$/"d | eval "${fzf} --header='move files in the current directory to the trash / ${size}'") \
+      set $(command ls ./ | sed "/^${trash##*/}$/"d | eval "${fzf} --header='move files in the current directory to the trash / ${size}'") \
       > /dev/null && [[ $# -eq 0 ]] && return
     echo $@ | tr -d '\n' |  xargs -d' ' -I{} sh -c "mv {} \"${trash}/\$(date +%F_%T_)\$(basename {})\""
   fi
 }
 
 function _mt() {
-  function _trash(){
-    typeset -r trash="${HOME}/.Trash"
-    _values \
-      'trash' \
-      $(ls ${trash})
-  }
+  typeset -r trash="${HOME}/.Trash"
 
-  if (( CURRENT == 2 )); then
-    _arguments \
-      -r'[restore]' \
-      -d'[delete]' \
-      '1: :_files'
-  elif (( CURRENT == 3 )); then
-    _trash
-  fi
+  _arguments \
+    '-r[restore]: :->trash' \
+    '-d[delete]: :->trash' \
+    '-l[list]: :->none' \
+    '*: :->files'
+
+  case "${state}" in
+    trash )
+      _values 'files in trash can' $(command ls -r ${trash})
+    ;;
+    files )
+      _files
+    ;;
+  esac
 
 }
 compdef _mt mt
@@ -801,11 +816,11 @@ function bak() {
 # bluetoothテザリング。
 # anacondaのdbus-sendを使わないようにする。AC_CF_85_B7_9D_9Aはスマホのmacアドレス。
 function bt() {
-  typeset -r addr='AC:CF:85:B7:9D:9A'
+  typeset -r ADDR='AC:CF:85:B7:9D:9A'
 
   [[ $(systemctl status bluetooth | sed '/Active:/!d;s/[^:]*: //;s/ .*//') == 'inactive' ]] && sudo systemctl start bluetooth.service
-  (){ echo 'power on'; sleep 1; echo "connect $1"; sleep 3; echo 'quit'; } ${addr} | bluetoothctl
-  /usr/bin/dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_${addr//:/_} org.bluez.Network1.Connect string:'nap'
+  (){ echo 'power on'; sleep 1; echo "connect $1"; sleep 3; echo 'quit'; } ${ADDR} | bluetoothctl
+  /usr/bin/dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_${ADDR//:/_} org.bluez.Network1.Connect string:'nap'
   sudo dhcpcd bnep0
 }
 
@@ -817,14 +832,14 @@ function fin() {
 # コマンドの終了ステータスを見てファイルに記録するか否かを決めたいので、
 # ここではファイルには記録しない。
 # 0 記録する, 1 記録しない, 2 メモリにだけ記録する
-function __recordCmd() {
+function _record_cmd() {
   typeset -g _cmd=${1%%$'\n'}
   return 2
 }
-add-zsh-hook zshaddhistory __recordCmd
+add-zsh-hook zshaddhistory _record_cmd
 
-function __saveCmd() {
-  local exitStatus="$?"
+function _save_cmd() {
+  local exit_status="$?"
   _cmd=$(echo ${_cmd} | tr -s ' ') # 連続する空白を1つにする
   # 引数やオプションを指定していない場合は記録しない
   [[ ! ${_cmd} =~ ' ' ]] && return
@@ -841,12 +856,12 @@ function __saveCmd() {
     [[ ${_cmd} =~ "^${ignore_cmd}" ]] && return
   done
   # コマンドが正常終了した場合はファイルに記録する
-  [[ ${exitStatus} == 0 ]] && print -sr -- "${_cmd}"
+  [[ ${exit_status} == 0 ]] && print -sr -- "${_cmd}"
 }
-add-zsh-hook precmd __saveCmd
+add-zsh-hook precmd _save_cmd
 
 # docker daemonが起動しているか
-function isDockerRunning() {
+function is_docker_running() {
   docker info > /dev/null 2>&1 && return 0
   echo 'Is the docker daemon running?'
   print -z 'sudo systemctl start docker'
@@ -858,7 +873,7 @@ function isDockerRunning() {
 # chromium -no-sandbox でも起動する。プロセスを隔離しない。
 # どちらにせよ安全性が下がる。
 function ubuntu() {
-  isDockerRunning || return
+  is_docker_running || return
   [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1 &
 
   docker run \
@@ -873,13 +888,13 @@ function ubuntu() {
 
 # dockerのコンテナを選択して破棄
 function drm() {
-  isDockerRunning && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
+  is_docker_running && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
   [[ -n ${container} ]] && echo ${container} | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
 }
 
 # dockerのimageを選択して破棄
 function drmi() {
-  isDockerRunning && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
+  is_docker_running && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
   [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
 }
 
@@ -916,6 +931,7 @@ alias -g G='| grep'
 alias -g L='| less'
 alias -g ..2='../..'
 alias -g ..3='../../..'
+alias -g lf='$(ls | fzf)'
 alias -s txt=cat
 alias -s html=chromium
 alias -s {png,jpg,jpeg}=feh
