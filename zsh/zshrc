@@ -7,7 +7,7 @@ type tmux > /dev/null 2>&1 && type fzf > /dev/null 2>&1 && [[ -z ${TMUX} && -n $
   id=$(echo "$(tmux list-sessions 2> /dev/null)\n${new}:" | sed /^$/d | fzf --select-1 --reverse | cut -d: -f1)
 
   if [[ ${id} = ${new} ]]; then
-    tmux -2 new-session && exit
+    tmux -f "${HOME}/dotfiles/tmux/tmux.conf" -2 new-session && exit
   elif [[ -n ${id} ]]; then
     tmux attach-session -t ${id}
   fi
@@ -53,6 +53,7 @@ setopt ignore_eof
   typeset -r highlighting='/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'
   [[ -s ${highlighting} ]] && source ${highlighting}
 }
+[[ -e '/usr/share/git/git-prompt.sh' ]] && source /usr/share/git/git-prompt.sh
 
 # =========================================================================
 # プロンプト
@@ -66,18 +67,24 @@ function _dir_prompt() {
   let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c "test 1 -gt {} && echo 1 || echo {}")/$(echo ${pwd} | grep -o '[~/]' | wc -l)
 
   # CUI と GUI で表示を変える
-  [[ -z ${WINDOWID} ]] && \
-    PROMPT="%n%m ${fg[blue]}$(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g")${reset_color} " || \
-    PROMPT="%{${fg[white]}${bg[black]}%}%n@%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
+  [[ -z ${WINDOWID} ]] \
+    && PROMPT="%n%m ${fg[blue]}$(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g")${reset_color} " \
+    || PROMPT="%{${fg[white]}${bg[black]}%}%n@%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
 }
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd _dir_prompt
 
+function _git_prompt() {
+  #git status | grep '^Changes not staged for commit:'
+  #git status | grep '^Untracked files:'
+  RPROMPT=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+}
+add-zsh-hook precmd _git_prompt
+
 # rangerでshellを起動したときにPROMPTの先頭にR_を付ける
 [[ -n ${RANGER_LEVEL} ]] && PROMPT="R_${PROMPT}"
-
 # コマンド実行後にRPROMPTを非表示
-# setopt transient_rprompt
+setopt transient_rprompt
 
 # =========================================================================
 # tmuxの左のステータスバー
@@ -99,11 +106,11 @@ zle -N zle-keymap-select _tmux_status
 # ディレクトリ移動
 # =========================================================================
 # cdでディレクトリ名を指定するだけで移動できるpath
- cdpath=( ${HOME} )
+# cdpath=( ${HOME} )
 # cdをpushdにする
- setopt auto_pushd
+setopt auto_pushd
 # pushdのスタックを重複しない
- setopt pushd_ignore_dups
+setopt pushd_ignore_dups
 
 # =========================================================================
 # 補完
@@ -248,15 +255,11 @@ typeset -r ignore_absolute_pathes=(
   ${HOME}/.config/fcitx
   ${HOME}/.config/Code
   ${HOME}/.config/undo
-  ${HOME}/.anaconda3
-  ${HOME}/.cache/mozilla
-  ${HOME}/.mozilla
-  # ${HOME}/.nvm
   ${HOME}/.node-gyp
   ${HOME}/.vscode/extensions
   ${HOME}/.npm/_cacache
   ${HOME}/.Trash
-  ${HOME}/Documents/go-programming-blueprints-master
+  ${HOME}/text/gowebprog-master
   ${GOPATH}/pkg
   ${GOPATH}/src/gopkg.in
   ${GOPATH}/src/github.com
@@ -327,14 +330,6 @@ function mv() {
   [[ -n ${destination} ]] && command mv -i ${source} -t ${destination}
 }
 
-function cat() {
-  if type fzf > /dev/null 2>&1 && [[ $# -eq 0 ]]; then
-    command cat $(command ls -A | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-  else
-    command cat $@
-  fi
-}
-
 # fat32なら現在のユーザで弄れるようにする
 # ディレクトリを省略すると~/mntにマウントする
 function mount() {
@@ -385,7 +380,7 @@ function vim(){
     done
 
     # 無視するディレクトリ(ディレクトリ名指定)
-    local ignore_dirs=( node_modules )
+    local ignore_dirs=( node_modules .git )
     for dir in ${ignore_dirs}; do
       arg="${arg} -path "\'\*${dir}\*\'" -prune -o"
     done
@@ -634,26 +629,29 @@ function cds() {
   }
 
   function check_file() { # ファイルを直接編集した場合、整合性がとれているか確認する。
+    local message
     # 別名が重複
     local duplicateAliases=$(cat ${file_name} | cut -d' ' -f2 | sort | uniq -d)
-    [[ -n ${duplicateAliases} ]] && echo "[Duplicate aliases]\n${duplicateAliases}\n" >&2
+    [[ -n ${duplicateAliases} ]] && message="\e[31;1m[Duplicate aliases]\e[m\n${duplicateAliases}\n"
 
     # directoryが重複
     local duplicateDirectories=$(cat ${file_name} | cut -d' ' -f3 | sort | uniq -d)
-    [[ -n ${duplicateDirectories} ]] && echo "[Duplicate directory]\n${duplicateDirectories}\n" >&2
+    [[ -n ${duplicateDirectories} ]] && message="${message}\e[31;1m[Duplicate directory]\e[m\n${duplicateDirectories}\n"
 
-    local dir flag
     # directoryではないものを登録していないか
+    local dir incorrent
     for dir in $(cat ${file_name} | cut -d' ' -f3 | sort | uniq); do
-      [[ -d ${dir} ]] || { echo "${dir} is not directory." >&2 && flag=1 ;}
+      [[ -d $(echo ${dir} | sed "s@~@${HOME}@") ]] || incorrent="${incorrent}${dir}\n"
     done
-    [[ -n ${flag} ]] && echo
+    [[ -n ${incorrent} ]] && message="${message}\e[31;1m[Not directories]\e[m\n${incorrent}" && incorrent=''
 
     local alias
     # 別名に/が含まれているか
     for alias in $(cat ${file_name} | cut -d' ' -f2 | sort | uniq); do
-      [[ ${alias} =~ '/' ]] && echo "${alias}: / cannot be used." >&2
+      [[ ${alias} =~ '/' ]] && incorrent="${incorrent}${alias}\n"
     done
+    [[ -n ${incorrent} ]] && message="${message}\e[31;1m[Alias contains \"/\"]\e[m\n${incorrent}"
+    [[ -n ${message} ]] && echo -e ${message} | sed '/^$/d' >&2 && print -z 'cds -e'
   }
 
   case ${action} in
@@ -808,9 +806,22 @@ function bat() {
 
 # バックアップをとる
 function bak() {
-  for file in $@; do
-    cp -i ${file} "${file}.bak"
-  done
+  local file
+  if [[ $1 == '-r' ]]; then # bak -r test.sh.bak
+    for file in $argv[2,-1]; do
+      mv -i ${file}  ${file%.bak}
+    done
+  else # bak test.sh
+    for file in $@; do
+      cp -i ${file} "${file}.bak"
+    done
+  fi
+}
+
+function init_test() {
+  [[ -e ./test.sh ]] && return 1
+  echo '#!/usr/bin/bash\n' > ./test.sh
+  chmod +x ./test.sh
 }
 
 # bluetoothテザリング。
@@ -932,6 +943,7 @@ alias -g L='| less'
 alias -g ..2='../..'
 alias -g ..3='../../..'
 alias -g lf='$(ls | fzf)'
+alias -g laf='$(ls -A | fzf)'
 alias -s txt=cat
 alias -s html=chromium
 alias -s {png,jpg,jpeg}=feh
