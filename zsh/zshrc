@@ -75,9 +75,35 @@ autoload -Uz add-zsh-hook
 add-zsh-hook precmd _dir_prompt
 
 function _git_prompt() {
-  #git status | grep '^Changes not staged for commit:'
-  #git status | grep '^Untracked files:'
-  RPROMPT=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+  RPROMPT=''
+  type git > /dev/null 2>&1 || return 1
+  git status > /dev/null 2>&1 || return 1
+  local git_info=("${(f)$(git status --porcelain --branch)}")
+
+  local branch="[$(echo ${git_info[1]} | sed 's/## \([^\.]*\).*/\1/')]"
+  if [[ $(echo ${git_info[1]} | grep -o '\[.*\]') == '[ahead 1]' ]]; then
+    branch="%{${fg[blue]}%}${branch}"
+  elif [[ $(echo ${git_info[1]} | grep -o '\[.*\]') == '[behind 1]' ]]; then
+    branch="%{${fg[red]}%}${branch}"
+  else
+    branch="%{${fg[green]}%}${branch}"
+  fi
+
+  local file uncommited=0 unadded=0 untracked=0
+  for file in ${git_info[2,-1]}; do
+    if [[ $(echo ${file} | cut -c1-2) == 'M ' ]]; then
+      (( uncommited++ ))
+    elif [[ $(echo ${file} | cut -c1-2) == ' M' ]]; then
+      (( unadded++ ))
+    elif [[ $(echo ${file} | cut -c1-2) == '??' ]]; then
+      (( untracked++ ))
+    fi
+  done
+  local git_status
+  [[ ${uncommited} -ne 0 ]] && git_status="%{${fg[yellow]}%}!${uncommited} "
+  [[ ${unadded} -ne 0 ]] && git_status="${git_status}%{${fg[red]}%}+${unadded} "
+  [[ ${untracked} -ne 0 ]] && git_status="${git_status}%{${fg[green]}%}?${untracked} "
+  RPROMPT="%B${git_status}${branch}%b"
 }
 add-zsh-hook precmd _git_prompt
 

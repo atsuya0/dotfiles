@@ -35,7 +35,7 @@ function Share_History {
 PROMPT_COMMAND='Share_History'
 
 function ls() {
-  [[ $(command ls $@) == "" ]] && command ls -FA --color=auto $@ || command ls -F --color=auto $@
+  [[ -z $(command ls $@) ]] && command ls -FA --color=auto $@ || command ls -F --color=auto $@
 }
 
 function up() {
@@ -131,6 +131,11 @@ function cds() {
     fi
     [[ -n ${dir} ]] && eval cd $(echo ${dir} | cut -d' ' -f2)
   fi
+}
+
+function init_fcitx(){
+  fcitx-imlist -e fcitx-keyboard-jp
+  fcitx-imlist -s fcitx-keyboard-jp,mozc
 }
 
 # alias
