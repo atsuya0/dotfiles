@@ -31,7 +31,7 @@ export LESS_TERMCAP_so=$(echo -n '\e[35;40;1m')
 export LESS_TERMCAP_ue=$(echo -n '\e[32;1m')
 export LESS_TERMCAP_us=$(echo -n '\e[32;1m')
 export MANPAGER='less' # man
-# export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理
+export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理
 # =========================================================================
 # その他
 # =========================================================================
@@ -53,7 +53,6 @@ setopt ignore_eof
   typeset -r highlighting='/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'
   [[ -s ${highlighting} ]] && source ${highlighting}
 }
-[[ -e '/usr/share/git/git-prompt.sh' ]] && source /usr/share/git/git-prompt.sh
 
 # =========================================================================
 # プロンプト
@@ -62,8 +61,8 @@ autoload -Uz colors && colors
 # カレントディレクトリのpathを画面の横幅に応じて短縮する。
 function _dir_prompt() {
   typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
-  # 表示するディレクトリ名の文字数を決める
   local num
+  # 表示するディレクトリ名の文字数を決める
   let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c "test 1 -gt {} && echo 1 || echo {}")/$(echo ${pwd} | grep -o '[~/]' | wc -l)
 
   # CUI と GUI で表示を変える
@@ -91,19 +90,19 @@ function _git_prompt() {
 
   local file uncommited=0 unadded=0 untracked=0
   for file in ${git_info[2,-1]}; do
-    if [[ $(echo ${file} | cut -c1-2) == 'M ' ]]; then
-      (( uncommited++ ))
-    elif [[ $(echo ${file} | cut -c1-2) == ' M' ]]; then
-      (( unadded++ ))
-    elif [[ $(echo ${file} | cut -c1-2) == '??' ]]; then
+    if [[ $(echo ${file} | cut -c1-2) == '??' ]]; then
       (( untracked++ ))
+    elif [[ $(echo ${file} | cut -c1-2) =~ '( |M|A|R)M' ]]; then
+      (( unadded++ ))
+    elif [[ $(echo ${file} | cut -c1-2) =~ '(M|A|R) ' ]]; then
+      (( uncommited++ ))
     fi
   done
   local git_status
   [[ ${uncommited} -ne 0 ]] && git_status="%{${fg[yellow]}%}!${uncommited} "
   [[ ${unadded} -ne 0 ]] && git_status="${git_status}%{${fg[red]}%}+${unadded} "
   [[ ${untracked} -ne 0 ]] && git_status="${git_status}%{${fg[green]}%}?${untracked} "
-  RPROMPT="%B${git_status}${branch}%b"
+  RPROMPT="${git_status}${branch}"
 }
 add-zsh-hook precmd _git_prompt
 
@@ -298,6 +297,7 @@ function _fzf_cd_widget() {
   for dir in ${ignore_absolute_pathes}; do
     local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
   done
+
   dir=$(eval find -mindepth 1 ${argument} -type d -print | \
     cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
@@ -327,32 +327,40 @@ function ls() { # 何も表示されないならば隠しファイルの表示�
 # 2回目でコピー先を選択する。ヘッダにコピー元のファイル・ディレクトリが表示される。
 function cp() {
   [[ $# -ne 0 ]] && command cp -i $@ && return
+
   local dir
   for dir in ${ignore_absolute_pathes}; do
     local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
   done
+
   # 元
   source=($(eval find -mindepth 1 ${argument} -print | \
     cut -c3- | fzf --select-1 --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
   [[ ${#source[@]} -eq 0 ]] && return
+
   # 宛先
   destination=$(eval find -mindepth 1 ${argument} -print | \
     cut -c3- | fzf --select-1 --header="${source}" --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+
   [[ -n ${destination} ]] && command cp -ri ${source} -t ${destination}
 }
 
 # cp と同じ
 function mv() {
   [[ $# -ne 0 ]] && command mv -i $@ && return
+
   local dir
   for dir in ${ignore_absolute_pathes}; do
     local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
   done
+
   source=($(eval find -mindepth 1 ${argument} -print | \
     cut -c3- | fzf --select-1 --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
   [[ ${#source[@]} -eq 0 ]] && return
+
   destination=$(eval find -mindepth 1 ${argument} -print | \
     cut -c3- | fzf --select-1 --header="${source}" --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+
   [[ -n ${destination} ]] && command mv -i ${source} -t ${destination}
 }
 
@@ -442,26 +450,29 @@ function w3m(){
       parameter="${parameter}+$argv[$i]"
     done
     parameter="http://www.google.co.jp/${parameter}&ie=UTF-8"
+
     command w3m ${parameter}
   } || command w3m $@
 }
 
 # Node.jsのversion管理
 # nvmを使用したときに初期設定を読み込む
-# function nvm() {
-#   unset -f nvm
-#   source /usr/share/nvm/nvm.sh
-#   source /usr/share/nvm/bash_completion
-#   nvm $@
-# }
+function nvm() {
+  unset -f nvm
+  source /usr/share/nvm/nvm.sh
+  source /usr/share/nvm/bash_completion
+  nvm $@
+}
 
 function pactl() {
   typeset -r pactl='/usr/bin/pactl'
+
   function get_index() {
     [[ $(${pactl} list sinks | grep 'RUNNING') != '' ]] \
       && ${pactl} list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]' \
       || ${pactl} list sinks | head -1 | grep -o '[0-9]'
   }
+
   if [[ $# -eq 0 ]]; then
     local run
     [[ $(pactl list sinks | grep 'RUNNING') != '' ]] && run="grep -A 10 'RUNNING'" || run='tee'
@@ -484,6 +495,7 @@ function paplay() {
 # wifi
 function netctl() {
   cmd_exists netctl || return
+
   if type fzf > /dev/null 2>&1 && [[ $# -eq 0 ]]; then
     command netctl list | fzf --select-1 | xargs sudo \netctl start
   elif [[ $1 == '-r' ]]; then
@@ -515,6 +527,7 @@ function cmd_exists(){
 # 親階層に移動。 自然数を引数にとり、何層上に行くのかを指定する。 引数なしは選択的インターフェースを使う。
 function up() {
   local str
+
   if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
     str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d' | \
       fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
@@ -523,6 +536,7 @@ function up() {
   elif [[ -d $1 ]]; then
     str=$1
   fi
+
   builtin cd ${str:-.}
 }
 
@@ -542,11 +556,13 @@ add-zsh-hook chpwd _save_pwd
 
 function cdh() {
   local dir
+
   case $1 in
     '-l' ) cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' ;;
     '--delete-all' ) : > ${_CD_FILE} ;; # 記録の全消去
     '-d' ) # 記録の消去
       type fzf > /dev/null 2>&1 || return 1
+
       local opt
       [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
       cat ${_CD_FILE} | \
@@ -762,26 +778,38 @@ function dtr() { # 電源を入れてからのネットワークのデータ転�
 
 function mt() { # ファイルをゴミ箱に入れる。
   typeset -r trash="${HOME}/.Trash"
-  local fzf="fzf \
-    --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
-    --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
+  local fzf_option="--preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
   [[ -s ${trash} ]] || mkdir ${trash}
   typeset -r size=$(du -s ${trash} | cut -f1)
 
   if [[ $1 == '-r' ]]; then
     type fzf > /dev/null 2>&1 || return
-    command ls -r ${trash} | eval "${fzf} --header='move files in the trash to the current directory / ${size}'" | \
-      xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
+
+    command ls -r ${trash} | \
+      eval "fzf --header='move files in the trash to the current directory / ${size}' \
+      --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
+      ${fzf_option}" | xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
+
   elif [[ $1 == '-d' ]]; then
     type fzf > /dev/null 2>&1 || return
-    command ls -r ${trash} | eval "${fzf} --header='delete files in the trash / ${size}'" | xargs -p -I{} rm -r "${trash}/{}"
+
+    command ls -r ${trash} | \
+      eval "fzf --header='delete files in the trash / ${size}' \
+      --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
+      ${fzf_option}" | xargs -p -I{} rm -r "${trash}/{}"
+
   elif [[ $1 == '-l' ]]; then
     ls -r ${trash}
+
   else
     [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 && \
-      set $(command ls ./ | sed "/^${trash##*/}$/"d | eval "${fzf} --header='move files in the current directory to the trash / ${size}'") \
+      set $(command ls ./ | sed "/^${trash##*/}$/"d | \
+      eval "fzf --header='move files in the current directory to the trash / ${size}' \
+      --preview=\"file {} | sed 's/^.*: //'; du -hs {} | cut -f1; less {}\" ${fzf_option}") \
       > /dev/null && [[ $# -eq 0 ]] && return
+
     echo $@ | tr -d '\n' |  xargs -d' ' -I{} sh -c "mv {} \"${trash}/\$(date +%F_%T_)\$(basename {})\""
+
   fi
 }
 
@@ -814,6 +842,7 @@ function interactive() { # 引数に指定したコマンドを実行するの�
     echo 'yes / no'
     read input
   done
+
   [[ $input == 'yes' ]] && command $@
 }
 
@@ -833,6 +862,7 @@ function bat() {
 # バックアップをとる
 function bak() {
   local file
+
   if [[ $1 == '-r' ]]; then # bak -r test.sh.bak
     for file in $argv[2,-1]; do
       mv -i ${file}  ${file%.bak}
@@ -942,13 +972,28 @@ function scrot() {
     || command scrot $@
 }
 
+function crypt() {
+  if [[ $1 -eq '-e' ]]; then
+    openssl enc -e -aes-256-cbc -salt -k $2 -in $3 -out $3.enc
+  elif [[ $1 -eq '-d' ]]; then
+   openssl enc -d -aes-256-cbc -salt -k $2 -in $3 -out ${3%.enc}
+  fi
+}
+
+function _crypt() {
+  _arguments \
+    '-e[encrypt]' \
+    '-d[decrypt]' \
+    '1: :_files'
+}
+compdef _crypt crypt
+
 # =========================================================================
 # alias
 # =========================================================================
 alias ll='ls -FAlht --color=auto'
 alias grep='grep -i --color=auto'
-# alias mv='mv -i'
-# alias cp='cp -i'
+# alias mv='mv -i' alias cp='cp -i'
 alias ln='ln -i'
 alias rm='echo "zsh: command not found: rm"'
 alias mkdir='mkdir -vp'

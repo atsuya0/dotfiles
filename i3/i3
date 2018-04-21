@@ -145,9 +145,8 @@ bindsym $mod+r mode "resize"
 mode "launcher" {
     bindsym t exec --no-startup-id mlterm, mode "default"
     bindsym Shift+t exec --no-startup-id urxvt, mode "default"
-    bindsym e exec --no-startup-id code, mode "default"
+    bindsym c exec --no-startup-id code, mode "default"
     bindsym b exec --no-startup-id chromium, mode "default"
-    bindsym f exec --no-startup-id firefox, mode "default"
     bindsym v exec --no-startup-id virtualbox, mode "default"
     bindsym w exec --no-startup-id wireshark, mode "default"
 
@@ -160,7 +159,7 @@ bindsym $mod+Return mode "launcher"
 set $mode_display (m)irroring, (d)ual-display, e(x)it
 mode "$mode_display" {
     bindsym m exec --no-startup-id xrandr --output eDP1 --output HDMI1 --mode 1366x768, mode "default"
-    bindsym d exec --no-startup-id xrandr --output eDP1 --left-of HDMI1 --mode 1366x768, mode "default"
+    bindsym d exec --no-startup-id xrandr --output HDMI1 --left-of eDP1 --mode 1366x768, mode "default"
     bindsym x exec --no-startup-id xrandr --output HDMI1 --off, mode "default"
 
     bindsym Return mode "default"
