@@ -15,7 +15,6 @@ type tmux > /dev/null 2>&1 && type fzf > /dev/null 2>&1 && [[ -z ${TMUX} && -n $
 # =========================================================================
 # 環境変数
 # =========================================================================
-typeset -U path
 readonly path=(
   ${GOPATH}/bin
   /usr/bin
@@ -27,7 +26,7 @@ export LESS_TERMCAP_mb=$(echo -n '\e[34;1m')
 export LESS_TERMCAP_md=$(echo -n '\e[34;1m')
 export LESS_TERMCAP_me=$(echo -n '\e[37m')
 export LESS_TERMCAP_se=$(echo -n '\e[37m')
-export LESS_TERMCAP_so=$(echo -n '\e[35;40;1m')
+export LESS_TERMCAP_so=$(echo -n '\e[31;40;1m')
 export LESS_TERMCAP_ue=$(echo -n '\e[32;1m')
 export LESS_TERMCAP_us=$(echo -n '\e[32;1m')
 export MANPAGER='less' # man
@@ -37,6 +36,8 @@ export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理
 # =========================================================================
 # 区切り文字として扱わない。
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+# 実行したプロセスの消費時間が3秒以上かかったら、消費時間の統計情報を表示する。
+REPORTTIME=3
 # 画面のロックと解除を無効(C-s,C-q)
 setopt no_flow_control
 # beep音停止
@@ -45,10 +46,10 @@ setopt no_list_beep
 setopt no_hist_beep
 # コマンドの打ち損じを修正
 setopt correct
-# 実行したプロセスの消費時間が3秒以上かかったら、消費時間の統計情報を表示する。
-REPORTTIME=3
 # <C-d>でログアウトしないようにする。
 setopt ignore_eof
+# リダイレクトで上書き禁止(>)。上書きをする場合は>|を使う。
+setopt noclobber
 () { # fishのようなsyntax-highlighting
   typeset -r highlighting='/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'
   [[ -s ${highlighting} ]] && source ${highlighting}
@@ -67,8 +68,8 @@ function _dir_prompt() {
 
   # CUI と GUI で表示を変える
   [[ -z ${WINDOWID} ]] \
-    && PROMPT="%n%m ${fg[blue]}$(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g")${reset_color} " \
-    || PROMPT="%{${fg[white]}${bg[black]}%}%n@%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
+    && PROMPT="%n@%m ${fg[blue]}$(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g")${reset_color} " \
+    || PROMPT="%{${fg[blue]}${bg[black]}%}%n%{${fg[magenta]}${bg[black]}%}@%{${fg[blue]}${bg[black]}%}%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
 }
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd _dir_prompt
@@ -455,53 +456,59 @@ function w3m(){
   } || command w3m $@
 }
 
-# Node.jsのversion管理
-# nvmを使用したときに初期設定を読み込む
+# nvm(Node.jsのversion管理)の初期設定を読み込む
+function init_nvm() {
+  unset -f $1
+  local nvm_dir='/usr/share/nvm'
+  [[ -e "${nvm_dir}/nvm.sh" ]] && source "${nvm_dir}/nvm.sh"
+  [[ -e "${nvm_dir}/bash_completion" ]] && source "${nvm_dir}/bash_completion"
+}
+
 function nvm() {
-  unset -f nvm
-  source /usr/share/nvm/nvm.sh
-  source /usr/share/nvm/bash_completion
+  init_nvm nvm
   nvm $@
 }
 
-function pactl() {
-  typeset -r pactl='/usr/bin/pactl'
+function npm() {
+  init_nvm npm
+  npm $@
+}
 
+function node() {
+  init_nvm node
+  node $@
+}
+
+function ng() {
+  init_nvm ng
+  ng $@
+}
+
+function vol() {
   function get_index() {
-    [[ $(${pactl} list sinks | grep 'RUNNING') != '' ]] \
-      && ${pactl} list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]' \
-      || ${pactl} list sinks | head -1 | grep -o '[0-9]'
+    [[ $(pactl list sinks | grep 'RUNNING') != '' ]] \
+      && pactl list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]' \
+      || pactl list sinks | head -1 | grep -o '[0-9]'
   }
 
-  if [[ $# -eq 0 ]]; then
+  if [[ $1 == up ]]; then
+    pactl set-sink-volume $(get_index) +5%
+  elif [[ $1 == down ]]; then
+    pactl set-sink-volume $(get_index) -5%
+  elif [[ $1 == mute ]]; then
+    pactl set-sink-mute $(get_index) toggle
+  else
     local run
     [[ $(pactl list sinks | grep 'RUNNING') != '' ]] && run="grep -A 10 'RUNNING'" || run='tee'
     pactl list sinks | eval ${run} | grep -o '[0-9]*%' | head -1
-  elif [[ $1 == up ]]; then
-    ${pactl} set-sink-volume $(get_index) +5%
-  elif [[ $1 == down ]]; then
-    ${pactl} set-sink-volume $(get_index) -5%
-  elif [[ $1 == mute ]]; then
-    ${pactl} set-sink-mute $(get_index) toggle
-  else
-    ${pactl} $@
   fi
 }
 
-function paplay() {
-  [[ $# -eq 0 ]] && command paplay /usr/share/sounds/alsa/Noise.wav || command paplay $@
-}
-
-# wifi
-function netctl() {
-  cmd_exists netctl || return
-
-  if type fzf > /dev/null 2>&1 && [[ $# -eq 0 ]]; then
-    command netctl list | fzf --select-1 | xargs sudo \netctl start
-  elif [[ $1 == '-r' ]]; then
-    command netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo \netctl restart
-  else
-    sudo \netctl $@
+function wifi() {
+  if [[ $1 == '-r' ]]; then
+    netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo netctl restart
+  elif type fzf > /dev/null 2>&1; then
+    netctl list | fzf --select-1 | xargs sudo netctl start
   fi
 }
 
@@ -715,8 +722,8 @@ function cds() {
     ;;
     'list' )
       [[ -z ${tag} ]] \
-        && cat ${file_name} | sort | xargs printf '\e[32m%s\e[m \e[37;1m%s\e[m \e[34m%s\e[m\n' \
-        || echo ${file} | sort | xargs printf '\e[37;1m%s\e[m \e[34m%s\e[m\n'
+        && cat ${file_name} | sort | xargs printf '\e[36m%s\e[m \e[37;1m%s\e[m \e[37m%s\e[m\n' \
+        || echo ${file} | sort | xargs printf '\e[37;1m%s\e[m \e[37m%s\e[m\n'
     ;;
     'delete' )
       if [[ -z ${alias} ]]; then
@@ -846,7 +853,7 @@ function interactive() { # 引数に指定したコマンドを実行するの�
   [[ $input == 'yes' ]] && command $@
 }
 
-function os() { # OSとKernelの情報を表示 別ファイル(cat /etc/issue)
+function os() { # OSとKernelの情報を表示 (hostnamectl statusで表示できた)
   echo -n 'OS\t'
   uname -o | tr -d '\n'
   cat /etc/os-release | sed '/^PRETTY_NAME/!d;s/.*"\(.*\)".*/(\1)/'
@@ -973,13 +980,12 @@ function scrot() {
 }
 
 function crypt() {
-  if [[ $1 -eq '-e' ]]; then
+  if [[ $1 == '-e' ]]; then
     openssl enc -e -aes-256-cbc -salt -k $2 -in $3 -out $3.enc
-  elif [[ $1 -eq '-d' ]]; then
+  elif [[ $1 == '-d' ]]; then
    openssl enc -d -aes-256-cbc -salt -k $2 -in $3 -out ${3%.enc}
   fi
 }
-
 function _crypt() {
   _arguments \
     '-e[encrypt]' \
@@ -987,6 +993,24 @@ function _crypt() {
     '1: :_files'
 }
 compdef _crypt crypt
+
+function md() {
+  if [[ $1 == 'school' ]]; then
+    xrandr --output HDMI1 --left-of eDP1 --mode 1600x900
+  elif [[ $1 == 'home' ]]; then
+    xrandr --output HDMI1 --left-of eDP1 --mode 1366x768
+  elif [[ $1 == 'off' ]]; then
+    xrandr --output $(xrandr | grep ' connected' | grep -v 'primary' | cut -d' ' -f1) --off
+  fi
+}
+function _md() {
+  _values \
+    'args' \
+    'school' \
+    'home' \
+    'off' \
+}
+compdef _md md
 
 # =========================================================================
 # alias
@@ -1006,6 +1030,7 @@ alias tree='tree -C'
 alias xbg="xbacklight -get | xargs printf '%.0f%%'"
 alias xephyr='Xephyr -wr -resizeable :1' # x serverのネスト。白背景。window可変。
 alias open='xdg-open'
+alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias poweroff='interactive systemctl poweroff'
 alias reboot='interactive systemctl reboot'
 alias logout='interactive i3-msg exit'

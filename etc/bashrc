@@ -6,7 +6,6 @@
 
 #プロンプト
 PS1='\[\033[01;36m\]\u@\h\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\] \$ '
-#PS1='\u@\h \[\033[01;34m\]\w\[\033[00m\] \[\033[01;37m\]\$\[\033[00m\] '
 
 #重複履歴を保存しない,空白から始めたコマンドを保存しない
 HISTCONTROL=ignoreboth
@@ -23,6 +22,10 @@ shopt -s autocd
 shopt -s cdspell
 shopt -s extglob
 shopt -s globstar
+set -o noclobber
+
+bind C-F:menu-complete
+bind C-B:menu-complete-backword
 
 [[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
 #コマンド履歴を共有
@@ -39,10 +42,6 @@ function ls() {
 }
 
 function up() {
-  #[[ $# -eq 0 ]] && set 1
-  #expr $1 + 1 > /dev/null 2>&1 && \
-  #   cd $(seq -s: $1 | sed 's/://g;s@.@\.\./@g') || \
-  #   cd $1
   local str
   if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
     str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d' | \
@@ -58,85 +57,6 @@ function _up() {
   COMPREPLY=( $(compgen -W "$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d')" -- ${COMP_WORDS[COMP_CWORD]}) )
 }
 complete -F _up up
-bind C-F:menu-complete
-bind C-B:menu-complete-backword
-
-function cds() {
-  local file=${HOME}/.saved_dirs
-  [[ ! -e ${file} ]] && find . -maxdepth 1 -type d -not -name '.*' -printf '%f ~/%f\n' > ${file}
-
-  function nameExists() {
-    local name
-    for name in $(cat ${file} | cut -d' ' -f1); do
-      [[ $1 == ${name} ]] && echo 'name already used' && return 1
-    done
-    return 0
-  }
-
-  function directoryExists() {
-    local dir
-    for dir in $(cat ${file} | cut -d' ' -f2); do
-      [[ $1 == ${dir} ]] && echo 'directory already exists' && return 1
-    done
-    return 0
-  }
-
-  function checkFile() {
-    local duplicateNames=$(cat ${file} | cut -d' ' -f1 | sort | uniq -d)
-    [[ -n ${duplicateNames} ]] && echo "[Duplicate name]\n${duplicateNames}\n"
-
-    local duplicateDirectories=$(cat ${file} | cut -d' ' -f2 | sort | uniq -d)
-    [[ -n ${duplicateDirectories} ]] && echo "[Duplicate directory]\n${duplicateDirectories}\n"
-
-    local flag
-    local dir
-    for dir in $(cat ${file} | cut -d' ' -f2 | sort | uniq); do
-      [[ -d $(echo ${dir} | sed "s@~@${HOME}@") ]] || { echo "${dir} is not directory." && flag=1; }
-    done
-    [[ -n ${flag} ]] && echo
-
-    local name
-    for name in $(cat ${file} | cut -d' ' -f1 | sort | uniq); do
-      [[ ${name} =~ '/' ]] && echo "${name}: / cannot be used."
-    done
-  }
-
-  if [[ $1 == '-s' ]]; then
-    [[ -z $2 ]] && echo "\"-s\" requires at least 1 argument." && return
-    nameExists $2 || return
-    [[ $2 =~ '/' ]] && echo '/ cannot be used' && return
-    [[ -d $3 ]] && set -- $1 $2 $(readlink -f $3 | sed "s@${HOME}@~@") || set -- $1 $2 $(pwd | sed "s@${HOME}@~@")
-    directoryExists $3 || return
-    echo "$2 $3" >> ${file}
-  elif [[ $1 == '-l' ]]; then
-    cat ${file} | xargs printf '\e[37;1m%s\e[m \e[34;1m%s\e[m\n'
-  elif [[ $1 == '-e' ]]; then
-    ${EDITOR} ${file}
-    checkFile
-  elif [[ $1 == '--delete-all' ]]; then
-    echo 'delete all? (y/n)' && read input && [[ ${input} == 'y' ]] && : > ${file}
-  elif [[ $1 == '-d' ]]; then
-    [[ -z $2 ]] \
-      && { type fzf > /dev/null 2>&1 \
-      && cat ${file} | fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
-        xargs -I{} sed -i 's@^{}$@@;/^$/d' ${file} ;} \
-      || sed -i "/^$2 /d" ${file}
-  else
-    local dir
-    if [[ $# -ne 0 ]]; then
-      dir=$(cat ${file} | grep "^$1" | head -1)
-    else
-      type fzf > /dev/null 2>&1 \
-        && dir=$(cat ${file} | fzf --header='change directory' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-    fi
-    [[ -n ${dir} ]] && eval cd $(echo ${dir} | cut -d' ' -f2)
-  fi
-}
-
-function init_fcitx(){
-  fcitx-imlist -e fcitx-keyboard-jp
-  fcitx-imlist -s fcitx-keyboard-jp,mozc
-}
 
 # alias
 alias ll='command ls -FAlht --color=auto'

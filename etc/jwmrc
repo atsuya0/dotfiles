@@ -4,6 +4,7 @@
     <!-- The root menu. -->
     <RootMenu onroot="12">
         <Program label="lxterminal">lxterminal</Program>
+        <Program label="google-chrome">google-chrome</Program>
         <Program label="chromium">chromium-browser</Program>
         <Separator/>
         <Program icon="lock.png" label="Lock">
