@@ -31,7 +31,7 @@ interval=1
 
 [volume]
 label=🔊
-command=[[ $(pactl list sinks | grep -A 10 'RUNNING' | grep 'Mute:' | cut -d' ' -f2) == 'no' ]] && color='#439ad3' || color='#6e7177' && pactl list sinks | grep -A 10 'RUNNING' | grep -o '[0-9]*%' | head -1 && echo -e "\n${color}"
+command=~/.config/i3blocks/volume.sh
 interval=once
 signal=1
 

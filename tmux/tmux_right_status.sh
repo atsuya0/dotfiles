@@ -15,17 +15,9 @@ signal="#[fg=blue,bg=black]${sep}#[default]#[fg=black,bg=blue] ${signal} #[defau
 
 # 音量
 if type pactl > /dev/null 2>&1;then
-  if [[ $(pactl list sinks | grep 'RUNNING') != '' ]];then
-    run="grep -A 10 'RUNNING'"
-  else
-    run='tee'
-  fi
-  if [[ $(pactl list sinks | eval ${run} | grep 'Mute:' | cut -d' ' -f2) == 'no' ]];then
-    volMeter='#[fg=blue,bg=black] '
-  else
-    volMeter='#[fg=colour237,bg=black] '
-  fi
-  volume=$(expr $(pactl list sinks | eval ${run} | grep -o '[0-9]*%' | head -1 | sed 's/%//g') / 5)
+  [[ -n $(pactl list sinks | grep 'RUNNING') ]] && cmd="grep -A 10 'RUNNING'" || cmd='tee'
+  [[ $(pactl list sinks | eval ${cmd} | grep 'Mute:' | cut -d' ' -f2) == 'no' ]] && volMeter='#[fg=blue,bg=black] ' || volMeter='#[fg=colour237,bg=black] '
+  volume=$(expr $(pactl list sinks | eval ${cmd} | grep -o '[0-9]*%' | head -1 | sed 's/%//g') / 5)
   volMeter="${volMeter}["
   for i in $(seq 1 ${volume});do
     volMeter="${volMeter}■"

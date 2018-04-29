@@ -299,8 +299,8 @@ function _fzf_cd_widget() {
     local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
   done
 
-  dir=$(eval find -mindepth 1 ${argument} -type d -print | \
-    cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  dir=$(eval find -mindepth 1 ${argument} -type d -print \
+    | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
 
   _dir_prompt
@@ -335,13 +335,13 @@ function cp() {
   done
 
   # 元
-  source=($(eval find -mindepth 1 ${argument} -print | \
-    cut -c3- | fzf --select-1 --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
+  source=($(eval find -mindepth 1 ${argument} -print \
+    | cut -c3- | fzf --select-1 --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
   [[ ${#source[@]} -eq 0 ]] && return
 
   # 宛先
-  destination=$(eval find -mindepth 1 ${argument} -print | \
-    cut -c3- | fzf --select-1 --header="${source}" --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  destination=$(eval find -mindepth 1 ${argument} -print \
+    | cut -c3- | fzf --select-1 --header="${source}" --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
 
   [[ -n ${destination} ]] && command cp -ri ${source} -t ${destination}
 }
@@ -355,12 +355,12 @@ function mv() {
     local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
   done
 
-  source=($(eval find -mindepth 1 ${argument} -print | \
-    cut -c3- | fzf --select-1 --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
+  source=($(eval find -mindepth 1 ${argument} -print \
+    | cut -c3- | fzf --select-1 --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
   [[ ${#source[@]} -eq 0 ]] && return
 
-  destination=$(eval find -mindepth 1 ${argument} -print | \
-    cut -c3- | fzf --select-1 --header="${source}" --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  destination=$(eval find -mindepth 1 ${argument} -print \
+    | cut -c3- | fzf --select-1 --header="${source}" --preview='tree -c {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
 
   [[ -n ${destination} ]] && command mv -i ${source} -t ${destination}
 }
@@ -420,10 +420,8 @@ function vim(){
       arg="${arg} -path "\'\*${dir}\*\'" -prune -o"
     done
 
-    local file=$( \
-      eval find ${arg} -type f -print | cut -c3- | \
-      fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' \
-    )
+    local file=$(eval find ${arg} -type f -print | cut -c3- \
+      | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
     [[ -n ${file} ]] && command ${editor} ${file}
   else
     command ${editor} $@
@@ -454,6 +452,13 @@ function w3m(){
 
     command w3m ${parameter}
   } || command w3m $@
+}
+
+# スクリーンショット
+function scrot() {
+  [[ $# -eq 0 ]] \
+    && command scrot -q 100 '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/Content/pictures/screenshot/ ]] && mv $f ~/Content/pictures/screenshot/' \
+    || command scrot $@
 }
 
 # nvm(Node.jsのversion管理)の初期設定を読み込む
@@ -536,8 +541,8 @@ function up() {
   local str
 
   if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
-    str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d' | \
-      fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+    str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d' \
+      | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   elif expr ${1-dummy} + 1 > /dev/null 2>&1; then
     str=$(seq -s: $1 | sed 's/://g;s@.@\.\./@g')
   elif [[ -d $1 ]]; then
@@ -572,15 +577,15 @@ function cdh() {
 
       local opt
       [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
-      cat ${_CD_FILE} | \
-        fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
-        xargs -I{} sed -i ${opt} 's@^{}$@@;/^$/d' ${_CD_FILE}
+      cat ${_CD_FILE} \
+        | fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' \
+        | xargs -I{} sed -i ${opt} 's@^{}$@@;/^$/d' ${_CD_FILE}
     ;;
     * ) # 記録しているディレクトリを表示 使用頻度順
       if [[ $# -eq 0 ]]; then
         type fzf > /dev/null 2>&1 || return 1
-        dir=$(cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' | cut -d' ' -f3 | \
-          fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+        dir=$(cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' | cut -d' ' -f3 \
+          | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
         [[ -z ${dir} ]] && return 1
       fi
       eval cd ${dir:-$1}
@@ -728,9 +733,9 @@ function cds() {
     'delete' )
       if [[ -z ${alias} ]]; then
         type fzf > /dev/null 2>&1 || return 1
-        alias=$(echo ${file} | \
-          fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' | \
-          cut -d' ' -f1)
+        alias=$(echo ${file} \
+          | fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' \
+          | cut -d' ' -f1)
       fi
       sed -i "/ ${alias} /d" ${file_name}
     ;;
@@ -762,7 +767,7 @@ function _cds() {
     '-t[tag]: :->tag' \
     '*: :->alias'
 
-  case "${state}" in
+  case ${state} in
     t )
       _arguments '-t[tag]: :->tag'
     ;;
@@ -792,16 +797,16 @@ function mt() { # ファイルをゴミ箱に入れる。
   if [[ $1 == '-r' ]]; then
     type fzf > /dev/null 2>&1 || return
 
-    command ls -r ${trash} | \
-      eval "fzf --header='move files in the trash to the current directory / ${size}' \
+    command ls -r ${trash} \
+      | eval "fzf --header='move files in the trash to the current directory / ${size}' \
       --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
       ${fzf_option}" | xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
 
   elif [[ $1 == '-d' ]]; then
     type fzf > /dev/null 2>&1 || return
 
-    command ls -r ${trash} | \
-      eval "fzf --header='delete files in the trash / ${size}' \
+    command ls -r ${trash} \
+      | eval "fzf --header='delete files in the trash / ${size}' \
       --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
       ${fzf_option}" | xargs -p -I{} rm -r "${trash}/{}"
 
@@ -809,9 +814,9 @@ function mt() { # ファイルをゴミ箱に入れる。
     ls -r ${trash}
 
   else
-    [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 && \
-      set $(command ls ./ | sed "/^${trash##*/}$/"d | \
-      eval "fzf --header='move files in the current directory to the trash / ${size}' \
+    [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 \
+      && set $(command ls -A ./ | sed "/^${trash##*/}$/"d \
+      | eval "fzf --header='move files in the current directory to the trash / ${size}' \
       --preview=\"file {} | sed 's/^.*: //'; du -hs {} | cut -f1; less {}\" ${fzf_option}") \
       > /dev/null && [[ $# -eq 0 ]] && return
 
@@ -843,14 +848,12 @@ compdef _mt mt
 
 function interactive() { # 引数に指定したコマンドを実行するのに確認をとる。
   local input
-  echo 'yes / no'
-  read input
-  while [[ $input != 'yes' && $input != 'no' ]]; do
-    echo 'yes / no'
-    read input
+  while [[ ${input} != 'yes' && ${input} != 'no' ]]; do
+    printf '\ryes / no'
+    read -s input
   done
 
-  [[ $input == 'yes' ]] && command $@
+  [[ ${input} == 'yes' ]] && command $@
 }
 
 function os() { # OSとKernelの情報を表示 (hostnamectl statusで表示できた)
@@ -876,7 +879,7 @@ function bak() {
     done
   else # bak test.sh
     for file in $@; do
-      cp -i ${file} "${file}.bak"
+      cp -ir ${file} "${file}.bak"
     done
   fi
 }
@@ -934,63 +937,40 @@ function _save_cmd() {
 }
 add-zsh-hook precmd _save_cmd
 
-# docker daemonが起動しているか
-function is_docker_running() {
-  docker info > /dev/null 2>&1 && return 0
-  echo 'Is the docker daemon running?'
-  print -z 'sudo systemctl start docker'
-
-  return 1
-}
-
-# --privileged は chromiumを起動するため。
-# chromium -no-sandbox でも起動する。プロセスを隔離しない。
-# どちらにせよ安全性が下がる。
-function ubuntu() {
-  is_docker_running || return
-  [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1 &
-
-  docker run \
-    --privileged \
-    -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v /run/user/$UID/pulse/native:/tmp/pulse/native \
-    -v $HOME/.config/pulse/cookie:/tmp/pulse/cookie \
-    -it --rm $USER/jwm $1
-
-  [[ -z ${exists} ]] && pkill Xephyr
-}
-
-# dockerのコンテナを選択して破棄
-function drm() {
-  is_docker_running && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
-  [[ -n ${container} ]] && echo ${container} | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
-}
-
-# dockerのimageを選択して破棄
-function drmi() {
-  is_docker_running && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
-  [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
-}
-
-# スクリーンショット
-function scrot() {
-  [[ $# -eq 0 ]] \
-    && command scrot -q 100 '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/Content/pictures/screenshot/ ]] && mv $f ~/Content/pictures/screenshot/' \
-    || command scrot $@
-}
-
 function crypt() {
+  ! type openssl > /dev/null 2>&1 && echo 'require openssl' && return 1
+  ! [[ ($1 == '-e' || $1 == '-d') && -f $2 ]] && echo 'encrypt: -e file\ndecrypt: -d file' && return 1
+
+  local password1
+  while [[ -z ${password1} ]]; do
+    printf '\rpassword:'
+    read -s password1
+  done
+  local password2
+  while [[ -z ${password2} ]]; do
+    printf '\rretype password:'
+    read -s password2
+  done
+  [[ ${password1} != ${password2} ]] && tput dl1 && echo '\rfailed' && return 1
+
   if [[ $1 == '-e' ]]; then
-    openssl enc -e -aes-256-cbc -salt -k $2 -in $3 -out $3.enc
+    [[ $(file $2 | cut -d' ' -f2-) == "openssl enc'd data with salted password" ]] \
+      && tput dl1 && echo '\rEncrypted file' && return 1
+    openssl enc -e -aes-256-cbc -salt -k ${password1} -in $2 -out $2.enc
   elif [[ $1 == '-d' ]]; then
-   openssl enc -d -aes-256-cbc -salt -k $2 -in $3 -out ${3%.enc}
+    [[ $(file $2 | cut -d' ' -f2-) != "openssl enc'd data with salted password" ]] \
+      && tput dl1 && echo '\rUnencrypted file' && return 1
+    openssl enc -d -aes-256-cbc -salt -k ${password1} -in $2 -out ${2%.enc}
   fi
 }
 function _crypt() {
   _arguments \
-    '-e[encrypt]' \
-    '-d[decrypt]' \
-    '1: :_files'
+    '-e[encrypt]: :->f' \
+    '-d[decrypt]: :->f'
+
+  case ${state} in
+    f) _files ;;
+  esac
 }
 compdef _crypt crypt
 
@@ -1011,6 +991,52 @@ function _md() {
     'off' \
 }
 compdef _md md
+
+# docker daemonが起動しているか
+function is_docker_running() {
+  docker info > /dev/null 2>&1 && return 0
+  echo 'Is the docker daemon running?'
+  print -z 'sudo systemctl start docker'
+
+  return 1
+}
+
+# --privileged は chromiumを起動するため。
+# chromium -no-sandbox でも起動する。プロセスを隔離しない。
+# どちらにせよ安全性が下がる。
+function ubuntu() {
+  set -eux
+  is_docker_running || return
+  [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1
+  local workdir="${HOME}/workspace/docker/ubunt-jwm"
+  [[ -e "${workdir}/google-chrome.tar.enc" ]] && crypt -d "${workdir}/google-chrome.tar.enc" && command rm "${workdir}/google-chrome.tar.enc"
+  [[ -e "${workdir}/google-chrome.tar" ]] && tar -xf "${workdir}/google-chrome.tar" && command rm "${workdir}/google-chrome.tar"
+
+  docker run \
+    --privileged \
+    -v ${workdir}/google-chrome:/home/docker/.config/google-chrome \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -v /run/user/${UID}/pulse/native:/tmp/pulse/native \
+    -v ${HOME}/.config/pulse/cookie:/tmp/pulse/cookie \
+    -it --rm ${USER}/ubuntu-jwm $1 > /dev/null 2>&1
+
+  [[ -z ${exists} ]] && pkill Xephyr > /dev/null 2>&1
+  [[ -e "${workdir}/google-chrome" ]] && tar -cf "${workdir}/google-chrome.tar" "${workdir}/google-chrome" && command rm "${workdir}/google-chrome"
+  [[ -e "${workdir}/google-chrome.tar" ]] && crypt -e "${workdir}/google-chrome.tar" && command rm "${workdir}/google-chrome.tar"
+  set +eux
+}
+
+# dockerのコンテナを選択して破棄
+function drm() {
+  is_docker_running && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
+  [[ -n ${container} ]] && echo ${container} | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
+}
+
+# dockerのimageを選択して破棄
+function drmi() {
+  is_docker_running && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
+  [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
+}
 
 # =========================================================================
 # alias
