@@ -2,7 +2,8 @@
 # =========================================================================
 # installed tmux && installed fzf && sessionが存在しない && GUI && True Color対応の仮想端末 && tmux起動
 # =========================================================================
-type tmux > /dev/null 2>&1 && type fzf > /dev/null 2>&1 && [[ -z ${TMUX} && -n ${WINDOWID} && $(ps -ho args ${PPID}) == 'mlterm' ]] && () {
+type tmux > /dev/null 2>&1 && type fzf > /dev/null 2>&1 \
+&& [[ -z ${TMUX} && -n ${WINDOWID} && $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) == 'mlterm' ]] && () {
   local new='new-session'
   id=$(echo "$(tmux list-sessions 2> /dev/null)\n${new}:" | sed /^$/d | fzf --select-1 --reverse | cut -d: -f1)
 
@@ -66,8 +67,8 @@ function _dir_prompt() {
   # 表示するディレクトリ名の文字数を決める
   let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c "test 1 -gt {} && echo 1 || echo {}")/$(echo ${pwd} | grep -o '[~/]' | wc -l)
 
-  # CUI と GUI で表示を変える
-  [[ -z ${WINDOWID} ]] \
+  # CUI/neovim と GUI で表示を変える
+  [[ -z ${WINDOWID} || $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) == 'nvim' ]] \
     && PROMPT="%n@%m ${fg[blue]}$(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g")${reset_color} " \
     || PROMPT="%{${fg[blue]}${bg[black]}%}%n%{${fg[magenta]}${bg[black]}%}@%{${fg[blue]}${bg[black]}%}%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
 }
@@ -415,7 +416,7 @@ function vim(){
     done
 
     # 無視するディレクトリ(ディレクトリ名指定)
-    local ignore_dirs=( node_modules .git )
+    local ignore_dirs=( node_modules .git data-mariadb )
     for dir in ${ignore_dirs}; do
       arg="${arg} -path "\'\*${dir}\*\'" -prune -o"
     done
@@ -792,31 +793,29 @@ function mt() { # ファイルをゴミ箱に入れる。
   typeset -r trash="${HOME}/.Trash"
   local fzf_option="--preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
   [[ -s ${trash} ]] || mkdir ${trash}
-  typeset -r size=$(du -s ${trash} | cut -f1)
 
   if [[ $1 == '-r' ]]; then
     type fzf > /dev/null 2>&1 || return
-
     command ls -r ${trash} \
-      | eval "fzf --header='move files in the trash to the current directory / ${size}' \
+      | eval "fzf --header='move files in the trash to the current directory' \
       --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
       ${fzf_option}" | xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
 
   elif [[ $1 == '-d' ]]; then
     type fzf > /dev/null 2>&1 || return
-
     command ls -r ${trash} \
-      | eval "fzf --header='delete files in the trash / ${size}' \
+      | eval "fzf --header='delete files in the trash' \
       --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
       ${fzf_option}" | xargs -p -I{} rm -r "${trash}/{}"
 
   elif [[ $1 == '-l' ]]; then
     ls -r ${trash}
-
+  elif [[ $1 == '-s' ]]; then
+    du -hs ${trash} | cut -f1
   else
     [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 \
       && set $(command ls -A ./ | sed "/^${trash##*/}$/"d \
-      | eval "fzf --header='move files in the current directory to the trash / ${size}' \
+      | eval "fzf --header='move files in the current directory to the trash' \
       --preview=\"file {} | sed 's/^.*: //'; du -hs {} | cut -f1; less {}\" ${fzf_option}") \
       > /dev/null && [[ $# -eq 0 ]] && return
 
@@ -956,11 +955,11 @@ function crypt() {
   if [[ $1 == '-e' ]]; then
     [[ $(file $2 | cut -d' ' -f2-) == "openssl enc'd data with salted password" ]] \
       && tput dl1 && echo '\rEncrypted file' && return 1
-    openssl enc -e -aes-256-cbc -salt -k ${password1} -in $2 -out $2.enc
+    openssl enc -e -aes-256-cbc -salt -k ${password1} -in $2 -out $2.enc && command rm $2
   elif [[ $1 == '-d' ]]; then
     [[ $(file $2 | cut -d' ' -f2-) != "openssl enc'd data with salted password" ]] \
       && tput dl1 && echo '\rUnencrypted file' && return 1
-    openssl enc -d -aes-256-cbc -salt -k ${password1} -in $2 -out ${2%.enc}
+    openssl enc -d -aes-256-cbc -salt -k ${password1} -in $2 -out ${2%.enc} && command rm $2
   fi
 }
 function _crypt() {
@@ -975,6 +974,7 @@ function _crypt() {
 compdef _crypt crypt
 
 function md() {
+  type xrandr > /dev/null 2>&1 || return 1
   if [[ $1 == 'school' ]]; then
     xrandr --output HDMI1 --left-of eDP1 --mode 1600x900
   elif [[ $1 == 'home' ]]; then
@@ -1005,36 +1005,43 @@ function is_docker_running() {
 # chromium -no-sandbox でも起動する。プロセスを隔離しない。
 # どちらにせよ安全性が下がる。
 function ubuntu() {
-  set -eux
   is_docker_running || return
-  [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1
-  local workdir="${HOME}/workspace/docker/ubunt-jwm"
-  [[ -e "${workdir}/google-chrome.tar.enc" ]] && crypt -d "${workdir}/google-chrome.tar.enc" && command rm "${workdir}/google-chrome.tar.enc"
-  [[ -e "${workdir}/google-chrome.tar" ]] && tar -xf "${workdir}/google-chrome.tar" && command rm "${workdir}/google-chrome.tar"
+  local passwd && printf '\rpassword:' && read -s passwd
+  [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1 > /dev/null 2>&1 &
+  local workdir="${HOME}/workspace/docker/ubuntu-jwm"
+  local chrome="${workdir}/google-chrome"
+  # 復号
+  [[ -e "${chrome}.tar.enc" ]] && type openssl > /dev/null 2>&1 \
+    && openssl enc -d -aes-256-cbc -salt -k ${passwd} -in "${chrome}.tar.enc" -out "${chrome}.tar" \
+    && command rm "${chrome}.tar.enc" || return 1
+  # 展開
+  [[ -e "${chrome}.tar" ]] && tar -xf "${chrome}.tar" -C ${workdir} && command rm "${chrome}.tar"
 
   docker run \
-    --privileged \
-    -v ${workdir}/google-chrome:/home/docker/.config/google-chrome \
+    -v ${chrome}:/home/docker/.config/google-chrome \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /run/user/${UID}/pulse/native:/tmp/pulse/native \
     -v ${HOME}/.config/pulse/cookie:/tmp/pulse/cookie \
     -it --rm ${USER}/ubuntu-jwm $1 > /dev/null 2>&1
 
   [[ -z ${exists} ]] && pkill Xephyr > /dev/null 2>&1
-  [[ -e "${workdir}/google-chrome" ]] && tar -cf "${workdir}/google-chrome.tar" "${workdir}/google-chrome" && command rm "${workdir}/google-chrome"
-  [[ -e "${workdir}/google-chrome.tar" ]] && crypt -e "${workdir}/google-chrome.tar" && command rm "${workdir}/google-chrome.tar"
-  set +eux
+  # 書庫化
+  [[ -e ${chrome} ]] && tar -cf "${chrome}.tar" -C ${workdir} $(basename ${chrome}) && command rm -r ${chrome}
+  # 暗号
+  [[ -e "${chrome}.tar" ]] && type openssl > /dev/null 2>&1 \
+    && openssl enc -e -aes-256-cbc -salt -k ${passwd} -in "${chrome}.tar" -out "${chrome}.tar.enc" \
+    && command rm "${chrome}.tar"
 }
 
 # dockerのコンテナを選択して破棄
 function drm() {
-  is_docker_running && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
+  is_docker_running && type fzf > /dev/null 2>&1 && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
   [[ -n ${container} ]] && echo ${container} | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
 }
 
 # dockerのimageを選択して破棄
 function drmi() {
-  is_docker_running && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
+  is_docker_running && type fzf > /dev/null 2>&1 && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
   [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
 }
 
@@ -1060,8 +1067,8 @@ alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias poweroff='interactive systemctl poweroff'
 alias reboot='interactive systemctl reboot'
 alias logout='interactive i3-msg exit'
-alias -g G='| grep'
-alias -g L='| less'
+alias -g g@='| grep'
+alias -g l@='| less'
 alias -g ..2='../..'
 alias -g ..3='../../..'
 alias -g lf='$(ls | fzf)'

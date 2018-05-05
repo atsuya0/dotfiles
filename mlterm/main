@@ -32,8 +32,3 @@ bd_color = #ffffff
 it_color = #cf6a4c
 ul_color = #4286f4
 vt_color_mode = true
-
-#fg_color = #C5C8C6
-#bg_color = #1D1F21
-#cursor_fg_color = #C5C8C6
-#cursor_bg_color = #495872
