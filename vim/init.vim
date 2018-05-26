@@ -17,8 +17,8 @@ set wildmode=longest:full,full
 "一行が余りにも長い場合に表示が抑制されるのを防ぐ
 set display=lastline
 "綴り修正
-"set spell
-"set spelllang=en,cjk
+set spell
+set spelllang=en,cjk
 "grepを実行するとQuickFixリストを表示
 augroup QuickFixConf
   autocmd!
@@ -172,9 +172,6 @@ endif
 syntax enable
 
 "-------------------------------------------
-"let g:neodark#background = '#202020'
-"colorscheme neodark
-"colorscheme iceberg
 "綴り誤りをアンダーラインで際立たせる
 highlight clear SpellBad
 highlight clear SpellCap

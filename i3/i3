@@ -144,7 +144,7 @@ bindsym $mod+r mode "resize"
 
 mode "launcher" {
     bindsym t exec --no-startup-id mlterm, mode "default"
-    bindsym Shift+t exec --no-startup-id urxvt, mode "default"
+    bindsym h exec --no-startup-id hyper, mode "default"
     bindsym c exec --no-startup-id code, mode "default"
     bindsym b exec --no-startup-id chromium, mode "default"
     bindsym v exec --no-startup-id virtualbox, mode "default"
@@ -180,7 +180,8 @@ bar {
     #modifier $mod
     position top
     #separator_symbol " │ "
-    separator_symbol " ░ "
+    #separator_symbol " ░ "
+    separator_symbol "   "
     workspace_buttons yes
     binding_mode_indicator yes
     colors {

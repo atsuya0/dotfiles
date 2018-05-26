@@ -13,7 +13,7 @@ HISTCONTROL=ignoreboth
 HISTSIZE=10000
 HISTFILESIZE=10000
 #履歴に追加しないコマンド
-HISTIGNORE=history:exit:cd*:ls*:ll:rm*:pushd*:dirs:popd*:tmux:poweroff:reboot:lsblk:umount*:mkdir*:rmdir*:date:tree*:unzip*:touch*:ranger:feh*:export*:which*:startx:xbacklight*:
+HISTIGNORE=history:exit:cd*:ls*:ll:rm*:pushd*:dirs:popd*:poweroff:reboot:lsblk:umount*:mkdir*:rmdir*:date:tree*:unzip*:touch*:ranger:feh*:export*:which*:startx:
 #履歴に時刻を付ける
 HISTTIMEFORMAT='%m/%d/%T | '
 

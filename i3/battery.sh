@@ -5,7 +5,7 @@ local char=('◜' '◝' '◞' '◟')
 
 local battery=$([[ -e /sys/class/power_supply/BAT1 ]] && cat /sys/class/power_supply/BAT1/capacity)
 
-local color='#439ad3'
+local color='#d0dcef'
 [[ -n ${battery} ]] && { \
   if [[ ${battery} -gt 79 ]];then
     color='#08d137'
