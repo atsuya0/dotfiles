@@ -1,6 +1,6 @@
 [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp)
 # =========================================================================
-# installed tmux && installed fzf && sessionが存在しない && GUI && True Color対応の仮想端末 && tmux起動
+# installed tmux && installed fzf && sessionが存在しない && GUI && True Color対応の仮想端末 => tmux起動
 # =========================================================================
 type tmux > /dev/null 2>&1 && type fzf > /dev/null 2>&1 \
 && [[ -z ${TMUX} && -n ${WINDOWID} && $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) == 'mlterm' ]] && () {
@@ -419,7 +419,7 @@ function vim(){
     done
 
     # 無視するディレクトリ(ディレクトリ名指定)
-    local ignore_dirs=( node_modules .git gems vendor cache data-mariadb )
+    local ignore_dirs=( node_modules .git gems vendor cache .WebStorm2018.1 data_docker-compose data-mariadb )
     for dir in ${ignore_dirs}; do
       arg="${arg} -path "\'\*${dir}\*\'" -prune -o"
     done
@@ -562,6 +562,14 @@ function _up() {
     $(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d')
 }
 compdef _up up
+
+# 引数に自然数を指定。指定した層までを探索してfilterで選択し移動する。
+function down() {
+  type fzf > /dev/null 2>&1 || return 1
+  dir=$(eval find -mindepth 1 -maxdepth ${1:-1} -type d -print \
+    | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  eval builtin cd ${dir:-.}
+}
 
 # cd するとディレクトリをファイルに記録する。~, / は記録しない。
 function _save_pwd() {
@@ -919,7 +927,7 @@ add-zsh-hook zshaddhistory _record_cmd
 
 function _save_cmd() {
   local exit_status="$?"
-  _cmd=$(echo ${_cmd} | tr -s ' ') # 連続する空白を1つにする
+  #_cmd=$(echo ${_cmd} | tr -s ' ') # 連続する空白を1つにする; sed /  */ で連続する空白を使う
   # 引数やオプションを指定していない場合は記録しない
   [[ ! ${_cmd} =~ ' ' ]] && return
 
@@ -972,6 +980,7 @@ function _crypt() {
 }
 compdef _crypt crypt
 
+# マルチディスプレイ
 function md() {
   type xrandr > /dev/null 2>&1 || return 1
   if [[ $1 == 'school' ]]; then
@@ -980,6 +989,9 @@ function md() {
     xrandr --output HDMI1 --left-of eDP1 --mode 1366x768
   elif [[ $1 == 'off' ]]; then
     xrandr --output $(xrandr | grep ' connected' | grep -v 'primary' | cut -d' ' -f1) --off
+  else
+    type fzf > /dev/null 2>&1 || return 1
+    xrandr --output HDMI1 --left-of eDP1 --mode $(xrandr | sed -n '/.* connected [^p].*/,/^[^ ]/p' | sed '1d;$d;s/  */ /g' | cut -d' ' -f2 | fzf)
   fi
 }
 function _md() {
@@ -991,6 +1003,7 @@ function _md() {
 }
 compdef _md md
 
+# ファイル名から空白を除去
 function rs() {
   [[ $1 =~ ' ' ]] && mv $1 $(echo $1 | sed 's/ //g')
 }
@@ -1060,7 +1073,7 @@ alias df='df -hT'
 alias ip='ip -c'
 alias nano='nano -$ -l -i -O -m -c' # オブションは個々に指定する
 alias tree='tree -C'
-alias xbg="xbacklight -get | xargs printf '%.0f%%'"
+alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
 alias xephyr='Xephyr -wr -resizeable :1' # x serverのネスト。白背景。window可変。
 alias open='xdg-open'
 alias dc='docker-compose'
