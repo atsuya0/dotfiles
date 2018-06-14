@@ -1008,6 +1008,29 @@ function rs() {
   [[ $1 =~ ' ' ]] && mv $1 $(echo $1 | sed 's/ //g')
 }
 
+# git add
+function gaf() {
+  type git > /dev/null 2>&1 || return 1
+  git status > /dev/null 2>&1 || return 1
+
+  local file unadded_files
+
+  for file in "${(f)$(git status --short)}"; do
+    local header=$(echo ${file} | cut -c1-2)
+    [[ ${header} == '??' || ${header} =~ '( |M|A|R)M' ]] && unadded_files="${unadded_files} $(echo ${file} | cut -c4-)"
+  done
+  local selected_files=$(echo ${unadded_files} | sed 's/ /\n/g' | sed /^$/d \
+    | fzf --preview='git diff --color=always {}' --preview-window='right:95%:hidden' --bind='ctrl-v:toggle-preview')
+  [[ -n ${selected_files} ]] && git add $(echo ${selected_files} | sed ':l;N;$!b l;s/\n/ /g')
+}
+
+function gc() {
+  type git > /dev/null 2>&1 || return 1
+  git status > /dev/null 2>&1 || return 1
+
+  git commit -m "$1"
+}
+
 # docker daemonが起動しているか
 function is_docker_running() {
   docker info > /dev/null 2>&1 && return 0
