@@ -61,8 +61,8 @@ setopt noclobber
 # プロンプト
 # =========================================================================
 autoload -Uz colors && colors
-# カレントディレクトリのpathを画面の横幅に応じて短縮する。
-function _dir_prompt() {
+
+function _dir_prompt() { # カレントディレクトリのpathを画面の横幅に応じて短縮する。
   typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
   local num
   # 表示するディレクトリ名の文字数を決める
@@ -96,9 +96,9 @@ function _git_prompt() {
   for file in ${git_info[2,-1]}; do
     if [[ $(echo ${file} | cut -c1-2) == '??' ]]; then
       (( untracked++ ))
-    elif [[ $(echo ${file} | cut -c1-2) =~ '( |M|A|R)M' ]]; then
+    elif [[ $(echo ${file} | cut -c1-2) =~ '( |M|A|R)(M|D)' ]]; then
       (( unadded++ ))
-    elif [[ $(echo ${file} | cut -c1-2) =~ '(M|A|R) ' ]]; then
+    elif [[ $(echo ${file} | cut -c1-2) =~ '(M|A|R|D) ' ]]; then
       (( uncommited++ ))
     fi
   done
@@ -118,8 +118,9 @@ setopt transient_rprompt
 # =========================================================================
 # tmuxの左のステータスバー
 # =========================================================================
-# tmuxのSession番号を表示。commandがzshのときにはmodeも表示。
 function _tmux_status() {
+  # tmuxのSession番号を表示。commandがzshのときにはmodeも表示。
+
   [[ -z ${TMUX} ]] && return
   typeset -r sep=''
   [[ ${KEYMAP} == 'vicmd' ]] \
@@ -286,18 +287,20 @@ typeset -r ignore_absolute_pathes=(
   ${HOME}/.config/undo
   ${HOME}/.node-gyp
   ${HOME}/.electron-gyp
+  ${HOME}/.rustup
   ${HOME}/.vscode/extensions
   ${HOME}/.npm/_cacache
   ${HOME}/.Trash
-  ${HOME}/text/gowebprog-master
+  ${HOME}/text/etc/gowebprog-master
   ${GOPATH}/pkg
   ${GOPATH}/src/gopkg.in
   ${GOPATH}/src/github.com
 )
 
-# ALT_Cにbindされてるwidgetを上書きしている。
-# 現階層以下のディレクトリからfzfを使って選び移動する。
 function _fzf_cd_widget() {
+  # ALT_Cにbindされてるwidgetを上書きしている。
+  # 現階層以下のディレクトリからfzfを使って選び移動する。
+
   local dir
   for dir in ${ignore_absolute_pathes}; do
     local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
@@ -327,10 +330,11 @@ function ls() { # 何も表示されないならば隠しファイルの表示�
   [[ $(command ls $@) == "" ]] && command ls -FA --color=auto $@ || command ls -F --color=auto $@
 }
 
-# 引数が指定されていないなら選択的インターフェースで選択する
-# 1回目の選択でコピー元を選択する。複数選択可。
-# 2回目でコピー先を選択する。ヘッダにコピー元のファイル・ディレクトリが表示される。
 function cp() {
+  # 引数が指定されていないなら選択的インターフェースで選択する
+  # 1回目の選択でコピー元を選択する。複数選択可。
+  # 2回目でコピー先を選択する。ヘッダにコピー元のファイル・ディレクトリが表示される。
+
   [[ $# -ne 0 ]] && command cp -i $@ && return
 
   local dir
@@ -350,8 +354,7 @@ function cp() {
   [[ -n ${destination} ]] && command cp -ri ${source} -t ${destination}
 }
 
-# cp と同じ
-function mv() {
+function mv() { # cp と同じ
   [[ $# -ne 0 ]] && command mv -i $@ && return
 
   local dir
@@ -369,9 +372,10 @@ function mv() {
   [[ -n ${destination} ]] && command mv -i ${source} -t ${destination}
 }
 
-# fat32なら現在のユーザで弄れるようにする
-# ディレクトリを省略すると~/mntにマウントする
 function mount() {
+  # fat32なら現在のユーザで弄れるようにする
+  # ディレクトリを省略すると~/mntにマウントする
+
   [[ $# -eq 0 ]] && command mount && return
 
   local mnt="${HOME}/mnt"
@@ -389,12 +393,11 @@ function umount() {
 }
 
 
-# historyの実行時に引数を指定しないなら全ての履歴を表示。
-function history() {
+function history() { # historyの実行時に引数を指定しないなら全ての履歴を表示。
   [[ $# -eq 0 ]] && builtin history -i 1 || builtin history $@
 }
 
-function vim(){
+function vim(){ # vimで開くファイルをfilterで選択する。
   # nvim > vim > vi の優先度で起動する。
   if cmd_exists nvim; then
     typeset -r editor='nvim'
@@ -432,21 +435,20 @@ function vim(){
   fi
 }
 
-# 簡単にフォントサイズを指定して起動する。
-function urxvt() {
+function urxvt() { # 簡単にフォントサイズを指定して起動する。
   [[ $# -eq 0 ]] && command urxvt $@ && return
   expr $1 + 1 > /dev/null 2>&1
   [[ $? -ne 2 ]] && command urxvt --font "xft:Ricty Discord:size=$1"
 }
 
-# rangerのサブシェルでネストしないようにする。
-function ranger() {
+function ranger() { # rangerのサブシェルでネストしないようにする。
   [[ -z $RANGER_LEVEL ]] && command ranger $@ || exit
 }
 
-# 引数に検索したい単語を渡せばgoogle検索を行う
-# w3m search windows bsd linux
 function w3m(){
+  # 引数に検索したい単語を渡せばgoogle検索を行う
+  # w3m search windows bsd linux
+
   [[ $1 == 'search' && $# -ge 2 ]] && { \
     local i parameter="search?&q=$2"
     for i in {3..$#}; do
@@ -458,15 +460,13 @@ function w3m(){
   } || command w3m $@
 }
 
-# スクリーンショット
-function scrot() {
+function scrot() { # スクリーンショット
   [[ $# -eq 0 ]] \
     && command scrot -q 100 '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/Content/pictures/screenshot/ ]] && mv $f ~/Content/pictures/screenshot/' \
     || command scrot $@
 }
 
-# nvm(Node.jsのversion管理)の初期設定を読み込む
-function init_nvm() {
+function init_nvm() { # nvm(Node.jsのversion管理)の初期設定を読み込む
   unset -f $1
   local nvm_dir='/usr/share/nvm'
   [[ -e "${nvm_dir}/nvm.sh" ]] && source "${nvm_dir}/nvm.sh"
@@ -494,6 +494,11 @@ function ng() {
 }
 
 function vol() {
+  # vol up    -> 音量を5%上げる
+  # vol down  -> 音量を5%下げる
+  # vol mute  -> muteの切り替え
+  # vol       -> 音量を表示
+
   function get_index() {
     [[ $(pactl list sinks | grep 'RUNNING') != '' ]] \
       && pactl list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]' \
@@ -514,7 +519,7 @@ function vol() {
 }
 
 function wifi() {
-  if [[ $1 == '-r' ]]; then
+  if [[ $1 == '-r' ]]; then # 再始動
     netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo netctl restart
   elif type fzf > /dev/null 2>&1; then
     netctl list | fzf --select-1 | xargs sudo netctl start
@@ -535,13 +540,15 @@ function colors(){
   done
 }
 
-# 関数やaliasに囚われないtype,which。 vim()で使う。
-function cmd_exists(){
+function cmd_exists(){ # 関数やaliasに囚われないtype,which。 vim()で使う。
   [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] && return 0 || return 1
 }
 
-# 親階層に移動。 自然数を引数にとり、何層上に行くのかを指定する。 引数なしは選択的インターフェースを使う。
 function up() {
+  # 親階層に移動する
+  # up 2    -> cd ../..
+  # up      -> filterを使って選択する
+
   local str
 
   if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
@@ -563,26 +570,28 @@ function _up() {
 }
 compdef _up up
 
-# 引数に自然数を指定。指定した層までを探索してfilterで選択し移動する。
 function down() {
+  # 指定した層までを探索してfilterで選択し移動する。
+  # dw 3
+
   type fzf > /dev/null 2>&1 || return 1
   dir=$(eval find -mindepth 1 -maxdepth ${1:-1} -type d -print \
     | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
 }
+alias dw='down'
 
-# cd するとディレクトリをファイルに記録する。~, / は記録しない。
-function _save_pwd() {
+function _save_pwd() { # 移動履歴をファイルに記録する。~, / は記録しない。
   typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
   [[ ${#pwd} -gt 2 ]] && echo ${pwd} >> ${_CD_FILE}
 }
 add-zsh-hook chpwd _save_pwd
 
-function cdh() {
+function cdh() { # 移動履歴からfilterを使って選んでcd
   local dir
 
   case $1 in
-    '-l' ) cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' ;;
+    '-l' ) cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' ;; # 記録一覧
     '--delete-all' ) : > ${_CD_FILE} ;; # 記録の全消去
     '-d' ) # 記録の消去
       type fzf > /dev/null 2>&1 || return 1
@@ -618,10 +627,11 @@ function _cdh() {
 }
 compdef _cdh cdh
 
-function cds() {
-  [[ -n ${ZDOTDIR} ]] && local file_name=${ZDOTDIR}/.saved_dirs || local file_name=${HOME}/.saved_dirs
+function cds() { # pathに別名をつけて移動を早くする。
+
+  [[ -n ${ZDOTDIR} ]] && local saved_dirs=${ZDOTDIR}/.saved_dirs || local saved_dirs=${HOME}/.saved_dirs
   # 記録ファイルがなければ作成
-  [[ ! -e ${file_name} ]] && find . -maxdepth 1 -type d -not -name '.*' -printf 'default %f ~/%f\n' > ${file_name}
+  [[ ! -e ${saved_dirs} ]] && find . -maxdepth 1 -type d -not -name '.*' -printf 'default %f ~/%f\n' > ${saved_dirs}
   local dir alias i action='change'
 
   for (( i=1; i <= $#; i++ )); do
@@ -665,6 +675,10 @@ function cds() {
         [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='edit'
       ;;
+      '-h' )
+        [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
+        action='help'
+      ;;
       * )
         alias=${argv[$i]}
       ;;
@@ -674,13 +688,13 @@ function cds() {
   if [[ ${action} == 'change' || ${action} == 'list' || ${action} == 'delete' ]]; then
     local file
     [[ -z ${tag} ]] \
-      && file=$(cat ${file_name} | cut -d' ' -f2-3) \
-      || file=$(cat ${file_name} | grep "^${tag} " | cut -d' ' -f2-3)
+      && file=$(cat ${saved_dirs} | cut -d' ' -f2-3) \
+      || file=$(cat ${saved_dirs} | grep "^${tag} " | cut -d' ' -f2-3)
   fi
 
   function alias_exists() { # 既に登録されている別名か
     local alias
-    for alias in $(cat ${file_name} | cut -d' ' -f2); do
+    for alias in $(cat ${saved_dirs} | cut -d' ' -f2); do
       [[ $1 == ${alias} ]] && echo 'alias already used' >&2 && return 1
     done
     return 0
@@ -688,7 +702,7 @@ function cds() {
 
   function directory_exists() { # 既に登録されているdirectoryか
     local dir
-    for dir in $(cat ${file_name} | cut -d' ' -f3); do
+    for dir in $(cat ${saved_dirs} | cut -d' ' -f3); do
       [[ $(echo $1 | sed "s@${HOME}@~@") == ${dir} ]] && echo 'directory already exists' >&2 && return 1
     done
     return 0
@@ -697,23 +711,23 @@ function cds() {
   function check_file() { # ファイルを直接編集した場合、整合性がとれているか確認する。
     local message
     # 別名が重複
-    local duplicateAliases=$(cat ${file_name} | cut -d' ' -f2 | sort | uniq -d)
+    local duplicateAliases=$(cat ${saved_dirs} | cut -d' ' -f2 | sort | uniq -d)
     [[ -n ${duplicateAliases} ]] && message="\e[31;1m[Duplicate aliases]\e[m\n${duplicateAliases}\n"
 
     # directoryが重複
-    local duplicateDirectories=$(cat ${file_name} | cut -d' ' -f3 | sort | uniq -d)
+    local duplicateDirectories=$(cat ${saved_dirs} | cut -d' ' -f3 | sort | uniq -d)
     [[ -n ${duplicateDirectories} ]] && message="${message}\e[31;1m[Duplicate directory]\e[m\n${duplicateDirectories}\n"
 
     # directoryではないものを登録していないか
     local dir incorrent
-    for dir in $(cat ${file_name} | cut -d' ' -f3 | sort | uniq); do
+    for dir in $(cat ${saved_dirs} | cut -d' ' -f3 | sort | uniq); do
       [[ -d $(echo ${dir} | sed "s@~@${HOME}@") ]] || incorrent="${incorrent}${dir}\n"
     done
     [[ -n ${incorrent} ]] && message="${message}\e[31;1m[Not directories]\e[m\n${incorrent}" && incorrent=''
 
     local alias
     # 別名に/が含まれているか
-    for alias in $(cat ${file_name} | cut -d' ' -f2 | sort | uniq); do
+    for alias in $(cat ${saved_dirs} | cut -d' ' -f2 | sort | uniq); do
       [[ ${alias} =~ '/' ]] && incorrent="${incorrent}${alias}\n"
     done
     [[ -n ${incorrent} ]] && message="${message}\e[31;1m[Alias contains \"/\"]\e[m\n${incorrent}"
@@ -735,11 +749,11 @@ function cds() {
       alias_exists ${alias} || return 1
       [[ -d ${dir} ]] && dir=$(readlink -f ${dir}) || dir=$(pwd)
       directory_exists ${dir} || return 1
-      echo "${tag:-default} ${alias} $(echo ${dir} | sed "s@${HOME}@~@")" >> ${file_name}
+      echo "${tag:-default} ${alias} $(echo ${dir} | sed "s@${HOME}@~@")" >> ${saved_dirs}
     ;;
     'list' )
       [[ -z ${tag} ]] \
-        && cat ${file_name} | sort | xargs printf '\e[36m%s\e[m \e[37;1m%s\e[m \e[37m%s\e[m\n' \
+        && cat ${saved_dirs} | sort | xargs printf '\e[36m%s\e[m \e[37;1m%s\e[m \e[37m%s\e[m\n' \
         || echo ${file} | sort | xargs printf '\e[37;1m%s\e[m \e[37m%s\e[m\n'
     ;;
     'delete' )
@@ -749,20 +763,44 @@ function cds() {
           | fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' \
           | cut -d' ' -f1)
       fi
-      sed -i "/ ${alias} /d" ${file_name}
+      sed -i "/ ${alias} /d" ${saved_dirs}
     ;;
     'delete-all' )
       echo 'delete all?'
       select input in 'no' 'yes'; do
         case ${input} in
           'no' ) break ;;
-          'yes' ) : >! ${file_name} && break ;;
+          'yes' ) : >! ${saved_dirs} && break ;;
         esac
       done
     ;;
     'edit' )
-      ${EDITOR} ${file_name}
+      ${EDITOR} ${saved_dirs}
       check_file
+    ;;
+    'help' )
+      echo '
+      cds [別名]
+      引数に別名を指定することで、移動する。
+      引数を指定しない場合は、filterで選択する。
+
+      -s 記録
+      |   cds -s [別名] [path]
+      |   pathの指定がなければ$(pwd)とする。別名の指定がなければカレントディレクトリ名とする。
+
+      -l 一覧を出力
+
+      -e 記録を直接編集
+
+      -d 記録を削除
+      |   cds -d [別名]
+      |   引数を指定しない場合は、filterで選択する。
+
+      --delete-all 全ての履歴を削除
+
+      -t タグ
+      |   保存するpathに対してtagを付けられる。
+      ' | sed 's/^ *//;s/|/ /'
     ;;
   esac
 }
@@ -777,6 +815,7 @@ function _cds() {
     '-d[delete]: :->alias' \
     '--delete-all[delete all]: :->none' \
     '-t[tag]: :->tag' \
+    '-h[help]: :->none' \
     '*: :->alias'
 
   case ${state} in
@@ -800,28 +839,28 @@ function dtr() { # 電源を入れてからのネットワークのデータ転�
     {if(match($0, /bnep0/)!=0) print "Bluetooth Tethering : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"}'
 }
 
-function mt() { # ファイルをゴミ箱に入れる。
+function mt() { # ファイルをゴミ箱に入れる。 別途スクリプトで自動でゴミを消す。
   typeset -r trash="${HOME}/.Trash"
   local fzf_option="--preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
   [[ -s ${trash} ]] || mkdir ${trash}
 
-  if [[ $1 == '-r' ]]; then
+  if [[ $1 == '-r' ]]; then # ゴミ箱からファイルを拾う
     type fzf > /dev/null 2>&1 || return
     command ls -r ${trash} \
       | eval "fzf --header='move files in the trash to the current directory' \
       --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
       ${fzf_option}" | xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
 
-  elif [[ $1 == '-d' ]]; then
+  elif [[ $1 == '-d' ]]; then # ゴミ箱のファイルを焼却
     type fzf > /dev/null 2>&1 || return
     command ls -r ${trash} \
       | eval "fzf --header='delete files in the trash' \
       --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
       ${fzf_option}" | xargs -p -I{} rm -r "${trash}/{}"
 
-  elif [[ $1 == '-l' ]]; then
+  elif [[ $1 == '-l' ]]; then # ゴミ一覧
     ls -r ${trash}
-  elif [[ $1 == '-s' ]]; then
+  elif [[ $1 == '-s' ]]; then # ゴミの量
     du -hs ${trash} | cut -f1
   else
     [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 \
@@ -873,21 +912,19 @@ function os() { # OSとKernelの情報を表示 (hostnamectl statusで表示で�
   uname -sr | sed 's/\(.*\) \(.*\)/Kernel\t\1(\2)/'
 }
 
-# 電池残量
-function bat() {
+function bat() { # 電池残量
   typeset -r bat='/sys/class/power_supply/BAT1'
   [[ -e ${bat} ]] && cat "${bat}/capacity" | sed 's/$/%/' || echo 'No Battery'
 }
 
-# バックアップをとる
-function bak() {
+function bak() { # ファイルのバックアップをとる
   local file
 
-  if [[ $1 == '-r' ]]; then # bak -r test.sh.bak
+  if [[ $1 == '-r' ]]; then # .bakを取り除く
     for file in $argv[2,-1]; do
       mv -i ${file}  ${file%.bak}
     done
-  else # bak test.sh
+  else # ファイル名の末尾に.bakをつけた複製を作成する
     for file in $@; do
       cp -ir ${file} "${file}.bak"
     done
@@ -911,8 +948,7 @@ function bt() {
   sudo dhcpcd bnep0
 }
 
-# コマンドが終了したことを知らせる(ex: command ; fin)
-function fin() {
+function fin() { # コマンドが終了したことを知らせる(ex: command ; fin)
   type i3-nagbar > /dev/null 2>&1 && i3-nagbar -t warning -m 'finish' -f 'pango:IPAGothic Regular 10' > /dev/null 2>&1
 }
 
@@ -933,7 +969,8 @@ function _save_cmd() {
 
   # 履歴に記録しないコマンドを記述
   local ignore_cmds=(\
-    ll up mt ls cd mv cp rm mkdir rmdir touch man less history source '\.' export type which file stat \
+    cds up mt md gcm gco gaf ll \
+    ls cd mv cp rm mkdir rmdir touch man less history source '\.' export type which file stat \
     vi vim sudoedit command builtin chromium unzip feh tree test '\[' '\[\[' \
     nvim code python go \
   )
@@ -948,6 +985,9 @@ function _save_cmd() {
 add-zsh-hook precmd _save_cmd
 
 function crypt() {
+  # crypt test.txt
+  # ファイルの暗号と復号を行う。暗号か復号はファイルの状態で自動で決める。
+
   ! type openssl > /dev/null 2>&1 && echo 'require openssl' && return 1
 
   if [[ $(file $1 | cut -d' ' -f2-) == "openssl enc'd data with salted password" ]]; then
@@ -980,8 +1020,7 @@ function _crypt() {
 }
 compdef _crypt crypt
 
-# マルチディスプレイ
-function md() {
+function md() { # マルチディスプレイ
   type xrandr > /dev/null 2>&1 || return 1
   if [[ $1 == 'school' ]]; then
     xrandr --output HDMI1 --left-of eDP1 --mode 1600x900
@@ -989,9 +1028,9 @@ function md() {
     xrandr --output HDMI1 --left-of eDP1 --mode 1366x768
   elif [[ $1 == 'off' ]]; then
     xrandr --output $(xrandr | grep ' connected' | grep -v 'primary' | cut -d' ' -f1) --off
-  else
+  elif [[ $1 == 'select' ]]; then
     type fzf > /dev/null 2>&1 || return 1
-    xrandr --output HDMI1 --left-of eDP1 --mode $(xrandr | sed -n '/.* connected [^p].*/,/^[^ ]/p' | sed '1d;$d;s/  */ /g' | cut -d' ' -f2 | fzf)
+    xrandr --output ${2:-VGA1} --left-of eDP1 --mode $(xrandr | sed -n '/.* connected [^p].*/,/^[^ ]/p' | sed '1d;$d;s/  */ /g' | cut -d' ' -f2 | fzf)
   fi
 }
 function _md() {
@@ -1000,16 +1039,15 @@ function _md() {
     'school' \
     'home' \
     'off' \
+    'select' \
 }
 compdef _md md
 
-# ファイル名から空白を除去
-function rs() {
+function rs() { # ファイル名から空白を除去
   [[ $1 =~ ' ' ]] && mv $1 $(echo $1 | sed 's/ //g')
 }
 
-# git add
-function gaf() {
+function gaf() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
   type git > /dev/null 2>&1 || return 1
   git status > /dev/null 2>&1 || return 1
 
@@ -1017,22 +1055,30 @@ function gaf() {
 
   for file in "${(f)$(git status --short)}"; do
     local header=$(echo ${file} | cut -c1-2)
-    [[ ${header} == '??' || ${header} =~ '( |M|A|R)M' ]] && unadded_files="${unadded_files} $(echo ${file} | cut -c4-)"
+    [[ ${header} == '??' || ${header} =~ '( |M|A|R)M' ]] && unadded_files="${unadded_files}\n$(echo ${file} | cut -c4-)"
   done
-  local selected_files=$(echo ${unadded_files} | sed 's/ /\n/g' | sed /^$/d \
+  local selected_files=$(echo ${unadded_files} | sed /^$/d \
     | fzf --preview='git diff --color=always {}' --preview-window='right:95%:hidden' --bind='ctrl-v:toggle-preview')
   [[ -n ${selected_files} ]] && git add $(echo ${selected_files} | sed ':l;N;$!b l;s/\n/ /g')
 }
 
-function gc() {
+function gcm() { # git commit しやすい
   type git > /dev/null 2>&1 || return 1
   git status > /dev/null 2>&1 || return 1
+  [[ $# -eq 0 ]] && return 1
 
   git commit -m "$1"
 }
 
-# docker daemonが起動しているか
-function is_docker_running() {
+function gco() { # git checkout の引数をfilterで選択する
+  type git > /dev/null 2>&1 || return 1
+  git status > /dev/null 2>&1 || return 1
+
+  local branch=$(git branch | tr -d ' ' | sed /^\*/d | fzf)
+  [[ -n ${branch} ]] && git checkout ${branch}
+}
+
+function is_docker_running() { # docker daemonが起動しているか
   docker info > /dev/null 2>&1 && return 0
   echo 'Is the docker daemon running?'
   print -z 'sudo systemctl start docker'
@@ -1040,12 +1086,15 @@ function is_docker_running() {
   return 1
 }
 
-function jwm() {
+function jwm() { # dockerでjwmを動かす。chromiumのデータを復号・暗号
   is_docker_running || return
+
   local passwd && printf '\rpassword:' && read -s passwd
   [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1 > /dev/null 2>&1 &
+
   local workdir="${HOME}/workspace/docker/ubuntu-jwm"
   local chrome="${workdir}/google-chrome"
+
   # 復号
   [[ -e "${chrome}.tar.enc" ]] && type openssl > /dev/null 2>&1 \
     && openssl enc -d -aes-256-cbc -salt -k ${passwd} -in "${chrome}.tar.enc" -out "${chrome}.tar" \
@@ -1069,14 +1118,12 @@ function jwm() {
     && command rm "${chrome}.tar"
 }
 
-# dockerのコンテナを選択して破棄
-function drm() {
+function drm() { # dockerのコンテナを選択して破棄
   is_docker_running && type fzf > /dev/null 2>&1 && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
   [[ -n ${container} ]] && echo ${container} | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
 }
 
-# dockerのimageを選択して破棄
-function drmi() {
+function drmi() { # dockerのimageを選択して破棄
   is_docker_running && type fzf > /dev/null 2>&1 && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
   [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
 }

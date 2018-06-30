@@ -5,7 +5,7 @@ col_size_of_width_a = 1
 fontsize = 14
 font_size_range = 6-30
 step_in_changing_font_size = 3
-use_variable_column_width = false 
+use_variable_column_width = false
 use_anti_alias = true
 use_bold_font = true
 use_italic_font = true
@@ -22,7 +22,7 @@ use_urgent_bell = false
 use_clipboard = true
 conf_menu_path_2 = mlterm-zoom
 use_transbg = false
-brightness = 60
+# use_transbg = true -> brightness = 80
 
 fg_color = #c0c5ce
 bg_color = #2b303b
