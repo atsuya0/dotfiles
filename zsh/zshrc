@@ -288,6 +288,7 @@ typeset -r ignore_absolute_pathes=(
   ${HOME}/.node-gyp
   ${HOME}/.electron-gyp
   ${HOME}/.rustup
+  ${HOME}/.cargo
   ${HOME}/.vscode/extensions
   ${HOME}/.npm/_cacache
   ${HOME}/.Trash
@@ -971,7 +972,7 @@ function _save_cmd() {
   local ignore_cmds=(\
     cds up mt md gcm gco gaf ll \
     ls cd mv cp rm mkdir rmdir touch man less history source '\.' export type which file stat \
-    vi vim sudoedit command builtin chromium unzip feh tree test '\[' '\[\[' \
+    vi vim sudoedit command builtin chromium unzip tree test '\[' '\[\[' \
     nvim code python go \
   )
 

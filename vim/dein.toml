@@ -20,11 +20,11 @@ repo = 'Shougo/neosnippet-snippets'
 repo = 'Yggdroot/indentLine'
 hook_add = 'let g:indentLine_char = "¦"'
 
-[[plugins]] # color scheme
-repo = 'cocopon/iceberg.vim'
+# [[plugins]] # color scheme
+# repo = 'cocopon/iceberg.vim'
 
-[[plugins]] # color scheme
-repo = 'KeitaNakamura/neodark.vim'
+# [[plugins]] # color scheme
+# repo = 'KeitaNakamura/neodark.vim'
 
 [[plugins]] # color scheme
 repo = 'rakr/vim-one'

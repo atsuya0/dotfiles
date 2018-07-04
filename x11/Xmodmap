@@ -17,6 +17,7 @@ keycode 101 = Alt_R
 keycode  37 = Control_L
 keycode 105 = Control_R
 keycode 108 = Control_R
+keycode 134 = Control_R
 keycode 135 = Control_R
 
 keycode  78 = plus
