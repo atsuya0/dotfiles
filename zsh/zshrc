@@ -573,7 +573,7 @@ compdef _up up
 
 function down() {
   # 指定した層までを探索してfilterで選択し移動する。
-  # dw 3
+  # down 3
 
   type fzf > /dev/null 2>&1 || return 1
   dir=$(eval find -mindepth 1 -maxdepth ${1:-1} -type d -print \
@@ -1129,6 +1129,14 @@ function drmi() { # dockerのimageを選択して破棄
   [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
 }
 
+function dc() {
+  is_docker_running && docker-compose $@
+}
+
+function rp() {
+  echo 'pi@192.168.3.16'
+}
+
 # =========================================================================
 # alias
 # =========================================================================
@@ -1147,7 +1155,6 @@ alias tree='tree -C'
 alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
 alias xephyr='Xephyr -wr -resizeable :1' # x serverのネスト。白背景。window可変。
 alias open='xdg-open'
-alias dc='docker-compose'
 alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias poweroff='interactive systemctl poweroff'
 alias reboot='interactive systemctl reboot'

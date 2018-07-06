@@ -198,10 +198,10 @@
     <Key key="Down">down</Key>
     <Key key="Right">right</Key>
     <Key key="Left">left</Key>
-    <Key key="h">left</Key>
-    <Key key="j">down</Key>
     <Key key="k">up</Key>
+    <Key key="j">down</Key>
     <Key key="l">right</Key>
+    <Key key="h">left</Key>
     <Key key="Return">select</Key>
     <Key key="Escape">escape</Key>
 
@@ -227,6 +227,5 @@
       fcitx-autostart
       fcitx-imlist -e fcitx-keyboard-jp
       fcitx-imlist -s fcitx-keyboard-jp,mozc
-      plank
     </StartupCommand>
 </JWM>
