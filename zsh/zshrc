@@ -1048,7 +1048,7 @@ function rs() { # ファイル名から空白を除去
   [[ $1 =~ ' ' ]] && mv $1 $(echo $1 | sed 's/ //g')
 }
 
-function gaf() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
+function ga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
   type git > /dev/null 2>&1 || return 1
   git status > /dev/null 2>&1 || return 1
 
@@ -1063,7 +1063,7 @@ function gaf() { # git add をfilterで選択して行う。<C-v>でgit diffを�
   [[ -n ${selected_files} ]] && git add $(echo ${selected_files} | sed ':l;N;$!b l;s/\n/ /g')
 }
 
-function gcm() { # git commit しやすい
+function gcm() { # commit message 記しやすい
   type git > /dev/null 2>&1 || return 1
   git status > /dev/null 2>&1 || return 1
   [[ $# -eq 0 ]] && return 1
@@ -1077,6 +1077,13 @@ function gco() { # git checkout の引数をfilterで選択する
 
   local branch=$(git branch | tr -d ' ' | sed /^\*/d | fzf)
   [[ -n ${branch} ]] && git checkout ${branch}
+}
+
+function gp() { # git push
+  type git > /dev/null 2>&1 || return 1
+  git status > /dev/null 2>&1 || return 1
+
+  git push origin ${1:-master}
 }
 
 function is_docker_running() { # docker daemonが起動しているか
