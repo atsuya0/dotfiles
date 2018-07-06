@@ -3,9 +3,8 @@
 
     <!-- The root menu. -->
     <RootMenu onroot="12">
-        <Program label="lxterminal">lxterminal</Program>
+        <Program label="mlterm">mlterm</Program>
         <Program label="google-chrome">google-chrome --no-sandbox</Program>
-        <Program label="spacefm">spacefm</Program>
         <Separator/>
         <Program icon="lock.png" label="Lock">
             xlock -mode blank
