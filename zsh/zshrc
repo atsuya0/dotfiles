@@ -36,8 +36,7 @@ export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理
 # =========================================================================
 # その他
 # =========================================================================
-# 区切り文字として扱わない。
-WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>' # 区切りとして扱わない文字。
 # 実行したプロセスの消費時間が3秒以上かかったら、消費時間の統計情報を表示する。
 REPORTTIME=3
 # 画面のロックと解除を無効(C-s,C-q)
@@ -96,7 +95,7 @@ function _git_prompt() {
   for file in ${git_info[2,-1]}; do
     if [[ $(echo ${file} | cut -c1-2) == '??' ]]; then
       (( untracked++ ))
-    elif [[ $(echo ${file} | cut -c1-2) =~ '( |M|A|R)(M|D)' ]]; then
+    elif [[ $(echo ${file} | cut -c1-2) =~ '( |M|A|R|U)(M|D|U)' ]]; then
       (( unadded++ ))
     elif [[ $(echo ${file} | cut -c1-2) =~ '(M|A|R|D) ' ]]; then
       (( uncommited++ ))
@@ -296,6 +295,7 @@ typeset -r ignore_absolute_pathes=(
   ${GOPATH}/pkg
   ${GOPATH}/src/gopkg.in
   ${GOPATH}/src/github.com
+  ${GOPATH}/src/golang.org
 )
 
 function _fzf_cd_widget() {
@@ -522,6 +522,8 @@ function vol() {
 function wifi() {
   if [[ $1 == '-r' ]]; then # 再始動
     netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo netctl restart
+  elif [[ $1 == '-s' ]]; then
+    netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo netctl stop
   elif type fzf > /dev/null 2>&1; then
     netctl list | fzf --select-1 | xargs sudo netctl start
   fi
@@ -637,11 +639,11 @@ function cds() { # pathに別名をつけて移動を早くする。
 
   for (( i=1; i <= $#; i++ )); do
     case ${argv[$i]} in
-      '-t' )
+      '-t' ) # タグ
         (( i++ ))
         [[ -n ${argv[$i]} && ${argv[$i]} != -* ]] && local tag=${argv[$i]}
       ;;
-      '-s' )
+      '-s' ) # 保存
         local skip=0
         [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='save'
@@ -659,24 +661,24 @@ function cds() { # pathに別名をつけて移動を早くする。
         fi
         i=$(( $i + ${skip} )) # -s の引数の数だけループを飛ばす
       ;;
-      '-l' )
+      '-l' ) # 一覧
         [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='list'
       ;;
-      '-d' )
+      '-d' ) # 削除
         [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='delete'
         [[ -n ${argv[$i+1]} && ${argv[$i+1]} != -* ]] && alias=${argv[$i+1]} && (( i++ ))
       ;;
-      '--delete-all' )
+      '--delete-all' ) # 全削除
         [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='delete-all'
       ;;
-      '-e' )
+      '-e' ) # 編集
         [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='edit'
       ;;
-      '-h' )
+      '-h' ) # ヘルプ
         [[ ${action} != 'change' ]] && echo 'option error' >&2 && return 1
         action='help'
       ;;
@@ -686,6 +688,7 @@ function cds() { # pathに別名をつけて移動を早くする。
     esac
   done
 
+  # ファイルから別名とpathを切り出す
   if [[ ${action} == 'change' || ${action} == 'list' || ${action} == 'delete' ]]; then
     local file
     [[ -z ${tag} ]] \
@@ -840,59 +843,89 @@ function dtr() { # 電源を入れてからのネットワークのデータ転�
     {if(match($0, /bnep0/)!=0) print "Bluetooth Tethering : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"}'
 }
 
-function mt() { # ファイルをゴミ箱に入れる。 別途スクリプトで自動でゴミを消す。
+function mt() {
   typeset -r trash="${HOME}/.Trash"
   local fzf_option="--preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
-  [[ -s ${trash} ]] || mkdir ${trash}
 
-  if [[ $1 == '-r' ]]; then # ゴミ箱からファイルを拾う
-    type fzf > /dev/null 2>&1 || return
-    command ls -r ${trash} \
-      | eval "fzf --header='move files in the trash to the current directory' \
-      --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
-      ${fzf_option}" | xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
+  ! type fzf > /dev/null 2>&1 && [[ -e ${GOPATH}/bin/mt ]] && ${GOPATH}/bin/mt $@
 
-  elif [[ $1 == '-d' ]]; then # ゴミ箱のファイルを焼却
-    type fzf > /dev/null 2>&1 || return
-    command ls -r ${trash} \
-      | eval "fzf --header='delete files in the trash' \
-      --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
-      ${fzf_option}" | xargs -p -I{} rm -r "${trash}/{}"
+  case $1 in
+    'move')
+      [[ -z $2 ]] && set 'move' $(command ls -A ./ | sed "/^${trash##*/}$/"d \
+        | eval "fzf --header='move files in the current directory to the trash' \
+        --preview=\"file {} | sed 's/^.*: //'; du -hs {} | cut -f1; less {}\" ${fzf_option}") \
+        > /dev/null && [[ -z $2 ]] && return
+    ;;
+    'restore')
+      [[ -z $2 ]] && set 'restore' $(command ls -rA ${trash} \
+        | eval "fzf --header='move files in the trash to the current directory' \
+        --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" ${fzf_option}") \
+        > /dev/null && [[ -z $2 ]] && return
+    ;;
+    'delete')
+      [[ -z $2 ]] && set 'delete' $(command ls -rA ${trash} \
+        | eval "fzf --header='delete files in the trash' \
+        --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" ${fzf_option}") \
+        > /dev/null && [[ -z $2 ]] && return
+    ;;
+    *)
+    ;;
+  esac
 
-  elif [[ $1 == '-l' ]]; then # ゴミ一覧
-    ls -r ${trash}
-  elif [[ $1 == '-s' ]]; then # ゴミの量
-    du -hs ${trash} | cut -f1
-  else
-    [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 \
-      && set $(command ls -A ./ | sed "/^${trash##*/}$/"d \
-      | eval "fzf --header='move files in the current directory to the trash' \
-      --preview=\"file {} | sed 's/^.*: //'; du -hs {} | cut -f1; less {}\" ${fzf_option}") \
-      > /dev/null && [[ $# -eq 0 ]] && return
-
-    echo $@ | tr -d '\n' |  xargs -d' ' -I{} sh -c "mv {} \"${trash}/\$(date +%F_%T_)\$(basename {})\""
-
-  fi
+  [[ -e ${GOPATH}/bin/mt ]] && ${GOPATH}/bin/mt $@
 }
 
 function _mt() {
   typeset -r trash="${HOME}/.Trash"
+  local ret=1
 
-  _arguments \
-    '-r[restore]: :->trash' \
-    '-d[delete]: :->trash' \
-    '-l[list]: :->none' \
-    '*: :->files'
+  function sub_commands() {
+    local -a _c
 
-  case "${state}" in
-    trash )
-      _values 'files in trash can' $(command ls -r ${trash})
-    ;;
-    files )
-      _files
-    ;;
+    _c=(
+      'move' \
+      'restore' \
+      'list' \
+      'size' \
+      'delete'
+    )
+
+    _describe -t commands Commands _c
+  }
+
+  _arguments -C \
+    '(-h --help)'{-h,--help}'[show help]' \
+    '1: :sub_commands' \
+    '*:: :->args' \
+    && ret=0
+
+  case ${state} in
+    (args)
+      case ${words[1]} in
+        (move)
+          _files
+        ;;
+        (restore)
+          _values \
+            'files in trash' \
+            $(command ls -Ar ${trash})
+        ;;
+        (list)
+          _arguments \
+            '(-d --days)'{-d,--days}'[How many days ago]' \
+            '(-r --reverse)'{-r,--reverse}'[display in reverse order]'
+        ;;
+        (size)
+        ;;
+        (delete)
+          _values \
+            'files in trash' \
+            $(command ls -Ar ${trash})
+        ;;
+      esac
   esac
 
+  return ret
 }
 compdef _mt mt
 
@@ -927,7 +960,7 @@ function bak() { # ファイルのバックアップをとる
     done
   else # ファイル名の末尾に.bakをつけた複製を作成する
     for file in $@; do
-      cp -ir ${file} "${file}.bak"
+      cp -ir "${file}{,.bak}"
     done
   fi
 }
@@ -944,7 +977,13 @@ function bt() {
   typeset -r ADDR='AC:CF:85:B7:9D:9A'
 
   [[ $(systemctl is-active bluetooth) == 'inactive' ]] && sudo systemctl start bluetooth.service
-  (){ echo 'power on'; sleep 1; echo "connect $1"; sleep 3; echo 'quit'; } ${ADDR} | bluetoothctl
+  () {
+    echo 'power on' \
+      && sleep 1 \
+      && echo "connect $1" \
+      && sleep 3 \
+      && echo 'quit'
+  } ${ADDR} | bluetoothctl
   /usr/bin/dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_${ADDR//:/_} org.bluez.Network1.Connect string:'nap'
   sudo dhcpcd bnep0
 }
@@ -1045,7 +1084,20 @@ function _md() {
 compdef _md md
 
 function rs() { # ファイル名から空白を除去
-  [[ $1 =~ ' ' ]] && mv $1 $(echo $1 | sed 's/ //g')
+  for file in $@; do
+    [[ -e ${file} && ${file} =~ ' ' ]] && mv ${file} $(echo ${file} | sed 's/ //g')
+  done
+}
+
+function rn() { # ファイル名を正規表現で変更する。perl製のrenameような。
+  for i in {2..$#}; do
+    local new=$(echo ${argv[${i}]} | sed ${1})
+    [[ -e ${argv[${i}]} && ${argv[${i}]} != ${new} ]] && mv ${argv[${i}]} ${new}
+  done
+}
+
+function cc() { # ファイルの文字数を数える
+  [[ -s $1 ]] && cat $1 | sed ':l;N;$!b l;s/\n//g' | wc -m
 }
 
 function ga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
@@ -1056,7 +1108,7 @@ function ga() { # git add をfilterで選択して行う。<C-v>でgit diffを�
 
   for file in "${(f)$(git status --short)}"; do
     local header=$(echo ${file} | cut -c1-2)
-    [[ ${header} == '??' || ${header} =~ '( |M|A|R)M' ]] && unadded_files="${unadded_files}\n$(echo ${file} | cut -c4-)"
+    [[ ${header} == '??' || ${header} =~ '( |M|A|R|U)(M|U)' ]] && unadded_files="${unadded_files}\n$(echo ${file} | cut -c4-)"
   done
   local selected_files=$(echo ${unadded_files} | sed /^$/d \
     | fzf --preview='git diff --color=always {}' --preview-window='right:95%:hidden' --bind='ctrl-v:toggle-preview')
@@ -1086,6 +1138,18 @@ function gp() { # git push
   git push origin ${1:-master}
 }
 
+function gmv() { # git mv
+  type git > /dev/null 2>&1 || return 1
+  git status > /dev/null 2>&1 || return 1
+  [[ $# -eq 0 ]] && return 1
+
+  [[ ${argv[$(expr $# - 1)]} != '-t' ]] && return 1
+  local target=${argv[$#]}
+  for i in {1..$(expr $# - 2)}; do
+    git mv ${argv[$i]} ${target}
+  done
+}
+
 function is_docker_running() { # docker daemonが起動しているか
   docker info > /dev/null 2>&1 && return 0
   echo 'Is the docker daemon running?'
@@ -1111,6 +1175,7 @@ function jwm() { # dockerでjwmを動かす。chromiumのデータを復号・�
   [[ -e "${chrome}.tar" ]] && tar -xf "${chrome}.tar" -C ${workdir} && command rm "${chrome}.tar"
 
   docker run $@ \
+    -v ${workdir}/data:/home/docker/data \
     -v ${chrome}:/home/docker/.config/google-chrome \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /run/user/${UID}/pulse/native:/tmp/pulse/native \
@@ -1147,6 +1212,7 @@ function rp() {
 # =========================================================================
 # alias
 # =========================================================================
+alias la='ls -A --color=auto'
 alias ll='ls -FAlht --color=auto'
 alias grep='grep -i --color=auto'
 # alias mv='mv -i' alias cp='cp -i'
@@ -1162,6 +1228,7 @@ alias tree='tree -C'
 alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
 alias xephyr='Xephyr -wr -resizeable :1' # x serverのネスト。白背景。window可変。
 alias open='xdg-open'
+alias crm='chromium'
 alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias poweroff='interactive systemctl poweroff'
 alias reboot='interactive systemctl reboot'
@@ -1172,7 +1239,8 @@ alias -g ..2='../..'
 alias -g ..3='../../..'
 alias -g lf='$(ls | fzf)'
 alias -g laf='$(ls -A | fzf)'
-alias -s txt=cat
-alias -s html=chromium
-alias -s {png,jpg,jpeg}=feh
+alias -s txt=less
+alias -s {html,md,pdf}=chromium
+alias -s {png,jpg}=feh
+alias -s {mp3}=paplay
 alias -s py=python3
