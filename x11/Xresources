@@ -1,0 +1,67 @@
+!C-A-c ヤンク
+!C-A-v ペースト
+
+!フォント
+urxvt*font: xft:Hack:size=13:antialias=true, \
+            xft:IPAGothic:size=13:antialias=true
+!太字可
+urxvt.allow_bold: true
+!スクロールバーを非表示
+urxvt.scrollBar: false
+!遡れる行数
+urxvt.saveLines: 8192
+!カーソルを点滅させない
+urxvt.cursorBlink: false
+!カーソルの形状をアンダーラインにしない
+urxvt.cursorUnderline: false
+!入力時にポインタを非表示
+urxvt.pointerBlank: true
+!ビープ音を視覚化
+urxvt.visualBell: true
+!フォーカスが当たっていないときに輝度を下げる
+urxvt.fading: 10
+!文字間隔
+urxvt.letterSpace: 0
+!urxvt.letterSpace: -1
+
+!色------
+
+!斜体
+urxvt.colorIT: #cf6a4c
+!強調
+urxvt.colorBD: #ffffff
+!下線
+urxvt.colorUL: #4286f4
+!カーソル
+urxvt*cursorColor:  #495872
+
+! Hibrid
+urxvt*foreground: #C5C8C6
+urxvt*background: #1D1F21
+urxvt*color0: #282A2E
+urxvt*color1: #A54242
+urxvt*color2: #8C9440
+urxvt*color3: #DE935F
+urxvt*color4: #5F819D
+urxvt*color5: #85678F
+urxvt*color6: #5E8D87
+urxvt*color7: #707880
+urxvt*color8: #373B41
+urxvt*color9: #CC6666
+urxvt*color10: #B5BD68
+urxvt*color11: #F0C674
+urxvt*color12: #81A2BE
+urxvt*color13: #B294BB
+urxvt*color14: #8ABEB7
+urxvt*color15: #C5C8C6
+
+!インライン入力
+urxvt.perl-ext-common: xim-onthespot
+urxvt.inputMethod: fcitx
+urxvt.preeditType: OnTheSpot
+
+!行間
+!urxvt.lineSpace:    2
+!GUIのスクロール系
+!urxvt.scrollColor: #504945
+!urxvt.troughColor: #3C3836
