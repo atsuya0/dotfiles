@@ -1,7 +1,6 @@
 [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp)
-# =========================================================================
+
 # installed tmux && installed fzf && sessionが存在しない && GUI && True Color対応の仮想端末であるmlterm => tmux起動
-# =========================================================================
 type tmux > /dev/null 2>&1 && type fzf > /dev/null 2>&1 \
 && [[ -z ${TMUX} \
       && -n ${WINDOWID} \

@@ -540,11 +540,11 @@ function dtr() { # 電源を入れてからのネットワークのデータ転�
     {if(match($0, /bnep0/)!=0) print "Bluetooth Tethering : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"}'
 }
 
-function mt() {
+function trash() {
   typeset -r trash="${HOME}/.Trash"
   local fzf_option="--preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
 
-  ! type fzf > /dev/null 2>&1 && [[ -e ${GOPATH}/bin/mt ]] && ${GOPATH}/bin/mt $@
+  ! type fzf > /dev/null 2>&1 && [[ -e ${GOPATH}/bin/trash ]] && ${GOPATH}/bin/trash $@
 
   case $1 in
     'move')
@@ -569,10 +569,10 @@ function mt() {
     ;;
   esac
 
-  [[ -e ${GOPATH}/bin/mt ]] && ${GOPATH}/bin/mt $@
+  [[ -e ${GOPATH}/bin/trash ]] && ${GOPATH}/bin/trash $@
 }
 
-function _mt() {
+function _trash() {
   typeset -r trash="${HOME}/.Trash"
   local ret=1
 
@@ -624,7 +624,8 @@ function _mt() {
 
   return ret
 }
-compdef _mt mt
+compdef _trash trash
+alias trs='trash'
 
 function interactive() { # 引数に指定したコマンドを実行するのに確認をとる。
   local input
@@ -706,7 +707,7 @@ function _save_cmd() {
 
   # 履歴に記録しないコマンドを記述
   local ignore_cmds=(\
-    cds up mt md gcm gco gaf ll \
+    cds up trash md gcm gco gaf ll \
     ls cd mv cp rm mkdir rmdir touch man less history source '\.' export type which file stat \
     vi vim sudoedit command builtin chromium unzip tree test '\[' '\[\[' \
     nvim code python go \
@@ -794,7 +795,7 @@ function rn() { # ファイル名を正規表現で変更する。perl製のrena
 }
 
 function cc() { # ファイルの文字数を数える
-  [[ -s $1 ]] && cat $1 | sed ':l;N;$!b l;s/\n//g' | wc -m
+  [[ -s $1 ]] && cat $1 | sed ':l;N;$!bl;s/\n//g' | wc -m
 }
 
 function ga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
@@ -855,37 +856,22 @@ function is_docker_running() { # docker daemonが起動しているか
   return 1
 }
 
-function jwm() { # dockerでjwmを動かす。chromiumのデータを復号・暗号
+function jwm() { # dockerでjwmを動かす。
   is_docker_running || return
 
-  local passwd && printf '\rpassword:' && read -s passwd
   [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1 > /dev/null 2>&1 &
 
   local workdir="${HOME}/workspace/docker/ubuntu-jwm"
-  local chrome="${workdir}/google-chrome"
-
-  # 復号
-  [[ -e "${chrome}.tar.enc" ]] && type openssl > /dev/null 2>&1 \
-    && openssl enc -d -aes-256-cbc -salt -k ${passwd} -in "${chrome}.tar.enc" -out "${chrome}.tar" \
-    && command rm "${chrome}.tar.enc" || return 1
-  # 展開
-  [[ -e "${chrome}.tar" ]] && tar -xf "${chrome}.tar" -C ${workdir} && command rm "${chrome}.tar"
 
   docker run $@ \
     -v ${workdir}/data:/home/docker/data \
-    -v ${chrome}:/home/docker/.config/google-chrome \
+    -v ${workdir}/epiphany:/home/docker/.config/epiphany \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /run/user/${UID}/pulse/native:/tmp/pulse/native \
     -v ${HOME}/.config/pulse/cookie:/tmp/pulse/cookie \
     -it --rm ${USER}/ubuntu-jwm > /dev/null 2>&1
 
   [[ -z ${exists} ]] && pkill Xephyr > /dev/null 2>&1
-  # 書庫化
-  [[ -e ${chrome} ]] && tar -cf "${chrome}.tar" -C ${workdir} $(basename ${chrome}) && command rm -r ${chrome}
-  # 暗号
-  [[ -e "${chrome}.tar" ]] && type openssl > /dev/null 2>&1 \
-    && openssl enc -e -aes-256-cbc -salt -k ${passwd} -in "${chrome}.tar" -out "${chrome}.tar.enc" \
-    && command rm "${chrome}.tar"
 }
 
 function drm() { # dockerのコンテナを選択して破棄

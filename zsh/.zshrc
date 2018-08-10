@@ -77,10 +77,6 @@ zstyle ':completion:*:*files' ignored-patterns '*mp3' '.mp4'
 zstyle ':completion:*' use-cache yes
 # 詳細
 zstyle ':completion:*' verbose yes
-#cd は親ディレクトリからカレントディレクトリを選択しないので表示させないようにする (例: cd ../<TAB>):
-# zstyle ':completion:*:cd:*' ignore-parents parent pwd
-# zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-# zstyle ':completion:*:options' description 'yes'
 # 補完結果をできるだけ詰める
 setopt list_packed
 # カッコの対応などを自動的に補完
@@ -122,10 +118,8 @@ setopt hist_expand
 setopt inc_append_history
 # 履歴の保存場所
 [[ -n ${ZDOTDIR} ]] && HISTFILE="${ZDOTDIR}/.zsh_history" || HISTFILE="${HOME}/.zsh_history"
-# 履歴をメモリに保存する数
-HISTSIZE=100000
-# 履歴をファイルに保存する数
-SAVEHIST=100000
+HISTSIZE=100000 # 履歴をメモリに保存する数
+SAVEHIST=100000 # 履歴をファイルに保存する数
 # 入力に対して履歴に一致したコマンドを表示
 autoload -Uz history-search-end
 zle -N history-beginning-search-forward-end history-search-end
