@@ -3,8 +3,8 @@
 
     <!-- The root menu. -->
     <RootMenu onroot="12">
-        <Program label="mlterm">mlterm</Program>
-        <Program label="google-chrome">google-chrome --no-sandbox</Program>
+        <Program label="terminal">lxterminal</Program>
+        <Program label="browser">epiphany-browser</Program>
         <Separator/>
         <Program icon="lock.png" label="Lock">
             xlock -mode blank
@@ -52,7 +52,7 @@
 
     <!-- Visual Styles -->
     <WindowStyle>
-        <Font>Sans-9:bold</Font>
+        <Font>IPAGothic-9:bold</Font>
         <Width>4</Width>
         <Height>21</Height>
         <Corner>3</Corner>
@@ -68,14 +68,14 @@
         </Active>
     </WindowStyle>
     <TrayStyle group="true" list="all">
-        <Font>Sans-9</Font>
+        <Font>IPAGothic-9</Font>
         <Background>#333333</Background>
         <Foreground>#FFFFFF</Foreground>
         <Outline>#000000</Outline>
         <Opacity>0.75</Opacity>
     </TrayStyle>
     <TaskListStyle>
-      <Font>Sans-9</Font>
+      <Font>IPAGothic-9</Font>
       <Active>
         <Foreground>#FFFFFF</Foreground>
         <Background>#555555</Background>
@@ -94,7 +94,7 @@
         </Active>
     </PagerStyle>
     <MenuStyle>
-        <Font>Sans-9</Font>
+        <Font>IPAGothic-9</Font>
         <Foreground>#FFFFFF</Foreground>
         <Background>#333333</Background>
         <Outline>#000000</Outline>
@@ -105,7 +105,7 @@
         <Opacity>0.85</Opacity>
     </MenuStyle>
     <PopupStyle>
-        <Font>Sans-9</Font>
+        <Font>IPAGothic-9</Font>
         <Foreground>#000000</Foreground>
         <Background>#999999</Background>
     </PopupStyle>
