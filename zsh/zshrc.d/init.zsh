@@ -4,7 +4,7 @@
 type tmux > /dev/null 2>&1 && type fzf > /dev/null 2>&1 \
 && [[ -z ${TMUX} \
       && -n ${WINDOWID} \
-      && $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) == 'mlterm' \
+      && $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) =~ 'mlterm|alacritty' \
 ]] && () {
   local new='new-session'
   id=$(

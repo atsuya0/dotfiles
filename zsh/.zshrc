@@ -127,5 +127,10 @@ zle -N history-beginning-search-backward-end history-search-end
 
 source "${ZDOTDIR}/zshrc.d/keybind.zsh"
 source "${ZDOTDIR}/zshrc.d/fzf.zsh"
+source "${ZDOTDIR}/zshrc.d/nvm.zsh"
+source "${ZDOTDIR}/zshrc.d/wrapper.zsh"
 source "${ZDOTDIR}/zshrc.d/function.zsh"
+source "${ZDOTDIR}/zshrc.d/cd.zsh"
+source "${ZDOTDIR}/zshrc.d/git.zsh"
+source "${ZDOTDIR}/zshrc.d/docker.zsh"
 source "${ZDOTDIR}/zshrc.d/alias.zsh"

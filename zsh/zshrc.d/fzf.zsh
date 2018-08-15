@@ -38,6 +38,7 @@ typeset -r ignore_absolute_pathes=(
   ${HOME}/.cargo
   ${HOME}/.vscode/extensions
   ${HOME}/.npm/_cacache
+  ${HOME}/.nvm/versions
   ${HOME}/.Trash
   ${HOME}/text/etc/gowebprog-master
   ${GOPATH}/pkg
