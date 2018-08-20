@@ -118,7 +118,7 @@ function vim(){ # vimで開くファイルをfilterで選択する。
 
     # 無視するディレクトリ(ディレクトリ名指定)
     local ignore_dirs=(
-      node_modules .git gems vendor cache .WebStorm2018.1 data_docker-compose
+      node_modules .git gems vendor cache google-chrome data_docker-compose
       data-mariadb
     )
     for dir in ${ignore_dirs}; do

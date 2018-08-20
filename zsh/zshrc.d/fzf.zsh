@@ -16,6 +16,7 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
 
 # _fzf_cd_widget(), vim() で用いる。無視するディレクトリを絶対パスで指定する。
 typeset -r ignore_absolute_pathes=(
+  ${HOME}/Downloads
   ${HOME}/.cache/dein/repos
   ${HOME}/.cache/dein/.cache
   ${HOME}/.cache/pip
@@ -37,10 +38,10 @@ typeset -r ignore_absolute_pathes=(
   ${HOME}/.rustup
   ${HOME}/.cargo
   ${HOME}/.vscode/extensions
+  ${HOME}/.WebStorm2018.1 
   ${HOME}/.npm/_cacache
   ${HOME}/.nvm/versions
   ${HOME}/.Trash
-  ${HOME}/text/etc/gowebprog-master
   ${GOPATH}/pkg
   ${GOPATH}/src/gopkg.in
   ${GOPATH}/src/github.com

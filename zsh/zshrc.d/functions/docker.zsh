@@ -16,10 +16,12 @@ function jwm() { # dockerでjwmを動かす。
   [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1 > /dev/null 2>&1 &
 
   local workdir="${HOME}/workspace/docker/ubuntu-jwm"
+  local docker='/home/docker'
 
   docker run $@ \
-    -v ${workdir}/data:/home/docker/data \
-    -v ${workdir}/epiphany:/home/docker/.config/epiphany \
+    -v ${workdir}/data:${docker}/data \
+    -v ${workdir}/epiphany:${docker}/.config/epiphany \
+    -v ${workdir}/google-chrome:${docker}/.config/google-chrome \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /run/user/${UID}/pulse/native:/tmp/pulse/native \
     -v ${HOME}/.config/pulse/cookie:/tmp/pulse/cookie \
