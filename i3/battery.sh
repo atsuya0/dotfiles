@@ -1,7 +1,7 @@
 #!/usr/bin/zsh
 
 local char=('◜' '◝' '◞' '◟')
-[[ $(cat /sys/class/power_supply/ADP1/online) = "1" ]] && echo -n "${char[$(expr $(expr $(date +%S) % 4) + 1)]} "
+[[ $(cat /sys/class/power_supply/ADP1/online) == '1' ]] && echo -n "${char[$(expr $(expr $(date +%S) % 4) + 1)]} "
 
 local battery=$([[ -e /sys/class/power_supply/BAT1 ]] && cat /sys/class/power_supply/BAT1/capacity)
 

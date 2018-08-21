@@ -8,7 +8,7 @@ function _record_cmd() {
 add-zsh-hook zshaddhistory _record_cmd
 
 function _save_cmd() {
-  local exit_status="$?"
+  local exit_status=$?
   #_cmd=$(echo ${_cmd} | tr -s ' ') # 連続する空白を1つにする; sed /  */ で連続する空白を使う
   [[ ! ${_cmd} =~ ' ' ]] && return # 引数やオプションを指定していない場合は記録しない
   [[ ${_cmd} =~ '^ ' ]] && return

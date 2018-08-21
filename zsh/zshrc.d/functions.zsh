@@ -16,15 +16,15 @@ function vol() {
   }
 
   if [[ $1 == up ]]; then
-    pactl set-sink-volume $(get_index) +5%
+    pactl set-sink-volume "$(get_index)" +5%
   elif [[ $1 == down ]]; then
-    pactl set-sink-volume $(get_index) -5%
+    pactl set-sink-volume "$(get_index)" -5%
   elif [[ $1 == mute ]]; then
-    pactl set-sink-mute $(get_index) toggle
+    pactl set-sink-mute "$(get_index)" toggle
   else
     local run
     [[ $(pactl list sinks | grep 'RUNNING') != '' ]] && run="grep -A 10 'RUNNING'" || run='tee'
-    pactl list sinks | eval ${run} | grep -o '[0-9]*%' | head -1
+    pactl list sinks | eval "${run}" | grep -o '[0-9]*%' | head -1
   fi
 }
 
@@ -66,7 +66,7 @@ function trash() {
   typeset -r trash="${HOME}/.Trash"
   local fzf_option="--preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
 
-  ! type fzf > /dev/null 2>&1 && [[ -e ${GOPATH}/bin/trash ]] && ${GOPATH}/bin/trash $@
+  ! type fzf > /dev/null 2>&1 && [[ -e "${GOPATH}/bin/trash" ]] && "${GOPATH}/bin/trash" $@
 
   case $1 in
     'move')
@@ -91,7 +91,7 @@ function trash() {
     ;;
   esac
 
-  [[ -e ${GOPATH}/bin/trash ]] && ${GOPATH}/bin/trash $@
+  [[ -e ${GOPATH}/bin/trash ]] && "${GOPATH}/bin/trash" $@
 }
 
 function _trash() {
@@ -120,7 +120,7 @@ function _trash() {
 
   case ${state} in
     (args)
-      case ${words[1]} in
+      case "${words[1]}" in
         (move)
           _files
         ;;
@@ -176,7 +176,7 @@ function bak() { # ファイルのバックアップをとる
 
   if [[ $1 == '-r' ]]; then # .bakを取り除く
     for file in $argv[2,-1]; do
-      mv -i ${file}  ${file%.bak}
+      mv -i "${file}"  "${file%.bak}"
     done
   else # ファイル名の末尾に.bakをつけた複製を作成する
     for file in $@; do
@@ -224,21 +224,21 @@ function crypt() {
       printf '\rpassword:'
       read password
     done
-    openssl enc -d -aes-256-cbc -salt -k ${password} -in $1 -out ${1%.enc}
+    openssl enc -d -aes-256-cbc -salt -k "${password}" -in $1 -out "${1%.enc}"
     command rm $1
   else
-    local password1
-    while [[ -z ${password1} ]]; do
+    local password_1
+    while [[ -z ${password_1} ]]; do
       printf '\rpassword:'
-      read password1
+      read password_1
     done
-    local password2
-    while [[ -z ${password2} ]]; do
+    local password_2
+    while [[ -z ${password_2} ]]; do
       printf '\rretype password:'
-      read password2
+      read password_2
     done
-    [[ ${password1} != ${password2} ]] && tput dl1 && echo '\rfailed' && return 1
-    openssl enc -e -aes-256-cbc -salt -k ${password1} -in $1 -out $1.enc
+    [[ ${password_1} != ${password_2} ]] && tput dl1 && echo '\rfailed' && return 1
+    openssl enc -e -aes-256-cbc -salt -k "${password_1}" -in $1 -out "$1.enc"
     command rm $1
   fi
   # tput dl1
@@ -255,10 +255,10 @@ function md() { # マルチディスプレイ
   elif [[ $1 == 'home' ]]; then
     xrandr --output HDMI1 --left-of eDP1 --mode 1366x768
   elif [[ $1 == 'off' ]]; then
-    xrandr --output $(xrandr | grep ' connected' | grep -v 'primary' | cut -d' ' -f1) --off
+    xrandr --output "$(xrandr | grep ' connected' | grep -v 'primary' | cut -d' ' -f1)" --off
   elif [[ $1 == 'select' ]]; then
     type fzf > /dev/null 2>&1 || return 1
-    xrandr --output ${2:-VGA1} --left-of eDP1 --mode $(xrandr | sed -n '/.* connected [^p].*/,/^[^ ]/p' | sed '1d;$d;s/  */ /g' | cut -d' ' -f2 | fzf)
+    xrandr --output ${2:-VGA1} --left-of eDP1 --mode "$(xrandr | sed -n '/.* connected [^p].*/,/^[^ ]/p' | sed '1d;$d;s/  */ /g' | cut -d' ' -f2 | fzf)"
   fi
 }
 function _md() {
@@ -273,21 +273,17 @@ compdef _md md
 
 function rs() { # ファイル名から空白を除去
   for file in $@; do
-    [[ -e ${file} && ${file} =~ ' ' ]] && mv ${file} $(echo ${file} | sed 's/ //g')
+    [[ -e ${file} && ${file} =~ ' ' ]] && mv "${file}" "$(echo ${file} | sed 's/ //g')"
   done
 }
 
 function rn() { # ファイル名を正規表現で変更する。perl製のrenameような。
   for i in {2..$#}; do
-    local new=$(echo ${argv[${i}]} | sed ${1})
-    [[ -e ${argv[${i}]} && ${argv[${i}]} != ${new} ]] && mv ${argv[${i}]} ${new}
+    local new=$(echo ${argv[${i}]} | sed $1)
+    [[ -e ${argv[${i}]} && ${argv[${i}]} != ${new} ]] && mv "${argv[${i}]}" "${new}"
   done
 }
 
 function cc() { # ファイルの文字数を数える
   [[ -s $1 ]] && cat $1 | sed ':l;N;$!bl;s/\n//g' | wc -m
-}
-
-function rp() {
-  echo 'pi@192.168.3.16'
 }

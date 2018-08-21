@@ -19,23 +19,23 @@ function jwm() { # dockerでjwmを動かす。
   local docker='/home/docker'
 
   docker run $@ \
-    -v ${workdir}/data:${docker}/data \
-    -v ${workdir}/epiphany:${docker}/.config/epiphany \
-    -v ${workdir}/google-chrome:${docker}/.config/google-chrome \
+    -v "${workdir}/data:${docker}/data" \
+    -v "${workdir}/epiphany:${docker}/.config/epiphany" \
+    -v "${workdir}/google-chrome:${docker}/.config/google-chrome" \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v /run/user/${UID}/pulse/native:/tmp/pulse/native \
-    -v ${HOME}/.config/pulse/cookie:/tmp/pulse/cookie \
-    -it --rm ${USER}/ubuntu-jwm > /dev/null 2>&1
+    -v "/run/user/${UID}/pulse/native:/tmp/pulse/native" \
+    -v "${HOME}/.config/pulse/cookie:/tmp/pulse/cookie" \
+    -it --rm "${USER}/ubuntu-jwm" > /dev/null 2>&1
 
   [[ -z ${exists} ]] && pkill Xephyr > /dev/null 2>&1
 }
 
 function drm() { # dockerのコンテナを選択して破棄
   is_docker_running && type fzf > /dev/null 2>&1 && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
-  [[ -n ${container} ]] && echo ${container} | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
+  [[ -n ${container} ]] && echo "${container}" | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
 }
 
 function drmi() { # dockerのimageを選択して破棄
   is_docker_running && type fzf > /dev/null 2>&1 && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
-  [[ -n ${image} ]] && echo ${image} | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
+  [[ -n ${image} ]] && echo "${image}" | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
 }

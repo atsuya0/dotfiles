@@ -5,7 +5,7 @@ function bash() { # bash終了時に.bash_historyを削除する。
 }
 
 function ls() { # 何も表示されないならば隠しファイルの表示を試みる。
-  [[ $(command ls $@) == "" ]] \
+  [[ $(command ls $@) == '' ]] \
     && command ls -FA --color=auto $@ \
     || command ls -F --color=auto $@
 }
@@ -15,7 +15,7 @@ function cp() {
   # 1回目の選択でコピー元を選択する。複数選択可。
   # 2回目でコピー先を選択する。ヘッダにコピー元のファイル・ディレクトリが表示される。
 
-  [[ $# -ne 0 ]] && command cp -i $@ && return
+  [[ $# -ne 0 ]] && command cp -iv $@ && return
 
   local dir
   for dir in ${ignore_absolute_pathes}; do
@@ -37,11 +37,11 @@ function cp() {
     --preview='tree -c {} | head -200' --preview-window='right:hidden' \
     --bind='ctrl-v:toggle-preview')
 
-  [[ -n ${destination} ]] && command cp -ri ${source} -t ${destination}
+  [[ -n ${destination} ]] && command cp -riv "${source}" -t "${destination}"
 }
 
 function mv() { # cp と同じ
-  [[ $# -ne 0 ]] && command mv -i $@ && return
+  [[ $# -ne 0 ]] && command mv -iv $@ && return
 
   local dir
   for dir in ${ignore_absolute_pathes}; do
@@ -61,7 +61,7 @@ function mv() { # cp と同じ
     --preview='tree -c {} | head -200' --preview-window='right:hidden' \
     --bind='ctrl-v:toggle-preview')
 
-  [[ -n ${destination} ]] && command mv -i ${source} -t ${destination}
+  [[ -n ${destination} ]] && command mv -iv "${source}" -t "${destination}"
 }
 
 function mount() {
@@ -71,8 +71,8 @@ function mount() {
   [[ $# -eq 0 ]] && command mount && return
 
   local mnt="${HOME}/mnt"
-  [[ -e ${mnt} ]] || mkdir ${mnt}
-  [[ $# -eq 1 ]] && set $1 ${mnt}
+  [[ -e ${mnt} ]] || mkdir "${mnt}"
+  [[ $# -eq 1 ]] && set $1 "${mnt}"
 
   [[ $(sudo file -s $1 | cut -d' ' -f2) == 'DOS/MBR' ]] \
     && sudo \mount -o uid=$(id -u),gid=$(id -g) $1 $2 \
@@ -82,8 +82,8 @@ function mount() {
 function umount() {
   [[ $# -eq 0 ]] \
     && local mnt="${HOME}/mnt" \
-    && sudo \umount ${mnt} \
-    && rmdir ${mnt} \
+    && sudo \umount "${mnt}" \
+    && rmdir "${mnt}" \
     && return
   command umount $@
 }
@@ -127,9 +127,9 @@ function vim(){ # vimで開くファイルをfilterで選択する。
 
     local file=$(eval find ${arg} -type f -print | cut -c3- \
       | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-    [[ -n ${file} ]] && command ${editor} ${file}
+    [[ -n ${file} ]] && command "${editor}" "${file}"
   else
-    command ${editor} $@
+    command "${editor}" $@
   fi
 }
 
@@ -140,7 +140,7 @@ function urxvt() { # 簡単にフォントサイズを指定して起動する�
 }
 
 function ranger() { # rangerのサブシェルでネストしないようにする。
-  [[ -z $RANGER_LEVEL ]] && command ranger $@ || exit
+  [[ -z ${RANGER_LEVEL} ]] && command ranger $@ || exit
 }
 
 function w3m(){
@@ -154,7 +154,7 @@ function w3m(){
     done
     parameter="http://www.google.co.jp/${parameter}&ie=UTF-8"
 
-    command w3m ${parameter}
+    command w3m "${parameter}"
   } || command w3m $@
 }
 
@@ -163,4 +163,3 @@ function scrot() { # スクリーンショット
     && command scrot -q 100 '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/Content/pictures/screenshot/ ]] && mv $f ~/Content/pictures/screenshot/' \
     || command scrot $@
 }
-

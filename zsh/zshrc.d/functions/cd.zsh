@@ -37,7 +37,7 @@ alias dw='down'
 
 function _save_pwd() { # 移動履歴をファイルに記録する。~, / は記録しない。
   typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
-  [[ ${#pwd} -gt 2 ]] && echo ${pwd} >> ${_CD_FILE}
+  [[ ${#pwd} -gt 2 ]] && echo "${pwd}" >> "${_CD_FILE}"
 }
 add-zsh-hook chpwd _save_pwd
 
@@ -45,16 +45,16 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
   local dir
 
   case $1 in
-    '-l' ) cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' ;; # 記録一覧
-    '--delete-all' ) : > ${_CD_FILE} ;; # 記録の全消去
+    '-l' ) cat "${_CD_FILE}" | sort | uniq -c | sort -r | tr -s ' ' ;; # 記録一覧
+    '--delete-all' ) : > "${_CD_FILE}" ;; # 記録の全消去
     '-d' ) # 記録の消去
       type fzf > /dev/null 2>&1 || return 1
 
       local opt
       [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
-      cat ${_CD_FILE} \
+      cat "${_CD_FILE}" \
         | fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' \
-        | xargs -I{} sed -i ${opt} 's@^{}$@@;/^$/d' ${_CD_FILE}
+        | xargs -I{} sed -i "${opt}" 's@^{}$@@;/^$/d' "${_CD_FILE}"
     ;;
     * ) # 記録しているディレクトリを表示 使用頻度順
       if [[ $# -eq 0 ]]; then
@@ -63,7 +63,7 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
           | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
         [[ -z ${dir} ]] && return 1
       fi
-      eval cd ${dir:-$1}
+      eval cd "${dir:-$1}"
     ;;
   esac
 }
@@ -82,10 +82,10 @@ function _cdh() {
 compdef _cdh cdh
 
 function second() {
-  local second=${GOPATH}/bin/second
+  local second="${GOPATH}/bin/second"
   [[ $1 == 'change' ]] \
-    && cd $(${second} $@ || echo '.') \
-    || ${second} $@
+    && cd "$(${second} $@ || echo '.')" \
+    || "${second}" $@
 }
 
 function _second() {
@@ -111,9 +111,9 @@ function _second() {
     '*:: :->args' \
     && ret=0
 
-  case ${state} in
+  case "${state}" in
     (args)
-      case ${words[1]} in
+      case "${words[1]}" in
         (register)
           _arguments \
             '(-n --name)'{-n,--name}'[Second name]' \

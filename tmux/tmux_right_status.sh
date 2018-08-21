@@ -36,12 +36,12 @@ date="#[fg=blue,bg=black]${sep}#[fg=black,bg=blue] $(date +%H:%M) #[default]"
 
 # バッテリー残量
 batteryColor=#[fg=black,bg=blue]${sep}#[default]
-if [[ $(cat /sys/class/power_supply/ADP1/online) = "1" ]];then
+if [[ $(cat /sys/class/power_supply/ADP1/online) == '1' ]];then
   declare -a char=('◜' '◝' '◟' '◞')
   i=$(expr $(date +%S) % 4)
   batteryColor="${batteryColor}#[fg=blue,bg=black] ${char[i]} #[default]"
 fi
-if [[ -e /sys/class/power_supply/BAT1 ]];then
+if [[ -e '/sys/class/power_supply/BAT1' ]];then
   battery=$(cat /sys/class/power_supply/BAT1/capacity)
   if [[ ${battery} -gt 79 ]];then
     batteryColor="${batteryColor}#[fg=#08d137,bg=black]"
@@ -53,7 +53,7 @@ if [[ -e /sys/class/power_supply/BAT1 ]];then
   batteryColor="${batteryColor} ${battery}% #[default]"
 fi
 
-if [[ $1 = 'short' ]];then
+if [[ $1 == 'short' ]];then
   echo "${memory}${la}"
 else
   echo "${memory}${la}${signal}${volMeter}${date}${batteryColor}"

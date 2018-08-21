@@ -1,9 +1,9 @@
-function _dir_prompt() { # カレントディレクトリのpathを画面の横幅に応じて短縮する。
+function _path_prompt() { # カレントディレクトリのpathを画面の横幅に応じて短縮する。
   typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
   local num
   # 表示するディレクトリ名の文字数を決める
-  let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c "test 1 -gt {} && echo 1 || echo {}")/$(echo ${pwd} | grep -o '[~/]' | wc -l)
-  [[ ${num} -eq 0 ]] && num=1
+  let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c 'test 1 -gt {} && echo 1 || echo {}')/$(echo ${pwd} | grep -o '[~/]' | wc -l)
+  [[ 0 -eq ${num} ]] && num=1
 
   # CUI/neovim と GUI で表示を変える
   [[ -z ${WINDOWID} || $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) == 'nvim' ]] \
@@ -11,7 +11,7 @@ function _dir_prompt() { # カレントディレクトリのpathを画面の横�
     || PROMPT="%{${fg[blue]}${bg[black]}%}%n%{${fg[magenta]}${bg[black]}%}@%{${fg[blue]}${bg[black]}%}%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
 }
 autoload -Uz add-zsh-hook
-add-zsh-hook precmd _dir_prompt
+add-zsh-hook precmd _path_prompt
 
 function _git_prompt() {
   RPROMPT=''
@@ -39,14 +39,12 @@ function _git_prompt() {
     fi
   done
   local git_status
-  [[ ${uncommited} -ne 0 ]] && git_status="%{${fg[yellow]}%}!${uncommited} "
-  [[ ${unadded} -ne 0 ]] && git_status="${git_status}%{${fg[red]}%}+${unadded} "
-  [[ ${untracked} -ne 0 ]] && git_status="${git_status}%{${fg[green]}%}?${untracked} "
+  [[ 0 -ne ${uncommited} ]] && git_status="%{${fg[yellow]}%}!${uncommited} "
+  [[ 0 -ne ${unadded} ]] && git_status="${git_status}%{${fg[red]}%}+${unadded} "
+  [[ 0 -ne ${untracked} ]] && git_status="${git_status}%{${fg[green]}%}?${untracked} "
   RPROMPT="${git_status}${branch}"
 }
 add-zsh-hook precmd _git_prompt
 
-# rangerでshellを起動したときにPROMPTの先頭にR_を付ける
-[[ -n ${RANGER_LEVEL} ]] && PROMPT="R_${PROMPT}"
 # コマンド実行後にRPROMPTを非表示
 setopt transient_rprompt
