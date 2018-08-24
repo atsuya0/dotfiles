@@ -14,40 +14,6 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
   [[ -s ${completion} ]] && source "${completion}"
 }
 
-# _fzf_cd_widget(), vim() で用いる。無視するディレクトリを絶対パスで指定する。
-typeset -r ignore_absolute_pathes=(
-  ${HOME}/Downloads
-  ${HOME}/.cache/dein/repos
-  ${HOME}/.cache/dein/.cache
-  ${HOME}/.cache/pip
-  ${HOME}/.cache/jedi
-  ${HOME}/.cache/yarn
-  ${HOME}/.cache/go-build
-  ${HOME}/.cache/fontconfig
-  ${HOME}/.cache/neosnippet
-  ${HOME}/.cache/typescript/2.6
-  ${HOME}/.cache/chromium
-  ${HOME}/.config/chromium
-  ${HOME}/.config/pulse
-  ${HOME}/.config/VirtualBox
-  ${HOME}/.config/fcitx
-  ${HOME}/.config/Code
-  ${HOME}/.config/undo
-  ${HOME}/.node-gyp
-  ${HOME}/.electron-gyp
-  ${HOME}/.rustup
-  ${HOME}/.cargo
-  ${HOME}/.vscode/extensions
-  ${HOME}/.WebStorm2018.1 
-  ${HOME}/.npm/_cacache
-  ${HOME}/.nvm/versions
-  ${HOME}/.Trash
-  ${GOPATH}/pkg
-  ${GOPATH}/src/gopkg.in
-  ${GOPATH}/src/github.com
-  ${GOPATH}/src/golang.org
-)
-
 function _fzf_cd_widget() {
   # ALT_Cにbindされてるwidgetを上書きしている。
   # 現階層以下のディレクトリからfzfを使って選び移動する。

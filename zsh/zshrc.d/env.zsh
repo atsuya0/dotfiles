@@ -1,4 +1,4 @@
-readonly path=(
+path=(
   "${GOPATH}/bin"
   "$(ruby -e 'print Gem.user_dir')/bin"
   /usr/bin

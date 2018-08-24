@@ -1,8 +1,12 @@
-source "${ZDOTDIR}/zshrc.d/init.zsh"
-source "${ZDOTDIR}/zshrc.d/env.zsh"
-# =========================================================================
-# その他
-# =========================================================================
+() { # 初期設定
+  typeset -r init_file="${ZDOTDIR}/zshrc.d/init.zsh"
+  [[ -s ${init_file} ]] && source ${init_file}
+}
+() { # 環境変数の設定
+  typeset -r env_file="${ZDOTDIR}/zshrc.d/env.zsh"
+  [[ -s ${env_file} ]] && source ${env_file}
+}
+
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>' # 区切りとして扱わない文字。
 # 実行したプロセスの消費時間が3秒以上かかったら、消費時間の統計情報を表示する。
 REPORTTIME=3
@@ -23,111 +27,74 @@ setopt noclobber
   [[ -s ${highlighting} ]] && source ${highlighting}
 }
 
+# _fzf_cd_widget(), vim() で用いる。無視するディレクトリを絶対パスで指定する。
+typeset -r ignore_absolute_pathes=(
+  ${HOME}/Downloads
+  ${HOME}/.cache/dein/repos
+  ${HOME}/.cache/dein/.cache
+  ${HOME}/.cache/pip
+  ${HOME}/.cache/jedi
+  ${HOME}/.cache/yarn
+  ${HOME}/.cache/go-build
+  ${HOME}/.cache/fontconfig
+  ${HOME}/.cache/neosnippet
+  ${HOME}/.cache/typescript/2.6
+  ${HOME}/.cache/chromium
+  ${HOME}/.config/chromium
+  ${HOME}/.config/pulse
+  ${HOME}/.config/VirtualBox
+  ${HOME}/.config/fcitx
+  ${HOME}/.config/Code
+  ${HOME}/.config/undo
+  ${HOME}/.node-gyp
+  ${HOME}/.electron-gyp
+  ${HOME}/.rustup
+  ${HOME}/.cargo
+  ${HOME}/.vscode/extensions
+  ${HOME}/.WebStorm2018.1 
+  ${HOME}/.npm/_cacache
+  ${HOME}/.nvm/versions
+  ${HOME}/.Trash
+  ${GOPATH}/pkg
+  ${GOPATH}/src/gopkg.in
+  ${GOPATH}/src/github.com
+  ${GOPATH}/src/golang.org
+)
+
 autoload -Uz colors && colors
-source "${ZDOTDIR}/zshrc.d/prompt.zsh"
-
-# =========================================================================
-# tmuxの左のステータスバー
-# =========================================================================
-function _tmux_status() {
-  # tmuxのSession番号を表示。commandがzshのときにはmodeも表示。
-
-  [[ -z ${TMUX} ]] && return
-  typeset -r sep=''
-  [[ ${KEYMAP} == 'vicmd' ]] \
-  && typeset -r mode="#[fg=black,bg=green]#{?#{==:#{pane_current_command},zsh}, -- NORM -- #[default]#[fg=green]#[bg=blue]#{?client_prefix,#[bg=yellow],}${sep},}" \
-  || typeset -r mode="#[fg=blue,bg=black]#{?#{==:#{pane_current_command},zsh}, -- INS -- #[default]#[fg=black]#[bg=blue]#{?client_prefix,#[bg=yellow],}${sep},}"
-
-  tmux set -g status-left "${mode}#[fg=black,bg=blue]#{?client_prefix,#[bg=yellow],} S/#S #[default]#[fg=blue]#{?client_prefix,#[fg=yellow],}${sep}"
+() { # 左右promptの設定
+  typeset -r prompt_file="${ZDOTDIR}/zshrc.d/prompt.zsh"
+  [[ -s ${prompt_file} ]] && source ${prompt_file}
 }
-zle -N zle-line-init _tmux_status
-zle -N zle-keymap-select _tmux_status
-
-# =========================================================================
-# ディレクトリ移動
-# =========================================================================
-# cdでディレクトリ名を指定するだけで移動できるpath
-# cdpath=( ${HOME} )
-# cdをpushdにする
-setopt auto_pushd
-# pushdのスタックを重複しない
-setopt pushd_ignore_dups
-
-# =========================================================================
-# 補完
-# =========================================================================
-autoload -Uz compinit && compinit
-# 補完時にハイライト tab,C-n,C-f,C-p,C-b
-zstyle ':completion:*:default' menu select
-# 補完で大文字にも一致
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-# 区切り文字
-zstyle ':completion:*' list-separator '->'
-# 上記を有効
-zstyle ':completion:*:manuals' separate-sections true
-# 補完候補に色を付ける
-zstyle ':completion:*' list-colors eval $(dircolors -b)
-# 説明を緑の太字で表示
-zstyle ':completion:*' format '%B%F{green}%d%f%b'
-# 補完しないファイル
-zstyle ':completion:*:*files' ignored-patterns '*mp3' '.mp4'
-# グループ名を表示
-#zstyle ':completion:*' group-name ''
-# キャッシュ
-zstyle ':completion:*' use-cache yes
-# 詳細
-zstyle ':completion:*' verbose yes
-# 補完結果をできるだけ詰める
-setopt list_packed
-# カッコの対応などを自動的に補完
-setopt auto_param_keys
-# ディレクトリ名の補完で末尾の/を自動的に付加し次の補完に備える
-setopt auto_param_slash
-# ファイル名の展開でディレクトリに一致した場合末尾に/を付加する
-setopt mark_dirs
-# カーソル位置で補完する。
-setopt complete_in_word
-# globを展開しないで候補の一覧から補完する。
-setopt glob_complete
-# 辞書順ではなく数字順に並べる。
-setopt numeric_glob_sort
-# --prefix=~/localというように「=」の後でも
-# 「~」や「=コマンド」などのファイル名展開を行う。
-setopt magic_equal_subst
-
-# =========================================================================
-# 履歴
-# =========================================================================
-# 直前と同じコマンドを記録しない
-setopt hist_ignore_dups
-# コマンド履歴を重複させない
-setopt hist_ignore_all_dups
-# spaceで始まるコマンドを記録しない
-setopt hist_ignore_space
-# spaceを詰めて記録
-setopt hist_reduce_blanks
-# 他のターミナルとコマンド履歴を共有
-setopt share_history
-# コマンド履歴に時間を追加
-setopt extended_history
-# historyコマンドを履歴に登録しない
-setopt hist_no_store
-# 補完時に履歴を自動展開
-setopt hist_expand
-# 対話検索
-setopt inc_append_history
-# 履歴の保存場所
-[[ -n ${ZDOTDIR} ]] && HISTFILE="${ZDOTDIR}/.zsh_history" || HISTFILE="${HOME}/.zsh_history"
-HISTSIZE=100000 # 履歴をメモリに保存する数
-SAVEHIST=100000 # 履歴をファイルに保存する数
-# 入力に対して履歴に一致したコマンドを表示
-autoload -Uz history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-
-source "${ZDOTDIR}/zshrc.d/keybind.zsh"
-source "${ZDOTDIR}/zshrc.d/fzf.zsh"
-source "${ZDOTDIR}/zshrc.d/nvm.zsh"
-source "${ZDOTDIR}/zshrc.d/functions.zsh"
-source "${ZDOTDIR}/zshrc.d/alias.zsh"
-source "${ZDOTDIR}/zshrc.d/history.zsh"
+() { # tmuxの左のstatus_bar
+  typeset -r tmux_file="${ZDOTDIR}/zshrc.d/tmux.zsh"
+  [[ -s ${tmux_file} ]] && source ${tmux_file}
+}
+() { # 補完
+  typeset -r completion_file="${ZDOTDIR}/zshrc.d/completion.zsh"
+  [[ -s ${completion_file} ]] && source ${completion_file}
+}
+() { # 履歴
+  typeset -r history_file="${ZDOTDIR}/zshrc.d/history.zsh"
+  [[ -s ${history_file} ]] && source ${history_file}
+}
+() { # vi(insert-mode: emacs)
+  typeset -r keybind_file="${ZDOTDIR}/zshrc.d/keybind.zsh"
+  [[ -s ${keybind_file} ]] && source ${keybind_file}
+}
+() { # A command-line fuzzy finder(filter, 選択的interface)の設定
+  typeset -r fzf_file="${ZDOTDIR}/zshrc.d/fzf.zsh"
+  [[ -s ${fzf_file} ]] && source ${fzf_file}
+}
+() { # nvm(Node version manager)の設定
+  typeset -r nvm_file="${ZDOTDIR}/zshrc.d/nvm.zsh"
+  [[ -s ${nvm_file} ]] && source ${nvm_file}
+}
+() { # 関数の定義
+  typeset -r functions_file="${ZDOTDIR}/zshrc.d/functions.zsh"
+  [[ -s ${functions_file} ]] && source ${functions_file}
+}
+() { # aliasの定義
+  typeset -r aliases_file="${ZDOTDIR}/zshrc.d/aliases.zsh"
+  [[ -s ${aliases_file} ]] && source ${aliases_file}
+}

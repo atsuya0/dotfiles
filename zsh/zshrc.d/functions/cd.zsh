@@ -1,8 +1,7 @@
+# 親階層に移動する
+# up 2    -> cd ../..
+# up      -> filterを使って選択する
 function up() {
-  # 親階層に移動する
-  # up 2    -> cd ../..
-  # up      -> filterを使って選択する
-
   local str
 
   if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
@@ -10,7 +9,7 @@ function up() {
       | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   elif expr ${1-dummy} + 1 > /dev/null 2>&1; then
     str=$(seq -s: $1 | sed 's/://g;s@.@\.\./@g')
-  elif [[ -d $1 ]]; then
+  else
     str=$1
   fi
 
