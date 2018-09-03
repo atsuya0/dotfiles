@@ -12,7 +12,5 @@ export TERM='xterm-256color'
 export EDITOR='nvim' # lessでvを押すなどに使う
 export SUDO_EDITOR='nvim -Zu NORC' # sudoedit file_name
 export XDG_CONFIG_HOME="${HOME}/.config"
-export GOPATH="${HOME}/workspace/go"
 
-export TRASH_PATH="${HOME}/.Trash"
-export SECOND_CMD_PATH="${HOME}/.second"
+export GOPATH="${HOME}/workspace/go"

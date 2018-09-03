@@ -2,44 +2,59 @@
 
 # 区切り文字
 sep=''
+# 色
+black='#[fg=black,bg=blue]'
+blue='#[fg=blue,bg=black]'
+def='#[default]'
 
 # メモリ使用量
-memory="#[fg=blue]${sep}#[fg=black,bg=blue] $(free -h | sed '/^Mem:/!d;s/  */ /g' | cut -d' ' -f3) #[default]"
+memory_cmd=$(free -h | sed '/^Mem:/!d;s/  */ /g' | cut -d' ' -f3)
+memory="${blue}${sep}${black} ${memory_cmd} ${def}"
 
 # ロードアベレージ
-la="#[fg=black,bg=blue]${sep}#[default]#[fg=blue,bg=black] $(uptime | sed -E 's/.*load average: ([0-9]\.[0-9][0-9]).*/\1/g')/$(cat /proc/cpuinfo | grep processor | wc -l) #[default]"
+la_cmd=$(uptime | sed -E 's/.*load average: ([0-9]\.[0-9][0-9]).*/\1/g')
+cpu_cmd=$(cat /proc/cpuinfo | grep processor | wc -l)
+la="${black}${sep}${def}${blue} ${la_cmd}/${cpu_cmd} ${def}"
 
 # ネットワーク
-[[ $(iw dev wlp4s0 link) != 'Not connected.' ]] && signal="-$(iw dev wlp4s0 link | grep signal | grep -o '[0-9]*')dBm" || signal='---'
-signal="#[fg=blue,bg=black]${sep}#[default]#[fg=black,bg=blue] ${signal} #[default]"
+[[ $(iw dev wlp4s0 link) != 'Not connected.' ]] \
+  && signal="-$(iw dev wlp4s0 link | grep signal | grep -o '[0-9]*')dBm" \
+  || signal='---'
+signal="${blue}${sep}${def}${black} ${signal} ${def}"
 
 # 音量
 if type pactl > /dev/null 2>&1;then
-  [[ -n $(pactl list sinks | grep 'RUNNING') ]] && cmd="grep -A 10 'RUNNING'" || cmd='tee'
-  [[ $(pactl list sinks | eval ${cmd} | grep 'Mute:' | cut -d' ' -f2) == 'no' ]] && volMeter='#[fg=blue,bg=black] ' || volMeter='#[fg=colour237,bg=black] '
-  volume=$(expr $(pactl list sinks | eval ${cmd} | grep -o '[0-9]*%' | head -1 | sed 's/%//g') / 5)
-  volMeter="${volMeter}["
-  for i in $(seq 1 ${volume});do
-    volMeter="${volMeter}■"
-  done
-  for i in $(seq ${volume} 20);do
-    volMeter="${volMeter} "
-  done
-  volMeter="${volMeter}] "
+  [[ -n $(pactl list sinks | grep 'RUNNING') ]] \
+    && cmd="grep -A 10 'RUNNING'" \
+    || cmd='tee'
+  mute=$(pactl list sinks | eval ${cmd} | grep 'Mute:' | cut -d' ' -f2)
+  [[ ${mute} == 'no' ]] \
+    && volMeter="${blue} " \
+    || volMeter='#[fg=colour237,bg=black] '
+  volume=$(
+    pactl list sinks \
+    | eval ${cmd} \
+    | grep -o '[0-9]*%' \
+    | head -1 \
+    | sed 's/%//g')
+  blocks=$(seq -f '%02g' -s '' 1 5 ${volume} | sed 's/.\{2\}/■/g')
+  # spaces=$(seq -f '%02g' -s '' ${volume} 5 95 | sed 's/.\{2\}/ /g')
+  spaces=$(seq -s ' ' ${volume} 5 100 | tr -d '[:digit:]')
+  volMeter="${volMeter}[${blocks}${spaces}] "
 else
-  volMeter='#[fg=blue,bg=black] × #[default]'
+  volMeter="${blue} × ${def}"
 fi
-volMeter="#[fg=black,bg=blue]${sep}#[default]${volMeter}#[default]"
+volMeter="${black}${sep}${def}${volMeter}${def}"
 
 # 時刻
-date="#[fg=blue,bg=black]${sep}#[fg=black,bg=blue] $(date +%H:%M) #[default]"
+date="${blue}${sep}${black} $(date +%H:%M) ${def}"
 
 # バッテリー残量
-batteryColor=#[fg=black,bg=blue]${sep}#[default]
+batteryColor=${black}${sep}${def}
 if [[ $(cat /sys/class/power_supply/ADP1/online) == '1' ]];then
   declare -a char=('◜' '◝' '◟' '◞')
   i=$(expr $(date +%S) % 4)
-  batteryColor="${batteryColor}#[fg=blue,bg=black] ${char[i]} #[default]"
+  batteryColor="${batteryColor}${blue} ${char[i]} ${def}"
 fi
 if [[ -e '/sys/class/power_supply/BAT1' ]];then
   battery=$(cat /sys/class/power_supply/BAT1/capacity)
@@ -50,7 +65,7 @@ if [[ -e '/sys/class/power_supply/BAT1' ]];then
   else
     batteryColor="${batteryColor}#[fg=#f73525,bg=black]"
   fi
-  batteryColor="${batteryColor} ${battery}% #[default]"
+  batteryColor="${batteryColor} ${battery}% ${def}"
 fi
 
 if [[ $1 == 'short' ]];then

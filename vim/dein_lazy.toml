@@ -3,15 +3,15 @@
 # on_ft = 'javascript'
 # on_i = 1
 
-[[plugins]]
-repo = 'billyvg/tigris.nvim'
-if = 'has("nvim")'
-on_ft = ['javascript', 'javascript.jsx']
-hook_add = '''
-  let g:tigris#enabled = 1
-  let g:tigris#on_the_fly_enabled = 1
-  let g:tigris#delay = 300
-'''
+# [[plugins]]
+# repo = 'billyvg/tigris.nvim'
+# if = 'has("nvim")'
+# on_ft = ['javascript', 'javascript.jsx']
+# hook_add = '''
+#   let g:tigris#enabled = 1
+#   let g:tigris#on_the_fly_enabled = 1
+#   let g:tigris#delay = 300
+# '''
 
 [[plugins]] # completion for python
 repo = 'zchee/deoplete-jedi'

@@ -8,6 +8,7 @@ function up() {
     str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^/]*$/!ba;d' \
       | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   elif expr ${1-dummy} + 1 > /dev/null 2>&1; then
+    # str=$(seq -s '' $1 | sed 's@.@\.\./@g')
     str=$(seq -s: $1 | sed 's/://g;s@.@\.\./@g')
   else
     str=$1
@@ -79,67 +80,3 @@ function _cdh() {
     '1: :visited'
 }
 compdef _cdh cdh
-
-function second() {
-  local second="${GOPATH}/bin/second"
-  [[ $1 == 'change' ]] \
-    && cd "$(${second} $@ || echo '.')" \
-    || "${second}" $@
-}
-
-function _second() {
-  local ret=1
-
-  function sub_commands() {
-    local -a _c
-
-    _c=(
-      'change' \
-      'register' \
-      'list' \
-      'delete' \
-      'init'
-    )
-
-    _describe -t commands Commands _c
-  }
-
-  _arguments -C \
-    '(-h --help)'{-h,--help}'[show help]' \
-    '1: :sub_commands' \
-    '*:: :->args' \
-    && ret=0
-
-  case "${state}" in
-    (args)
-      case "${words[1]}" in
-        (register)
-          _arguments \
-            '(-n --name)'{-n,--name}'[Second name]' \
-            '(-p --path)'{-p,--path}'[Target path]'
-        ;;
-        (change)
-          _values \
-            'Second names' \
-            $(second list --name)
-        ;;
-        (list)
-          _arguments \
-            '(-n --name)'{-n,--name}'[Second name]' \
-            '(-p --path)'{-p,--path}'[Target path]'
-        ;;
-        (delete)
-          _values \
-            'Second names' \
-            $(second list --name)
-        ;;
-        (init)
-        ;;
-      esac
-  esac
-
-  return ret
-}
-compdef _second second
-
-alias sc='second'

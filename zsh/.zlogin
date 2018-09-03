@@ -1,3 +1,4 @@
+return
 [[ -n $TMUX ]] && return
 
 

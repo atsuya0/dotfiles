@@ -2,6 +2,8 @@ source "${ZDOTDIR}/zshrc.d/functions/cd.zsh"
 source "${ZDOTDIR}/zshrc.d/functions/docker.zsh"
 source "${ZDOTDIR}/zshrc.d/functions/git.zsh"
 source "${ZDOTDIR}/zshrc.d/functions/wrapper.zsh"
+source "${ZDOTDIR}/zshrc.d/functions/second.zsh"
+source "${ZDOTDIR}/zshrc.d/functions/trash.zsh"
 
 function vol() {
   # vol up    -> 音量を5%上げる
@@ -61,93 +63,6 @@ function dtr() { # 電源を入れてからのネットワークのデータ転�
     '{if(match($0, /wlp4s0/)!=0) print "Wifi        : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"} \
     {if(match($0, /bnep0/)!=0) print "Bluetooth Tethering : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"}'
 }
-
-function trash() {
-  typeset -r trash="${HOME}/.Trash"
-  local fzf_option="--preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
-
-  ! type fzf > /dev/null 2>&1 && [[ -e "${GOPATH}/bin/trash" ]] && "${GOPATH}/bin/trash" $@
-
-  case $1 in
-    'move')
-      [[ -z $2 ]] && set 'move' $(command ls -A ./ | sed "/^${trash##*/}$/"d \
-        | eval "fzf --header='move files in the current directory to the trash' \
-        --preview=\"file {} | sed 's/^.*: //'; du -hs {} | cut -f1; less {}\" ${fzf_option}") \
-        > /dev/null && [[ -z $2 ]] && return
-    ;;
-    'restore')
-      [[ -z $2 ]] && set 'restore' $(command ls -rA ${trash} \
-        | eval "fzf --header='move files in the trash to the current directory' \
-        --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" ${fzf_option}") \
-        > /dev/null && [[ -z $2 ]] && return
-    ;;
-    'delete')
-      [[ -z $2 ]] && set 'delete' $(command ls -rA ${trash} \
-        | eval "fzf --header='delete files in the trash' \
-        --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" ${fzf_option}") \
-        > /dev/null && [[ -z $2 ]] && return
-    ;;
-    *)
-    ;;
-  esac
-
-  [[ -e ${GOPATH}/bin/trash ]] && "${GOPATH}/bin/trash" $@
-}
-
-function _trash() {
-  typeset -r trash="${HOME}/.Trash"
-  local ret=1
-
-  function sub_commands() {
-    local -a _c
-
-    _c=(
-      'move' \
-      'restore' \
-      'list' \
-      'size' \
-      'delete'
-    )
-
-    _describe -t commands Commands _c
-  }
-
-  _arguments -C \
-    '(-h --help)'{-h,--help}'[show help]' \
-    '1: :sub_commands' \
-    '*:: :->args' \
-    && ret=0
-
-  case ${state} in
-    (args)
-      case "${words[1]}" in
-        (move)
-          _files
-        ;;
-        (restore)
-          _values \
-            'files in trash' \
-            $(command ls -Ar ${trash})
-        ;;
-        (list)
-          _arguments \
-            '(-d --days)'{-d,--days}'[How many days ago]' \
-            '(-r --reverse)'{-r,--reverse}'[display in reverse order]'
-        ;;
-        (size)
-        ;;
-        (delete)
-          _values \
-            'files in trash' \
-            $(command ls -Ar ${trash})
-        ;;
-      esac
-  esac
-
-  return ret
-}
-compdef _trash trash
-alias trs='trash'
 
 function interactive() { # 引数に指定したコマンドを実行するのに確認をとる。
   local input
