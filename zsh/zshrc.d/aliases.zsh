@@ -1,6 +1,6 @@
 alias la='ls -A --color=auto'
 alias ll='ls -FAlht --color=auto'
-alias grep='grep -i --color=auto'
+alias grep='grep --color=auto'
 # alias mv='mv -i' alias cp='cp -i'
 alias ln='ln -i'
 alias rm='echo "zsh: command not found: rm"'

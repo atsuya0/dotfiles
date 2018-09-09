@@ -10,7 +10,7 @@ function init_nvm() { # nvm(Node.jsのversion管理)の初期設定を読み込�
   unset -f $@
   local nvm_dir='/usr/share/nvm'
   [[ -e "${nvm_dir}/nvm.sh" ]] && source "${nvm_dir}/nvm.sh"
-  # zshの自作補完関数が全て開放される。防ぐ方法がわからない。
+  # 実行するとzshの自作補完関数が全て解放される。防ぐ方法がわからない。
   # [[ -e "${nvm_dir}/bash_completion" ]] && source "${nvm_dir}/bash_completion"
 }
 

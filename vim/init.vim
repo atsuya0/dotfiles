@@ -69,6 +69,7 @@ set smarttab "nvim-default
 set autoindent "nvim-default
 
 "キーマップ---------------------------------------------------------
+let mapleader = "\<space>"
 "ESCと間違えて押すときがあるので無効化にする。
 noremap <F1> <Nop>
 noremap! <F1> <Nop>
@@ -76,11 +77,11 @@ noremap! <F1> <Nop>
 noremap <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
 noremap! <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
 "空行を追加する
-nnoremap <space>j o<esc>
-nnoremap <space>k O<esc>
+nnoremap <leader>j o<esc>
+nnoremap <leader>k O<esc>
 " 空白を追加
-nnoremap <space>l a<space><esc>
-nnoremap <space>h i<space><esc>
+nnoremap <leader>l a<space><esc>
+nnoremap <leader>h i<space><esc>
 "ウィンドウの大きさを変える比率を上げる
 nnoremap <C-w>< 0<C-w><
 nnoremap <C-w>> 0<C-w>>

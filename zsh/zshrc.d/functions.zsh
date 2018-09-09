@@ -17,11 +17,11 @@ function vol() {
       || pactl list sinks | head -1 | grep -o '[0-9]'
   }
 
-  if [[ $1 == up ]]; then
+  if [[ $1 == 'up' ]]; then
     pactl set-sink-volume "$(get_index)" +5%
-  elif [[ $1 == down ]]; then
+  elif [[ $1 == 'down' ]]; then
     pactl set-sink-volume "$(get_index)" -5%
-  elif [[ $1 == mute ]]; then
+  elif [[ $1 == 'mute' ]]; then
     pactl set-sink-mute "$(get_index)" toggle
   else
     local run

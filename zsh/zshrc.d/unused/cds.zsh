@@ -1,3 +1,15 @@
+# .zlogin
+
+() { # 存在しないディレクトリの記録を.saved_dirsから削除する
+  [[ -n ${ZDOTDIR} ]] && local file=${ZDOTDIR}/.saved_dirs || local file=${HOME}/.saved_dirs
+  [[ ! -s ${file} ]] && return
+
+  # echo {} の処理で ~ が${HOME}に展開されて出力されるので、置換で戻す。
+  cat ${file} | cut -d' ' -f3 | xargs -I{} sh -c "test -e {} || echo {}" | sed "s@${HOME}@~@" | xargs -I{} sed -i 's@.* {}$@@;/^$/d' ${file}
+}
+
+# .zshrc
+
 function cds() { # pathに別名をつけて移動を早くする。
 
   [[ -n ${ZDOTDIR} ]] && local saved_dirs=${ZDOTDIR}/.saved_dirs || local saved_dirs=${HOME}/.saved_dirs
