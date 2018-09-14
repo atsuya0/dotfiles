@@ -13,7 +13,7 @@ type tmux > /dev/null 2>&1 && type fzf > /dev/null 2>&1 \
   )
 
   if [[ ${id} == ${new} ]]; then
-    tmux -f "${HOME}/dotfiles/tmux/tmux.conf" -2 new-session && exit
+    tmux -f "${DOTFILES}/tmux/tmux.conf" -2 new-session && exit
   elif [[ -n ${id} ]]; then
     tmux attach-session -t "${id}"
   fi

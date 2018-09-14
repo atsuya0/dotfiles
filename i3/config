@@ -144,6 +144,7 @@ bindsym $mod+r mode "resize"
 
 mode "launcher" {
     bindsym t exec --no-startup-id mlterm, mode "default"
+    bindsym T exec --no-startup-id urxvt, mode "default"
     bindsym e exec --no-startup-id webstorm, mode "default"
     bindsym b exec --no-startup-id chromium, mode "default"
     bindsym v exec --no-startup-id virtualbox, mode "default"

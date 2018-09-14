@@ -1,52 +1,76 @@
 #!/usr/bin/bash
 
+function is_not_empty() {
+  [[ -z $(find $1 -maxdepth 0 -type d -empty) ]] \
+    && return 1
+    || return 0
+}
+
 # zsh
+function init_zsh() {
 cat << "EOF" > ${HOME}/.zshenv
-export ZDOTDIR="${HOME}/.zsh"
+export ZDOTDIR="${DOTFILES}/zsh"
 source ${ZDOTDIR}/.zshenv
 EOF
+}
 
-zsh="${HOME}/.zsh"
-dot="${HOME}/dotfiles/zsh"
-mkdir "${zsh}"
-ln "${dot}/zshenv" "${zsh}/.zshenv"
-ln "${dot}/zshrc" "${zsh}/.zshrc"
-ln "${dot}/zlogin" "${zsh}/.zlogin"
+# neovim
+function init_nvim() {
+  local src="${DOTFILES}/vim"
 
-# vim
-nvim="${XDG_CONFIG_HOME}/nvim"
-dein="${HOME}/.cache/dein/toml"
-dot="${HOME}/dotfiles/vim"
-mkdir "${nvim}"
-mkdir -p "${dein}"
-ln "${dot}/init.vim" "${nvim}/"
-ln "${dot}/dein.toml" "${dein}/"
-ln "${dot}/dein_lazy.toml" "${dein}/"
+  local nvim="${XDG_CONFIG_HOME}/nvim"
+  mkdir "${nvim}"
+  [[ -s "${src}/init.vim" ]] \
+    && ln "${src}/init.vim" "${nvim}/"
+
+  local dein="${HOME}/.cache/dein/toml"
+  mkdir -p "${dein}"
+  is_not_empty "${src}/dein/" \
+    && ln "${src}/dein/*" "${dein}/"
+}
 
 # mlterm
-mlterm="${HOME}/.mlterm"
-dot="${HOME}/dotfiles/mlterm"
-mkdir "${HOME}/.mlterm"
-ln "${dot}/aafont" "${mlterm}/"
-ln "${dot}/color" "${mlterm}/"
-ln "${dot}/key" "${mlterm}/"
-ln "${dot}/main" "${mlterm}/"
+function init_mlterm() {
+  local src="${DOTFILES}/mlterm" mlterm="${HOME}/.mlterm"
+  mkdir ${mlterm}
+  is_not_empty "${src}/" \
+    && ln "${src}/*" "${mlterm}/"
+}
 
 # i3
-dot="${HOME}/dotfiles/i3"
-mkdir "${XDG_CONFIG_HOME}/{i3,i3blocks}"
-ln "${i3}/i3" "${XDG_CONFIG_HOME}/i3/config"
-ln "${i3}/i3blocks" "${XDG_CONFIG_HOME}/i3blocks/config"
-ln "${i3}/battery.sh" "${XDG_CONFIG_HOME}/i3blocks/"
+function init_i3() {
+  local src="${DOTFILES}/i3"
+  mkdir "${XDG_CONFIG_HOME}/{i3,i3blocks}"
+
+  [[ -s "${src}/config" ]] \
+    && ln "${src}/config" "${XDG_CONFIG_HOME}/i3" \
+
+  is_not_empty "${src}/i3blocks/" \
+    && ln "${src}/i3blocks/*" "${XDG_CONFIG_HOME}/i3blocks/"
+}
 
 # x11
-dot="${HOME}/dotfiles/x11"
-ln "${x11}/Xmodmap" "${HOME}/.Xmodmap"
-ln "${x11}/xprofile" "${HOME}/.xprofile"
+function init_x11() {
+  local src="${DOTFILES}/x11/local"
+  is_not_empty "${src}/" \
+    && ln "${src}/*" "${HOME}/"
+}
 
 # rofi
-rofi="${XDG_CONFIG_HOME}/rofi"
-dot="${HOME}/dotfiles/rofi"
-mkdir "${rofi}"
-ln "${rofi}/rofi" "${rofi}/config"
-ln "${rofi}/rofi_system.sh" "${rofi}/"
+function init_rofi() {
+  local src="${DOTFILES}/rofi" rofi="${XDG_CONFIG_HOME}/rofi"
+  mkdir "${rofi}"
+  is_not_empty "${src}/" \
+    && ln "${src}/*" "${rofi}/"
+}
+
+function main() {
+  init_zsh
+  init_nvim
+  init_mlterm
+  init_i3
+  init_x11
+  init_rofi
+}
+
+main
