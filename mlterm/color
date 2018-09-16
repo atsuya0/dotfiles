@@ -1,17 +1,17 @@
 # [ocean dark]
 black=#2b303b
-blue=#8fa1b3
-cyan=#96b5b4
-green=#a3be8c
-magenta=#b48ead
 red=#bf616a
-white=#c0c5ce
+green=#a3be8c
 yellow=#ebcb8b
+blue=#8fa1b3
+magenta=#b48ead
+cyan=#96b5b4
+white=#c0c5ce
 hl_black=#65737e
-hl_blue=#5597d9
-hl_cyan=#96b5b4
-hl_green=#a3be8c
-hl_magenta=#b48ead
 hl_red=#bf616a
-hl_white=#eff1f5
+hl_green=#a3be8c
 hl_yellow=#ebcb8b
+hl_blue=#5597d9
+hl_magenta=#b48ead
+hl_cyan=#96b5b4
+hl_white=#eff1f5

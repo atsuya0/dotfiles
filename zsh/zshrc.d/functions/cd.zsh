@@ -3,7 +3,6 @@
 # up      -> filterを使って選択する
 function up() {
   local str
-
   if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
     str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^/]*$/!ba;d' \
       | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
