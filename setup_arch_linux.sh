@@ -4,7 +4,7 @@
 
 function install_min_packages() {
   sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xbacklight \
-    otf-ipafont fcitx-mozc fcitx-gtk3 \
+    otf-ipafont fcitx-mozc fcitx-gtk3 fcitx-configtool \
     alsa-utils pulseaudio \
     termite rxvt-unicode \
     zsh zsh-completions zsh-syntax-highlighting \
@@ -20,7 +20,7 @@ function install_min_packages() {
 }
 
 function install_option_packages() {
-  sudo pacman -S --noconfirm tmux openssh docker neofetch xorg-xrandr \
+  sudo pacman -S --noconfirm fzf tmux openssh docker neofetch xorg-xrandr \
     cmus libmad bluez bluez-utils pulseaudio-bluetooth libmtp ntfs-3g \
     xorg-server-xephyr nodejs npm jq go dosfstools w3m virtualbox scrot \
     && sudo systemctl start docker \
@@ -34,7 +34,7 @@ function install_jwm() {
   sudo pacman -S --noconfirm jwm
 }
 
-function install_font() {
+function install_fonts() {
   local font="${HOME}/.local/share/fonts/"
   mkdir -p ${font} \
     && curl -L https://github.com/tonsky/FiraCode/raw/master/distr/ttf/{FiraCode-Regular.ttf} -o ${font}/#1 \
@@ -76,8 +76,14 @@ EOF
 
 function main() {
   sudo sed -i 's/^#\(Color\)$/\1/' /etc/pacman.conf
+
+  sudo hostnamectl set-hostname $1
+  set_time
+  set_locale
+  set_touchpad
   install_min_packages
-  install_font
+  install_fonts
+
   if [[ $1 == 'virtualbox' ]]; then
     install_jwm
     install_packages_for_virtualbox
@@ -86,11 +92,8 @@ function main() {
     install_i3
     install_option_packages
   fi
-  sudo hostnamectl set-hostname $1
-  set_time
-  set_locale
-  set_touchpad
 }
 
+[[ $(id -u) -eq 0 ]] && return 1
 [[ $# -eq 0 ]] && echo 'hostname' && return 1
 main $1

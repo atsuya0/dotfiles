@@ -1,13 +1,12 @@
 [options]
 allow_bold = true
-#audible_bell = false
-#clickable_url = true
-#dynamic_title = true
-font = FiraCode Regular 10.5
+audible_bell = false
+clickable_url = true
+dynamic_title = true
 font = Hack Regular 10.5
-#fullscreen = true
+fullscreen = true
 #geometry = 640x480
-#icon_name = terminal
+icon_name = terminal
 mouse_autohide = true
 # scroll_on_output = false
 #scroll_on_keystroke = true
@@ -19,7 +18,7 @@ urgent_on_bell = false
 #hyperlinks = false
 
 # $BROWSER is used by default if set, with xdg-open as a fallback
-#browser = xdg-open
+browser = xdg-open
 
 # "system", "on" or "off"
 cursor_blink = off

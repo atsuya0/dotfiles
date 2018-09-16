@@ -66,6 +66,7 @@ function init_rofi() {
 }
 
 function main() {
+  [[ $(id -u) -eq 0 ]] && return 1
   [[ -z ${DOTFILES} ]] && export DOTFILES=${HOME}/dotfiles
   [[ -z ${XDG_CONFIG_HOME} ]] && export XDG_CONFIG_HOME=${HOME}/.config
   init_zsh

@@ -40,10 +40,10 @@ function ls() {
 
 function up() {
   local str
-  if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
+  if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
     str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d' | \
       fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-  elif expr ${1-dummy} + 1 > /dev/null 2>&1; then
+  elif expr ${1-dummy} + 1 &> /dev/null; then
     str=$(seq -s: $1 | sed 's/://g;s@.@\.\./@g')
   elif [[ -d $1 ]]; then
     str=$1
@@ -58,7 +58,7 @@ complete -F _up up
 # alias
 alias ll='command ls -FAlht --color=auto'
 alias grep='grep -i --color=auto'
-alias cd='pushd > /dev/null 2>&1'
+alias cd='pushd &> /dev/null'
 alias mv='mv -i'
 alias cp='cp -i'
 alias ln='ln -i'

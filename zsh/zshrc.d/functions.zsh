@@ -35,7 +35,7 @@ function wifi() {
     netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo netctl restart
   elif [[ $1 == '-s' ]]; then
     netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo netctl stop
-  elif type fzf > /dev/null 2>&1; then
+  elif type fzf &> /dev/null; then
     netctl list | fzf --select-1 | xargs sudo netctl start
   fi
 }
@@ -124,14 +124,14 @@ function bt() {
 }
 
 function fin() { # コマンドが終了したことを知らせる(ex: command ; fin)
-  type i3-nagbar > /dev/null 2>&1 && i3-nagbar -t warning -m 'finish' -f 'pango:IPAGothic Regular 10' > /dev/null 2>&1
+  type i3-nagbar &> /dev/null && i3-nagbar -t warning -m 'finish' -f 'pango:IPAGothic Regular 10' &> /dev/null
 }
 
 function crypt() {
   # crypt test.txt
   # ファイルの暗号と復号を行う。暗号か復号はファイルの状態で自動で決める。
 
-  ! type openssl > /dev/null 2>&1 && echo 'require openssl' && return 1
+  ! type openssl &> /dev/null && echo 'require openssl' && return 1
 
   if [[ $(file $1 | cut -d' ' -f2-) == "openssl enc'd data with salted password" ]]; then
     local password
@@ -164,7 +164,7 @@ function _crypt() {
 compdef _crypt crypt
 
 function md() { # マルチディスプレイ
-  type xrandr > /dev/null 2>&1 || return 1
+  type xrandr &> /dev/null || return 1
   if [[ $1 == 'school' ]]; then
     xrandr --output HDMI1 --left-of eDP1 --mode 1600x900
   elif [[ $1 == 'home' ]]; then
@@ -172,7 +172,7 @@ function md() { # マルチディスプレイ
   elif [[ $1 == 'off' ]]; then
     xrandr --output "$(xrandr | grep ' connected' | grep -v 'primary' | cut -d' ' -f1)" --off
   elif [[ $1 == 'select' ]]; then
-    type fzf > /dev/null 2>&1 || return 1
+    type fzf &> /dev/null || return 1
     xrandr --output ${2:-VGA1} --left-of eDP1 --mode "$(xrandr | sed -n '/.* connected [^p].*/,/^[^ ]/p' | sed '1d;$d;s/  */ /g' | cut -d' ' -f2 | fzf)"
   fi
 }

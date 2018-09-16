@@ -23,7 +23,7 @@ la="${black}${sep}${def}${blue} ${la_cmd}/${cpu_cmd} ${def}"
 signal="${blue}${sep}${def}${black} ${signal} ${def}"
 
 # 音量
-if type pactl > /dev/null 2>&1;then
+if type pactl &> /dev/null;then
   [[ -n $(pactl list sinks | grep 'RUNNING') ]] \
     && cmd="grep -A 10 'RUNNING'" \
     || cmd='tee'

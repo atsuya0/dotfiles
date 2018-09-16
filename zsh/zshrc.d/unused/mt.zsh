@@ -18,14 +18,14 @@ function mt() { # ファイルをゴミ箱に入れる。 別途スクリプト�
   [[ -s ${trash} ]] || mkdir ${trash}
 
   if [[ $1 == '-r' ]]; then # ゴミ箱からファイルを拾う
-    type fzf > /dev/null 2>&1 || return
+    type fzf &> /dev/null || return
     command ls -r ${trash} \
       | eval "fzf --header='move files in the trash to the current directory' \
       --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
       ${fzf_option}" | xargs -I{} sh -c "mv \"${trash}/{}\"  \"./\$(echo {} | cut -d_ -f3-)\""
 
   elif [[ $1 == '-d' ]]; then # ゴミ箱のファイルを焼却
-    type fzf > /dev/null 2>&1 || return
+    type fzf &> /dev/null || return
     command ls -r ${trash} \
       | eval "fzf --header='delete files in the trash' \
       --preview=\"file ${trash}/{} | sed 's/^.*: //'; du -hs ${trash}/{} | cut -f1; echo '\n'; less ${trash}/{}\" \
@@ -36,7 +36,7 @@ function mt() { # ファイルをゴミ箱に入れる。 別途スクリプト�
   elif [[ $1 == '-s' ]]; then # ゴミの量
     du -hs ${trash} | cut -f1
   else
-    [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1 \
+    [[ $# -eq 0 ]] && type fzf &> /dev/null \
       && set $(command ls -A ./ | sed "/^${trash##*/}$/"d \
       | eval "fzf --header='move files in the current directory to the trash' \
       --preview=\"file {} | sed 's/^.*: //'; du -hs {} | cut -f1; less {}\" ${fzf_option}") \

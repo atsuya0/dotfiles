@@ -123,7 +123,7 @@ function cds() { # pathに別名をつけて移動を早くする。
       if [[ -n ${alias} ]]; then
         dir=$(echo ${file} | grep "^${alias} " | head -1) \
       else
-        type fzf > /dev/null 2>&1 || return 1
+        type fzf &> /dev/null || return 1
         dir=$(echo ${file} | fzf --header='change directory' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
       fi
       [[ -n ${dir} ]] && eval cd $(echo ${dir} | cut -d' ' -f2)
@@ -142,7 +142,7 @@ function cds() { # pathに別名をつけて移動を早くする。
     ;;
     'delete' )
       if [[ -z ${alias} ]]; then
-        type fzf > /dev/null 2>&1 || return 1
+        type fzf &> /dev/null || return 1
         alias=$(echo ${file} \
           | fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' \
           | cut -d' ' -f1)

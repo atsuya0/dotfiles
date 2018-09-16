@@ -3,10 +3,10 @@
 # up      -> filterを使って選択する
 function up() {
   local str
-  if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
+  if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
     str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^/]*$/!ba;d' \
       | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-  elif expr ${1-dummy} + 1 > /dev/null 2>&1; then
+  elif expr ${1-dummy} + 1 &> /dev/null; then
     # str=$(seq -s '' $1 | sed 's@.@\.\./@g')
     str=$(seq -s: $1 | sed 's/://g;s@.@\.\./@g')
   else
@@ -27,7 +27,7 @@ function down() {
   # 指定した層までを探索してfilterで選択し移動する。
   # down 3
 
-  type fzf > /dev/null 2>&1 || return 1
+  type fzf &> /dev/null || return 1
   dir=$(eval find -mindepth 1 -maxdepth ${1:-1} -type d -print \
     | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
@@ -47,7 +47,7 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
     '-l' ) cat "${_CD_FILE}" | sort | uniq -c | sort -r | tr -s ' ' ;; # 記録一覧
     '--delete-all' ) : > "${_CD_FILE}" ;; # 記録の全消去
     '-d' ) # 記録の消去
-      type fzf > /dev/null 2>&1 || return 1
+      type fzf &> /dev/null || return 1
 
       local opt
       [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
@@ -57,7 +57,7 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
     ;;
     * ) # 記録しているディレクトリを表示 使用頻度順
       if [[ $# -eq 0 ]]; then
-        type fzf > /dev/null 2>&1 || return 1
+        type fzf &> /dev/null || return 1
         dir=$(cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' | cut -d' ' -f3 \
           | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
         [[ -z ${dir} ]] && return 1

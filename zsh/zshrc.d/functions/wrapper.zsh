@@ -102,7 +102,7 @@ function vim(){ # vimで開くファイルをfilterで選択する。
     typeset -r editor='vi'
   fi
 
-  if [[ $# -eq 0 ]] && type fzf > /dev/null 2>&1; then
+  if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
 
     # 無視するディレクトリ(絶対path指定)
     local arg dir
@@ -135,7 +135,7 @@ function vim(){ # vimで開くファイルをfilterで選択する。
 
 function urxvt() { # 簡単にフォントサイズを指定して起動する。
   [[ $# -eq 0 ]] && command urxvt $@ && return
-  expr $1 + 1 > /dev/null 2>&1
+  expr $1 + 1 &> /dev/null
   [[ $? -ne 2 ]] && command urxvt --font "xft:Ricty Discord:size=$1"
 }
 

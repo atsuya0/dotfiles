@@ -15,8 +15,8 @@ add-zsh-hook precmd _path_prompt
 
 function _git_prompt() {
   RPROMPT=''
-  type git > /dev/null 2>&1 || return 1
-  git status > /dev/null 2>&1 || return 1
+  type git &> /dev/null || return 1
+  git status &> /dev/null || return 1
   local git_info=("${(f)$(git status --porcelain --branch)}")
 
   local branch="[$(echo ${git_info[1]} | sed 's/## \([^\.]*\).*/\1/')]"

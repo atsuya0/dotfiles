@@ -1,6 +1,6 @@
 #!/usr/bin/zsh
 
-type pactl > /dev/null 2>&1 || return 1
+type pactl &> /dev/null || return 1
 
 # 動いているsinkの方の情報を取得する。 全て動いていない場合がある。
 [[ -n $(pactl list sinks | grep 'RUNNING') ]] && cmd="grep -A 10 'RUNNING'" || cmd='tee'
