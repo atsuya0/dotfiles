@@ -53,7 +53,7 @@ on_i = 1
 repo = 'fatih/vim-go'
 on_ft = 'go'
 
-[[plugins]] # syntax highlighting, formatting for rust
+[[plugins]] # syntax highlighting and formatting for rust
 repo = 'rust-lang/rust.vim'
 on_ft = 'rust'
 hook_source = '''

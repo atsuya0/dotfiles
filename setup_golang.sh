@@ -25,5 +25,4 @@ function main() {
   install_my_tool second
 }
 
-main || return 1
-return 0
+main

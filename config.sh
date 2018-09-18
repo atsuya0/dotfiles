@@ -1,9 +1,24 @@
 #!/usr/bin/bash
 
+set -u
+
 function is_not_empty() {
   [[ -z $(find $1 -maxdepth 0 -type d -empty) ]] \
     && return 0 \
     || return 1
+}
+
+function place_config_files() {
+  [[ $# -lt 2 ]] && return 1
+  mkdir -p $2
+  if [[ -f $1 && -s $1 ]]; then
+    ln $1 $2/
+  elif [[ -d $1 ]] && is_not_empty $1/; then
+    ln $1/* $2/
+  else
+    return 1
+  fi
+  return 0
 }
 
 # zsh
@@ -17,64 +32,51 @@ EOF
 
 # neovim
 function init_nvim() {
-  local src=${DOTFILES}/vim
-
-  local nvim=${XDG_CONFIG_HOME}/nvim
-  mkdir -p ${nvim}
-  [[ -s ${src}/init.vim ]] \
-    && ln ${src}/init.vim ${nvim}/
-
-  local dein=${HOME}/.cache/dein/toml
-  mkdir -p ${dein}
-  is_not_empty ${src}/dein/ \
-    && ln ${src}/dein/* ${dein}/
+  local dot=${DOTFILES}/vim
+  place_config_files "${dot}/init.vim" "${XDG_CONFIG_HOME}/nvim" \
+    || return 1
+  place_config_files "${dot}/dein" "${HOME}/.cache/dein/toml" \
+    || return 1
 }
 
 # termite
 function init_termite() {
-  local src=${DOTFILES}/termite termite=${XDG_CONFIG_HOME}/termite
-  mkdir -p ${termite}
-  [[ -s ${src}/config ]] \
-    && ln ${src}/config ${termite}/
+  place_config_files "${DOTFILES}/termite/config" "${XDG_CONFIG_HOME}/termite" \
+    || return 1
 }
 
 # i3
 function init_i3() {
-  local src=${DOTFILES}/i3
-  mkdir -p ${XDG_CONFIG_HOME}/{i3,i3blocks}
-
-  [[ -s ${src}/config ]] \
-    && ln ${src}/config ${XDG_CONFIG_HOME}/i3/ \
-
-  is_not_empty ${src}/i3blocks/ \
-    && ln ${src}/i3blocks/* ${XDG_CONFIG_HOME}/i3blocks/
+  local dot=${DOTFILES}/i3
+  place_config_files "${dot}/config" "${XDG_CONFIG_HOME}/i3" \
+    || return 1
+  place_config_files "${dot}/i3blocks" "${XDG_CONFIG_HOME}/i3blocks" \
+    || return 1
 }
 
 # x11
 function init_x11() {
-  local src=${DOTFILES}/x11/local
-  is_not_empty ${src}/ \
-    && ln ${src}/* ${HOME}/
+  place_config_files "${DOTFILES}/x11/local" ${HOME} \
+    || return 1
 }
 
 # rofi
 function init_rofi() {
-  local src=${DOTFILES}/rofi rofi=${XDG_CONFIG_HOME}/rofi
-  mkdir -p ${rofi}
-  is_not_empty ${src}/ \
-    && ln ${src}/* ${rofi}/
+  place_config_files "${DOTFILES}/rofi" "${XDG_CONFIG_HOME}/rofi" \
+    || return 1
 }
 
 function main() {
   [[ $(id -u) -eq 0 ]] && return 1
   [[ -z ${DOTFILES} ]] && export DOTFILES=${HOME}/dotfiles
   [[ -z ${XDG_CONFIG_HOME} ]] && export XDG_CONFIG_HOME=${HOME}/.config
+
   init_zsh
-  init_nvim
-  init_termite
-  init_i3
-  init_x11
-  init_rofi
+  init_nvim || echo 'Place failed: nvim'
+  init_termite || echo 'Place failed: termite'
+  init_i3 || echo 'Place failed: i3'
+  init_x11 || echo 'Place failed: x11'
+  init_rofi || echo 'Place failed: rofi'
 }
 
 main

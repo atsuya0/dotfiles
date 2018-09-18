@@ -22,7 +22,8 @@ function install_min_packages() {
 function install_option_packages() {
   sudo pacman -S --noconfirm fzf tmux openssh docker neofetch xorg-xrandr \
     cmus libmad bluez bluez-utils pulseaudio-bluetooth libmtp ntfs-3g \
-    xorg-server-xephyr nodejs npm jq go dosfstools w3m virtualbox scrot \
+    xorg-server-xephyr nodejs npm jq go rustup dosfstools w3m \
+    virtualbox scrot \
     && sudo systemctl start docker \
     && usermod -G docker $(whoami)
 }
@@ -31,7 +32,7 @@ function install_i3() {
   sudo pacman -S --noconfirm i3-wm i3blocks i3lock rofi
 }
 function install_jwm() {
-  sudo pacman -S --noconfirm jwm
+  sudo pacman -S --noconfirm jwm xterm
 }
 
 function install_fonts() {
@@ -43,7 +44,7 @@ function install_fonts() {
 }
 
 function install_packages_for_virtualbox() {
-  sudo pacman -S --noconfirm xf86-video-vesa xf86-video-fbdev virtualbox-guest-modules-arch
+  sudo pacman -S --noconfirm xf86-video-vesa xf86-video-fbdev virtualbox-guest-utils virtualbox-guest-modules-arch
 }
 
 function set_time() {
@@ -53,7 +54,7 @@ function set_time() {
 }
 
 function set_locale() {
-  sudo sed -i 's/^#\(ja_JP.UTF-8 UTF-8\)$/\1/' /etc/locale.gen \
+  sudo sed -i 's/^#\(ja_JP.UTF-8\)$/\1/' /etc/locale.gen \
     && sudo locale-gen \
     && sudo localectl set-locale ja_JP.UTF-8 \
   sudo localectl set-x11-keymap jp || sudo localectl set-keymap jp
@@ -77,6 +78,7 @@ EOF
 function main() {
   sudo sed -i 's/^#\(Color\)$/\1/' /etc/pacman.conf
 
+  sudo pacman -Syu
   sudo hostnamectl set-hostname $1
   set_time
   set_locale
