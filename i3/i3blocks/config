@@ -36,6 +36,7 @@ interval=1
 signal=1
 
 [date]
+label=🕔
 command=date +'%m/%d %H:%M'
 color=#d0dcef
 interval=1

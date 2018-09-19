@@ -51,9 +51,10 @@ typeset -r ignore_absolute_pathes=(
   ${HOME}/.rustup
   ${HOME}/.cargo
   ${HOME}/.vscode/extensions
-  ${HOME}/.WebStorm2018.1 
+  ${HOME}/.WebStorm2018.2
   ${HOME}/.npm/_cacache
   ${HOME}/.nvm/versions
+  ${HOME}/.java
   ${HOME}/.Trash
   ${GOPATH}/pkg
   ${GOPATH}/src/gopkg.in

@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-set -u
-
 function is_not_empty() {
   [[ -z $(find $1 -maxdepth 0 -type d -empty) ]] \
     && return 0 \

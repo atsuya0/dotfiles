@@ -1,10 +1,10 @@
 #!/usr/bin/bash
 
-# [todo] graphic driverのinstall
+# [todo] graphic driver(xf86-video-intel)のinstall
 
 function install_min_packages() {
   sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xbacklight \
-    otf-ipafont fcitx-mozc fcitx-gtk3 fcitx-configtool \
+    otf-ipafont noto-fonts-emoji fcitx-mozc fcitx-gtk3 fcitx-configtool \
     alsa-utils pulseaudio \
     termite rxvt-unicode \
     zsh zsh-completions zsh-syntax-highlighting \
@@ -20,9 +20,9 @@ function install_min_packages() {
 }
 
 function install_option_packages() {
-  sudo pacman -S --noconfirm fzf tmux openssh docker neofetch xorg-xrandr \
+  sudo pacman -S --noconfirm fzf tmux openssh docker docker-compose xorg-xrandr \
     cmus libmad bluez bluez-utils pulseaudio-bluetooth libmtp ntfs-3g \
-    xorg-server-xephyr nodejs npm jq go rustup dosfstools w3m \
+    xorg-server-xephyr jq go rustup dosfstools w3m neofetch \
     virtualbox scrot \
     && sudo systemctl start docker \
     && usermod -G docker $(whoami)
@@ -39,7 +39,7 @@ function install_fonts() {
   local font="${HOME}/.local/share/fonts/"
   mkdir -p ${font} \
     && curl -L https://github.com/tonsky/FiraCode/raw/master/distr/ttf/{FiraCode-Regular.ttf} -o ${font}/#1 \
-    && curl -L https://github.com/source-foundry/Hack/blob/master/build/ttf/{Hack-Regular.ttf} -o ${font}/#1 \
+    && curl -L https://github.com/source-foundry/Hack/raw/master/build/ttf/{Hack-Regular.ttf} -o ${font}/#1 \
     && fc-cache
 }
 
@@ -54,7 +54,7 @@ function set_time() {
 }
 
 function set_locale() {
-  sudo sed -i 's/^#\(ja_JP.UTF-8\)$/\1/' /etc/locale.gen \
+  sudo sed -i 's/^#\(ja_JP.UTF-8.*\)$/\1/' /etc/locale.gen \
     && sudo locale-gen \
     && sudo localectl set-locale ja_JP.UTF-8 \
   sudo localectl set-x11-keymap jp || sudo localectl set-keymap jp
@@ -73,6 +73,11 @@ Section "InputClass"
   Option "NaturalScrolling" "true"
 EndSection
 EOF
+}
+
+function download_packages_from_aur() {
+  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/nvm.tar.gz
+  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/webstorm.tar.gz
 }
 
 function main() {

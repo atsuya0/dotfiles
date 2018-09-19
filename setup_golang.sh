@@ -9,8 +9,10 @@ function download_libraries() {
 
 function install_my_tool() {
   git clone https://github.com/tayusa/$1.git ${GOPATH}/src/github.com/tayusa/$1 \
+    && cd ${GOPATH}/src/github.com/tayusa/$1 \
     && dep ensure \
     && go install github.com/tayusa/$1
+    && cd -
 }
 
 function main() {
@@ -19,7 +21,9 @@ function main() {
 
   mkdir -p ${GOPATH}/{src,bin,pkg}
   download_libraries
+
   type dep &> /dev/null || return 1
+  type git &> /dev/null || return 1
   install_my_tool go-choice
   install_my_tool trash
   install_my_tool second
