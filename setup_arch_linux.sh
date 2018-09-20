@@ -23,9 +23,15 @@ function install_option_packages() {
   sudo pacman -S --noconfirm fzf tmux openssh docker docker-compose xorg-xrandr \
     cmus libmad bluez bluez-utils pulseaudio-bluetooth libmtp ntfs-3g \
     xorg-server-xephyr jq go rustup dosfstools w3m neofetch \
-    virtualbox scrot \
-    && sudo systemctl start docker \
-    && usermod -G docker $(whoami)
+    virtualbox scrot
+
+  add_docker_group
+}
+
+function add_docker_group() {
+  groups | grep docker \
+    && sudo groupadd docker \
+    && sudo gpasswd -a $(whoami) docker
 }
 
 function install_i3() {
@@ -61,6 +67,7 @@ function set_locale() {
 }
 
 function set_touchpad() {
+  sudo mkdir -p /etc/X11/xorg.conf.d
 cat << "EOF" | sudo tee /etc/X11/xorg.conf.d/40-libinput.conf
 Section "InputClass"
   Identifier "libinput touchpad catchall"
@@ -71,6 +78,8 @@ Section "InputClass"
   Option "ClickMethod" "clickfinger"
   Option "TappingButtonMap" "lrm"
   Option "NaturalScrolling" "true"
+  Option "TappingDragLock" "false"
+  Option "TappingDrag" "false"
 EndSection
 EOF
 }

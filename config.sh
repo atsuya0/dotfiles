@@ -10,9 +10,9 @@ function place_config_files() {
   [[ $# -lt 2 ]] && return 1
   mkdir -p $2
   if [[ -f $1 && -s $1 ]]; then
-    ln $1 $2/
-  elif [[ -d $1 ]] && is_not_empty $1/; then
-    ln $1/* $2/
+    ln $1 "$2/"
+  elif [[ -d $1 ]] && is_not_empty "$1/"; then
+    ln $1/* "$2/"
   else
     return 1
   fi
@@ -30,7 +30,7 @@ EOF
 
 # neovim
 function init_nvim() {
-  local dot=${DOTFILES}/vim
+  local dot="${DOTFILES}/vim"
   place_config_files "${dot}/init.vim" "${XDG_CONFIG_HOME}/nvim" \
     || return 1
   place_config_files "${dot}/dein" "${HOME}/.cache/dein/toml" \
@@ -45,7 +45,7 @@ function init_termite() {
 
 # i3
 function init_i3() {
-  local dot=${DOTFILES}/i3
+  local dot="${DOTFILES}/i3"
   place_config_files "${dot}/config" "${XDG_CONFIG_HOME}/i3" \
     || return 1
   place_config_files "${dot}/i3blocks" "${XDG_CONFIG_HOME}/i3blocks" \
@@ -54,8 +54,11 @@ function init_i3() {
 
 # x11
 function init_x11() {
-  place_config_files "${DOTFILES}/x11/local" ${HOME} \
+  place_config_files "${DOTFILES}/x11" ${HOME} \
     || return 1
+  for file in $(ls "${DOTFILES}/x11"); do
+    mv "${HOME}/${file}" "${HOME}/.${file}"
+  done
 }
 
 # rofi

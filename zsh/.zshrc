@@ -20,7 +20,7 @@ setopt no_hist_beep
 setopt correct
 # <C-d>でログアウトしないようにする。
 setopt ignore_eof
-# リダイレクトで上書き禁止(>)。上書きをする場合は>|を使う。
+# リダイレクトで上書き禁止(>)。上書きをする場合は>!, >|を使う。
 setopt noclobber
 () { # fishのようなsyntax-highlighting
   typeset -r highlighting='/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'

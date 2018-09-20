@@ -11,21 +11,23 @@ function dc() {
 }
 
 function jwm() { # dockerでjwmを動かす。
-  is_docker_running || return
+  is_docker_running || return 1
 
-  [[ -e /tmp/.X11-unix/X1 ]] && local exists='true' || Xephyr -wr -resizeable :1 &> /dev/null &
+  [[ -e /tmp/.X11-unix/X1 ]] \
+    && local exists='true' \
+    || Xephyr -wr -resizeable :1 &> /dev/null &
 
-  local workdir="${HOME}/workspace/docker/ubuntu-jwm"
-  local docker='/home/docker'
+  local config="${HOME}/workspace/docker/jwm/config" docker='/home/docker'
+  [[ -d ${config} ]] || return 1
 
   docker run $@ \
-    -v "${workdir}/data:${docker}/data" \
-    -v "${workdir}/epiphany:${docker}/.config/epiphany" \
-    -v "${workdir}/google-chrome:${docker}/.config/google-chrome" \
+    -v "${config}/data:${docker}/data" \
+    -v "${config}/epiphany:${docker}/.config/epiphany" \
+    -v "${config}/google-chrome:${docker}/.config/google-chrome" \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "/run/user/${UID}/pulse/native:/tmp/pulse/native" \
     -v "${HOME}/.config/pulse/cookie:/tmp/pulse/cookie" \
-    -it --rm "${USER}/ubuntu-jwm" &> /dev/null
+    -it --rm "${USER}/jwm" &> /dev/null
 
   [[ -z ${exists} ]] && pkill Xephyr &> /dev/null
 }

@@ -1,9 +1,15 @@
-source "${ZDOTDIR}/zshrc.d/functions/cd.zsh"
-source "${ZDOTDIR}/zshrc.d/functions/docker.zsh"
-source "${ZDOTDIR}/zshrc.d/functions/git.zsh"
-source "${ZDOTDIR}/zshrc.d/functions/wrapper.zsh"
-source "${ZDOTDIR}/zshrc.d/functions/second.zsh"
-source "${ZDOTDIR}/zshrc.d/functions/trash.zsh"
+[[ -f "${ZDOTDIR}/zshrc.d/functions/cd.zsh" ]] \
+  && source "${ZDOTDIR}/zshrc.d/functions/cd.zsh"
+[[ -f "${ZDOTDIR}/zshrc.d/functions/docker.zsh" ]] \
+  && source "${ZDOTDIR}/zshrc.d/functions/docker.zsh"
+[[ -f "${ZDOTDIR}/zshrc.d/functions/git.zsh" ]] \
+  && source "${ZDOTDIR}/zshrc.d/functions/git.zsh"
+[[ -f "${ZDOTDIR}/zshrc.d/functions/wrapper.zsh" ]] \
+  && source "${ZDOTDIR}/zshrc.d/functions/wrapper.zsh"
+[[ -f "${ZDOTDIR}/zshrc.d/functions/second.zsh" ]] \
+  && source "${ZDOTDIR}/zshrc.d/functions/second.zsh"
+[[ -f "${ZDOTDIR}/zshrc.d/functions/trash.zsh" ]] \
+  && source "${ZDOTDIR}/zshrc.d/functions/trash.zsh"
 
 function vol() {
   # vol up    -> 音量を5%上げる
