@@ -143,8 +143,8 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 mode "launcher" {
-    bindsym t exec --no-startup-id termite, mode "default"
-    # bindsym Shift+t exec --no-startup-id mlterm, mode "default"
+    bindsym t exec --no-startup-id alacritty, mode "default"
+    bindsym Shift+t exec --no-startup-id termite, mode "default"
     bindsym w exec --no-startup-id webstorm, mode "default"
     bindsym b exec --no-startup-id chromium, mode "default"
     bindsym v exec --no-startup-id virtualbox, mode "default"

@@ -39,7 +39,13 @@ function init_nvim() {
 
 # termite
 function init_termite() {
-  place_config_files "${DOTFILES}/termite/config" "${XDG_CONFIG_HOME}/termite" \
+  place_config_files "${DOTFILES}/terminal/termite/config" "${XDG_CONFIG_HOME}/termite" \
+    || return 1
+}
+
+# alacritty
+function init_alacritty() {
+  place_config_files "${DOTFILES}/terminal/alacritty/alacritty.yml" "${XDG_CONFIG_HOME}/alacritty" \
     || return 1
 }
 

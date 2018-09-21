@@ -23,7 +23,7 @@ function install_option_packages() {
   sudo pacman -S --noconfirm fzf tmux openssh docker docker-compose xorg-xrandr \
     cmus libmad bluez bluez-utils pulseaudio-bluetooth libmtp ntfs-3g \
     xorg-server-xephyr jq go rustup dosfstools w3m neofetch \
-    virtualbox scrot
+    virtualbox scrot alacritty
 
   add_docker_group
 }
@@ -43,10 +43,17 @@ function install_jwm() {
 
 function install_fonts() {
   local font="${HOME}/.local/share/fonts/"
-  mkdir -p ${font} \
-    && curl -L https://github.com/tonsky/FiraCode/raw/master/distr/ttf/{FiraCode-Regular.ttf} -o ${font}/#1 \
-    && curl -L https://github.com/source-foundry/Hack/raw/master/build/ttf/{Hack-Regular.ttf} -o ${font}/#1 \
-    && fc-cache
+  local fira_code='https://github.com/tonsky/FiraCode/raw/master/distr/ttf'
+  local hack='https://github.com/source-foundry/Hack/raw/master/build/ttf'
+  local faces=('Regular' 'Bold' 'Italic')
+  mkdir -p ${font}
+
+  for face in ${faces[@]}; do
+    curl -L ${fira_code}/{FiraCode-${face}.ttf} -o ${font}/#1
+    curl -L ${hack}/{Hack-${face}.ttf} -o ${font}/#1
+  done
+
+  fc-cache
 }
 
 function install_packages_for_virtualbox() {

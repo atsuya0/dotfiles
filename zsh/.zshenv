@@ -1,11 +1,6 @@
 # .zshenv is loaded for the first time in zsh config files.
 # .zshenv is the only zsh config file to load before execute shellscript.
 
-# ~/.zshenv
-# export ZDOTDIR="${HOME}/.zsh"
-# source ${ZDOTDIR}/.zshenv
-
-# ${ZDOTDIR}/.zshenv
 export PATH='/usr/bin:/usr/bin/core_perl'
 export LANG='ja_JP.UTF-8'
 export TERM='xterm-256color'

@@ -27,7 +27,7 @@ function _fzf_cd_widget() {
     | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
 
-  _dir_prompt
+  _path_prompt
   zle reset-prompt
 }
 zle   -N  _fzf_cd_widget
