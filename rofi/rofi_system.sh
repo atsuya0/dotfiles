@@ -1,7 +1,6 @@
 #!/usr/bin/bash
 
 declare -A list=(
-  ['Lock']='dm-tool lock'
   ['Logout']='i3-msg exit'
   ['Poweroff']='systemctl poweroff'
   ['Reboot']='systemctl reboot'

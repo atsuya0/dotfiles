@@ -1,12 +1,12 @@
 function bash() { # bash終了時に.bash_historyを削除する。
   cmd_exists bash || return
-  command bash
-  trap "command rm ${HOME}/.bash_history" EXIT
+  command bash $@
+  trap "[[ -f ${HOME}/.bash_history ]] && command rm ${HOME}/.bash_history" EXIT
 }
 
 function ls() { # 何も表示されないならば隠しファイルの表示を試みる。
-  [[ $(command ls $@) == '' ]] \
-    && command ls -FA --color=auto $@ \
+  [[ $(command ls $@ 2> /dev/null) == '' ]] \
+    && command ls -FA --color=auto $@ 2> /dev/null \
     || command ls -F --color=auto $@
 }
 

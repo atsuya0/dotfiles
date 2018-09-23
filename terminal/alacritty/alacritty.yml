@@ -132,7 +132,7 @@ render_timer: false
 
 # Use custom cursor colors. If true, display the cursor in the cursor.foreground
 # and cursor.background colors, otherwise invert the colors of the cursor.
-custom_cursor_colors: false
+custom_cursor_colors: true
 
 # Colors (Tomorrow Night Bright)
 colors:
@@ -257,7 +257,7 @@ hide_cursor_when_typing: false
 # - Block
 # - Underline
 # - Beam
-cursor_style: Beam
+cursor_style: Block
 
 # Whether the cursor should be a hollow block on window focus loss
 unfocused_hollow_cursor: true
@@ -334,8 +334,8 @@ key_bindings:
   - { key: W,        mods: Command, action: Quit                         }
   - { key: Insert,   mods: Shift,   action: PasteSelection               }
   - { key: Key0,     mods: Control, action: ResetFontSize                }
-  - { key: Equals,   mods: Control, action: IncreaseFontSize             }
-  - { key: Subtract, mods: Control, action: DecreaseFontSize             }
+  - { key: Up,   mods: Control, action: IncreaseFontSize             }
+  - { key: Down, mods: Control, action: DecreaseFontSize             }
   - { key: Home,                    chars: "\x1bOH",   mode: AppCursor   }
   - { key: Home,                    chars: "\x1b[H",   mode: ~AppCursor  }
   - { key: End,                     chars: "\x1bOF",   mode: AppCursor   }

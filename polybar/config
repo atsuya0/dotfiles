@@ -1,0 +1,266 @@
+[colors]
+background = #2b303b
+foreground = #c0c5ce
+background-alt = #68a0ba
+foreground-alt = #454c4f
+
+primary = #5c6c84
+secondary = #e60053
+alert = #bd2c40
+
+black = #65737e
+red = #bf616a
+green = #a3be8c
+yellow = #ebcb8b
+blue = #5597d9
+magenta = #b48ead
+cyan = #96b5b4
+white = #eff1f5
+
+[bar/bar1]
+monitor = ${env:MONITOR:HDMI1}
+monitor-fallback = eDP1
+bottom = false
+width = 100%
+height = 23
+offset-x = 0%
+offset-y = 0%
+radius = 0.0
+fixed-center = false
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 1
+line-color = #f00
+
+border-size = 3
+border-color = ${colors.background}
+
+padding-left = 2
+padding-right = 2
+
+module-margin-left = 2
+module-margin-right = 2
+
+font-0 = IPAGothic:style=Regular:pixelsize=10;1
+font-1 = "Font Awesome 5 Free:style=Regular:pixelsize=8;1"
+font-2 = "Font Awesome 5 Free:style=Solid:pixelsize=8;1"
+font-3 = "Font Awesome 5 Brands:pixelsize=8;1"
+
+;font-0 = fixed:pixelsize=10;1
+;font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+;font-2 = siji:pixelsize=10;1
+
+modules-left = i3
+modules-center =
+;modules-right = filesystem xbacklight alsa pulseaudio xkeyboard memory cpu wlan eth battery temperature date powermenu
+modules-right = memory cpu backlight-acpi pulseaudio wlan date battery
+
+tray-position = right
+tray-padding = 2
+;tray-transparent = true
+;tray-background = #0063ff
+
+;wm-restack = i3
+
+override-redirect = false
+enalbe-ipc = true
+
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[module/i3]
+type = internal/i3
+format = <label-state> <label-mode>
+index-sort = true
+wrapping-scroll = false
+
+; Only show workspaces on the same output as the bar
+;pin-workspaces = true
+
+label-mode-foreground = ${colors.background}
+label-mode-background = ${colors.white}
+label-mode-padding = 2
+
+; focused = Active workspace on focused monitor
+label-focused = %index%
+label-focused-foreground = ${colors.blue}
+label-focused-background = ${colors.background}
+label-focused-underline = ${colors.blue}
+label-focused-padding = 2
+
+; unfocused = Inactive workspace on any monitor
+label-unfocused = %index%
+label-unfocused-foreground = ${colors.foreground}
+label-unfocused-background = ${self.label-focused-background}
+label-unfocused-underline = ${self.label-unfocused-foreground}
+label-unfocused-padding = ${self.label-focused-padding}
+
+; visible = Active workspace on unfocused monitor
+label-visible = %index%
+label-visible-foreground = ${colors.foreground}
+label-visible-background = ${self.label-focused-background}
+label-visible-underline = ${self.label-visible-foreground}
+label-visible-padding = ${self.label-focused-padding}
+;label-visible-padding = ${self.label-focused-padding}
+
+; urgent = Workspace with urgency hint set
+label-urgent = %index%
+label-urgent-foreground = ${colors.foreground}
+label-urgent-background = ${colors.red}
+label-urgent-underline = ${self.label-urgent-foreground}
+label-urgent-padding = ${self.label-focused-padding}
+
+; Separator in between workspaces
+; label-separator = |
+
+
+[module/mpd]
+type = internal/mpd
+format-online = <label-song>  <icon-prev> <icon-stop> <toggle> <icon-next>
+
+icon-prev = 
+icon-stop = 
+icon-play = 
+icon-pause = 
+icon-next = 
+
+label-song-maxlen = 25
+label-song-ellipsis = true
+
+[module/xbacklight]
+type = internal/xbacklight
+
+format = <label> <bar>
+label = ☀
+
+bar-width = 10
+bar-indicator = |
+bar-indicator-foreground = ${colors.foreground}
+bar-indicator-font = 2
+bar-fill = ─
+bar-fill-font = 2
+bar-fill-foreground = ${colors.blue}
+bar-empty = ─
+bar-empty-font = 2
+bar-empty-foreground = ${colors.black}
+
+[module/backlight-acpi]
+inherit = module/xbacklight
+type = internal/backlight
+card = intel_backlight
+
+[module/cpu]
+type = internal/cpu
+interval = 5
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground}
+format-underline = ${colors.foreground}
+label = %percentage:2%%
+
+[module/memory]
+type = internal/memory
+interval = 5
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground}
+format-underline = ${colors.foreground}
+label = %percentage_used%%
+
+[module/wlan]
+type = internal/network
+interface = wlp4s0
+interval = 5
+
+format-connected = <ramp-signal> <label-connected>
+format-connected-underline = ${colors.foreground}
+label-connected =  %essid%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+ramp-signal-0 = 
+ramp-signal-1 = 
+ramp-signal-2 = 
+ramp-signal-3 = 
+ramp-signal-4 = 
+ramp-signal-foreground = ${colors.foreground-alt}
+
+[module/eth]
+type = internal/network
+interface = enp0s25
+interval = 3.0
+
+format-connected-underline = #55aa55
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.foreground-alt}
+label-connected = %local_ip%
+
+format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+[module/date]
+type = custom/script
+exec = date +'%m/%d %H:%M'
+interval = 5
+format-underline = ${colors.foreground}
+;format-prefix = 
+;format-prefix-foreground = ${colors.foreground-alt}
+
+[module/pulseaudio]
+type = internal/pulseaudio
+
+format-volume = <label-volume> <bar-volume>
+;label-volume =  %percentage%%
+label-volume = 
+label-volume-foreground = ${root.foreground}
+
+label-muted = 🔇 muted
+label-muted-foreground = #666
+
+bar-volume-width = 10
+bar-volume-foreground-0 = ${colors.green}
+bar-volume-foreground-1 = ${colors.green}
+bar-volume-foreground-2 = ${colors.green}
+bar-volume-foreground-3 = ${colors.green}
+bar-volume-foreground-4 = ${colors.green}
+bar-volume-foreground-5 = ${colors.yellow}
+bar-volume-foreground-6 = ${colors.red}
+bar-volume-gradient = false
+bar-volume-indicator = |
+bar-volume-indicator-font = 2
+bar-volume-fill = ─
+bar-volume-fill-font = 2
+bar-volume-empty = ─
+bar-volume-empty-font = 2
+bar-volume-empty-foreground = ${colors.black}
+
+[module/battery]
+type = custom/script
+exec = ~/dotfiles/polybar/battery.sh
+interval = 10
+;format-foreground = ${colors.foreground}
+;format-background = ${colors.background}
+;format-underline = ${colors.underline}
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+
+[global/wm]
+margin-top = 5
+margin-bottom = 5
+
+; vim:ft=dosini

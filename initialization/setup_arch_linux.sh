@@ -6,24 +6,25 @@ function install_min_packages() {
   sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xbacklight \
     otf-ipafont noto-fonts-emoji fcitx-mozc fcitx-gtk3 fcitx-configtool \
     alsa-utils pulseaudio \
-    termite rxvt-unicode \
+    termite chromium \
     zsh zsh-completions zsh-syntax-highlighting \
     neovim python-neovim python-pip xsel \
-    lightdm light-locker lightdm-gtk-greeter \
-    pacman-contrib feh tree ranger chromium unzip iw \
-    && chsh -s $(which zsh) \
-    && pip install --upgrade neovim \
-    && sudo systemctl enable lightdm \
-    && sudo sed -i \
-      's/^Exec=.*/Exec=env GTK_THEME=Adwaita:dark lightdm-gtk-greeter/' \
-      /usr/share/xgreeters/lightdm-gtk-greeter.desktop
+    pacman-contrib feh tree ranger unzip iw tlp
+
+  type zsh &> /dev/null \
+    && chsh -s $(which zsh)
+  type pip &> /dev/null \
+    && pip install --upgrade neovim
+  type tlp &> /dev/null \
+    && sudo systemctl enable tlp.service tlp-sleep.service \
+    && sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
 }
 
 function install_option_packages() {
-  sudo pacman -S --noconfirm fzf tmux openssh docker docker-compose xorg-xrandr \
+  sudo pacman -S --noconfirm fzf tmux docker docker-compose xorg-xrandr \
     cmus libmad bluez bluez-utils pulseaudio-bluetooth libmtp ntfs-3g \
-    xorg-server-xephyr jq go rustup dosfstools w3m neofetch \
-    virtualbox scrot alacritty
+    xorg-server-xephyr jq go rustup dosfstools w3m neofetch openssh \
+    virtualbox scrot rofi alacritty alacritty-terminfo ttf-font-awesome
 
   add_docker_group
 }
@@ -35,7 +36,7 @@ function add_docker_group() {
 }
 
 function install_i3() {
-  sudo pacman -S --noconfirm i3-wm i3blocks i3lock rofi
+  sudo pacman -S --noconfirm i3-wm i3blocks i3lock
 }
 function install_jwm() {
   sudo pacman -S --noconfirm jwm xterm
@@ -92,14 +93,27 @@ EOF
 }
 
 function download_packages_from_aur() {
-  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/nvm.tar.gz
-  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/webstorm.tar.gz
+  local polybar='polybar.tar.gz'
+  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/${polybar} \
+    && tar -xzf ${polybar} \
+    && rm ${polybar}
+    && sudo pacman -S --noconfirm jsoncpp
+
+  local nvm='nvm.tar.gz'
+  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot${nvm} \
+    && tar -xzf ${nvm} \
+    && rm ${nvm}
+
+  local webstorm='webstorm.tar.gz'
+  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/${webstorm} \
+    && tar -xzf ${webstorm} \
+    && rm ${webstorm}
 }
 
 function main() {
   sudo sed -i 's/^#\(Color\)$/\1/' /etc/pacman.conf
 
-  sudo pacman -Syu
+  sudo pacman -Syu --noconfirm
   sudo hostnamectl set-hostname $1
   set_time
   set_locale

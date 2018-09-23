@@ -17,13 +17,13 @@ function jwm() { # dockerでjwmを動かす。
     && local exists='true' \
     || Xephyr -wr -resizeable :1 &> /dev/null &
 
-  local config="${HOME}/workspace/docker/jwm/config" docker='/home/docker'
-  [[ -d ${config} ]] || return 1
+  local share="${HOME}/workspace/docker/jwm/share" docker='/home/docker'
+  [[ -d ${share} ]] || return 1
 
   docker run $@ \
-    -v "${config}/data:${docker}/data" \
-    -v "${config}/epiphany:${docker}/.config/epiphany" \
-    -v "${config}/google-chrome:${docker}/.config/google-chrome" \
+    -v "${share}/data:${docker}/data" \
+    -v "${share}/epiphany:${docker}/.config/epiphany" \
+    -v "${share}/google-chrome:${docker}/.config/google-chrome" \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "/run/user/${UID}/pulse/native:/tmp/pulse/native" \
     -v "${HOME}/.config/pulse/cookie:/tmp/pulse/cookie" \

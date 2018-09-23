@@ -19,7 +19,7 @@ function _git_prompt() {
   git status &> /dev/null || return 1
   local git_info=("${(f)$(git status --porcelain --branch)}")
 
-  local branch="[$(echo ${git_info[1]} | sed 's/## \([^\.]*\).*/\1/')]"
+  local branch="[ $(echo ${git_info[1]} | sed 's/## \([^\.]*\).*/\1/')]"
   if [[ $(echo ${git_info[1]} | grep -o '\[.*\]') =~ '[ahead .*]' ]]; then
     branch="%{${fg[blue]}%}${branch}"
   elif [[ $(echo ${git_info[1]} | grep -o '\[.*\]') =~ '[behind .*]' ]]; then

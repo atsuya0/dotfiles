@@ -60,6 +60,12 @@ function colors(){
   done
 }
 
+function fonts() {
+  for i in {61500..62900}; do
+    echo -n -e "$(printf '\\u%x' $i) "
+  done
+}
+
 function cmd_exists(){ # 関数やaliasに囚われないtype,which。 vim()で使う。
   [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] && return 0 || return 1
 }
@@ -171,16 +177,28 @@ compdef _crypt crypt
 
 function md() { # マルチディスプレイ
   type xrandr &> /dev/null || return 1
+  local primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)
+  local second=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
+
   if [[ $1 == 'school' ]]; then
-    xrandr --output HDMI1 --left-of eDP1 --mode 1600x900
+    xrandr --output ${second} --left-of ${primary} --mode 1600x900 \
+      && return 0 \
+      || return 1
   elif [[ $1 == 'home' ]]; then
-    xrandr --output HDMI1 --left-of eDP1 --mode 1366x768
+    xrandr --output ${second} --left-of ${primary} --mode 1366x768 \
+      && return 0 \
+      || return 1
   elif [[ $1 == 'off' ]]; then
-    xrandr --output "$(xrandr | grep ' connected' | grep -v 'primary' | cut -d' ' -f1)" --off
-  elif [[ $1 == 'select' ]]; then
-    type fzf &> /dev/null || return 1
-    xrandr --output ${2:-VGA1} --left-of eDP1 --mode "$(xrandr | sed -n '/.* connected [^p].*/,/^[^ ]/p' | sed '1d;$d;s/  */ /g' | cut -d' ' -f2 | fzf)"
+    [[ 3 -gt $(xrandr --listactivemonitors | wc -l) ]] && return 1
+    xrandr --output ${second} --off \
+      && return 0 \
+      || return 1
   fi
+
+  type fzf &> /dev/null || return 1
+  local mode=$(xrandr | sed -n "/^${second}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
+  [[ -z ${mode} ]] && return 1
+  xrandr --output ${second} --left-of ${primary} --mode ${mode}
 }
 function _md() {
   _values \

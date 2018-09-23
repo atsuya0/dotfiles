@@ -1,4 +1,4 @@
-rofi.modi: drun,system:~/.config/rofi/rofi_system.sh,window
+rofi.modi: drun,wifi:~/.config/rofi/rofi_wifi.sh,monitor:~/.config/rofi/rofi_monitor.sh,system:~/.config/rofi/rofi_system.sh
 rofi.sidebar-mode:  true
 rofi.hide-scrollbar: true
 rofi.kb-cancel: Escape,Control+bracketleft
