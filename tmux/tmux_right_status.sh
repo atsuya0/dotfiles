@@ -13,7 +13,7 @@ memory="${blue}${sep}${black} ${memory_cmd} ${def}"
 
 # ロードアベレージ
 la_cmd=$(uptime | sed -E 's/.*load average: ([0-9]\.[0-9][0-9]).*/\1/g')
-cpu_cmd=$(cat /proc/cpuinfo | grep processor | wc -l)
+cpu_cmd=$(grep 'processor' /proc/cpuinfo | wc -l)
 la="${black}${sep}${def}${blue} ${la_cmd}/${cpu_cmd} ${def}"
 
 # ネットワーク

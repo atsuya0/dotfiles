@@ -9,8 +9,6 @@ typeset -gr path=(
 )
 
 export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理
-export MONITOR=$(type xrandr &> /dev/null \
-  && xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | tail -1)
 
 export TRASH_PATH="${HOME}/.Trash"
 export SECOND_LIST_PATH="${HOME}/.second_list.json"

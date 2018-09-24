@@ -3,7 +3,7 @@
 # [todo] graphic driver(xf86-video-intel)のinstall
 
 function install_min_packages() {
-  sudo pacman -S --noconfirm xorg-server xorg-xinit xorg-xbacklight \
+  sudo pacman -S --needed --noconfirm xorg-server xorg-xinit xorg-xbacklight \
     otf-ipafont noto-fonts-emoji fcitx-mozc fcitx-gtk3 fcitx-configtool \
     alsa-utils pulseaudio \
     termite chromium \
@@ -21,7 +21,7 @@ function install_min_packages() {
 }
 
 function install_option_packages() {
-  sudo pacman -S --noconfirm fzf tmux docker docker-compose xorg-xrandr \
+  sudo pacman -S --needed --noconfirm fzf tmux docker docker-compose xorg-xrandr \
     cmus libmad bluez bluez-utils pulseaudio-bluetooth libmtp ntfs-3g \
     xorg-server-xephyr jq go rustup dosfstools w3m neofetch openssh \
     virtualbox scrot rofi alacritty alacritty-terminfo ttf-font-awesome
@@ -36,10 +36,13 @@ function add_docker_group() {
 }
 
 function install_i3() {
-  sudo pacman -S --noconfirm i3-wm i3blocks i3lock
+  sudo pacman -S --needed --noconfirm i3-wm i3blocks i3lock
 }
+
 function install_jwm() {
-  sudo pacman -S --noconfirm jwm xterm
+  sudo pacman -S --needed --noconfirm jwm \
+    && cp /etc/jwm/system.jwm ${HOME}/.jwmrc \
+    && sed -i 's/xterm/termite/g' ${HOME}/.jwmrc
 }
 
 function install_fonts() {
@@ -58,7 +61,7 @@ function install_fonts() {
 }
 
 function install_packages_for_virtualbox() {
-  sudo pacman -S --noconfirm xf86-video-vesa xf86-video-fbdev virtualbox-guest-utils virtualbox-guest-modules-arch
+  sudo pacman -S --needed --noconfirm xf86-video-vesa xf86-video-fbdev virtualbox-guest-utils virtualbox-guest-modules-arch
 }
 
 function set_time() {

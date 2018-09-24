@@ -15,8 +15,8 @@ export DefalutIMModule=fcitx
 type fcitx-autostart &> /dev/null && fcitx-autostart &
 
 # 壁紙を設定
-[[ -s "${HOME}/Content/pictures/wallpaper/arch/e3ds1gR.jpg" ]] \
-  && feh --no-fehbg --bg-scale "${HOME}/Content/pictures/wallpaper/arch/e3ds1gR.jpg"
+[[ -f "${HOME}/Content/pictures/wallpaper/arch/Ju5PuBC.jpg" ]] \
+  && feh --no-fehbg --bg-scale "${HOME}/Content/pictures/wallpaper/arch/Ju5PuBC.jpg"
 
 # 画面の輝度を30%に設定
 type xbacklight &> /dev/null && xbacklight -set 30

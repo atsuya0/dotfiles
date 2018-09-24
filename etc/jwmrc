@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
+<!-- /etc/jwm/system.jwm -->
 <JWM>
 
     <!-- The root menu. -->
     <RootMenu onroot="12">
         <Program label="terminal">lxterminal</Program>
-        <Program label="browser">epiphany-browser</Program>
+        <Program label="epiphany-browser">epiphany-browser</Program>
+        <Program label="google-chrome">google-chrome</Program>
         <Separator/>
         <Program icon="lock.png" label="Lock">
             xlock -mode blank
@@ -204,27 +206,18 @@
     <Key key="Return">select</Key>
     <Key key="Escape">escape</Key>
 
+    <Key mask="A" key="#">desktop#</Key>
     <Key mask="A" key="Tab">nextstacked</Key>
-    <Key mask="4" key="#">desktop#</Key>
-    <Key mask="4" key="Up">maximize</Key>
-    <Key mask="4" key="Left">maxleft</Key>
-    <Key mask="4" key="Right">maxright</Key>
-    <Key mask="4" key="Tab">rdesktop</Key>
-
-    <!-- <Key mask="4" key="Tab">nextstacked</Key>
-    <Key mask="S4" key="q">close</Key>
-    <Key mask="4" key="#">desktop#</Key>
-    <Key mask="A" key="F1">root:1</Key>
-    <Key mask="A" key="F2">window</Key>
-    <Key mask="4" key="k">maximize</Key>
-    <Key mask="4" key="h">maxleft</Key>
-    <Key mask="4" key="l">maxright</Key>
-    <Key mask="4" key="i">rdesktop</Key>
-    <Key mask="4" key="u">ldesktop</Key> -->
+    <Key mask="A" key="m">root:1</Key>
+    <Key mask="A" key="k">maximize</Key>
+    <Key mask="A" key="h">maxleft</Key>
+    <Key mask="A" key="l">maxright</Key>
+    <Key mask="A" key="i">rdesktop</Key>
+    <Key mask="A" key="u">ldesktop</Key>
 
     <StartupCommand>
       fcitx-autostart
       fcitx-imlist -e fcitx-keyboard-jp
-      fcitx-imlist -s fcitx-keyboard-jp,mozc
+      fcitx-imlist -s fcitx-keyboard-jp,mozc,fcitx-keyboard-us
     </StartupCommand>
 </JWM>

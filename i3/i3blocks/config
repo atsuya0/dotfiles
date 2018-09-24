@@ -19,7 +19,7 @@ interval=1
 
 [load average]
 label=LA
-command=echo "$(uptime | sed 's/.*load average: \(.*\)/\1/' | cut -d, -f1) / $(cat /proc/cpuinfo | grep processor | wc -l)"
+command=echo "$(uptime | sed 's/.*load average: \(.*\)/\1/' | cut -d, -f1) / $(grep 'processor' /proc/cpuinfo | wc -l)"
 color=#d0dcef
 interval=1
 

@@ -14,7 +14,7 @@ function print_battery() {
 
 function main() {
   battery=$([[ -e /sys/class/power_supply/BAT1 ]] && cat /sys/class/power_supply/BAT1/capacity)
-  [[ -z ${battery} ]] && echo "$(format \#c0c5ce) No Battery" && return
+  [[ -z ${battery} ]] && echo "$(format '#c0c5ce') No Battery" && return
 
   if [[ ${battery} -gt 79 ]];then
     print_battery '#08d137' ${battery}

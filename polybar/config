@@ -83,8 +83,8 @@ wrapping-scroll = false
 ;pin-workspaces = true
 
 label-mode-foreground = ${colors.background}
-label-mode-background = ${colors.white}
-label-mode-padding = 2
+label-mode-background = ${colors.blue}
+label-mode-padding = 1
 
 ; focused = Active workspace on focused monitor
 label-focused = %index%
@@ -155,20 +155,15 @@ type = internal/backlight
 card = intel_backlight
 
 [module/cpu]
-type = internal/cpu
+type = custom/script
+exec = ~/dotfiles/polybar/load_average.sh
 interval = 5
-format-prefix = " "
-format-prefix-foreground = ${colors.foreground}
-format-underline = ${colors.foreground}
-label = %percentage:2%%
+;label = %percentage:2%%
 
 [module/memory]
-type = internal/memory
+type = custom/script
+exec = ~/dotfiles/polybar/memory.py
 interval = 5
-format-prefix = " "
-format-prefix-foreground = ${colors.foreground}
-format-underline = ${colors.foreground}
-label = %percentage_used%%
 
 [module/wlan]
 type = internal/network
@@ -224,7 +219,8 @@ format-volume = <label-volume> <bar-volume>
 label-volume = 
 label-volume-foreground = ${root.foreground}
 
-label-muted = 🔇 muted
+;label-muted = 🔇 muted
+label-muted =  muted
 label-muted-foreground = #666
 
 bar-volume-width = 10
