@@ -36,26 +36,32 @@ class MemInfo():
     def get_cached(self):
         return self.retrieve('Cached')
 
-    # key error
     def get_mem_used(self):
         return self.get_mem_total() \
                 - self.get_mem_free() \
                 - self.get_buffers() \
                 - self.get_cached()
 
-# index error
+# size: kB
 def convert(size, cnt):
     if size < 1024 ** (cnt+1):
-        return f'{size / 1024 ** cnt:.1f}{units[cnt]}'
+        return f'{size / 1024 ** cnt:.4g}{units[cnt]}'
     return convert(size, cnt+1)
 
 def main():
     mem_info = MemInfo('/proc/meminfo')
     if not mem_info.is_loaded():
         return
-    used = mem_info.get_mem_used()
-    rate = used / mem_info.get_mem_total() * 100
-    print('%{F#c0c5ce}%{u#c0c5ce}', f'{icon} {convert(used, 0)} : {rate:.1f}%')
+    try:
+        used = mem_info.get_mem_used()
+    except KeyError as err:
+        return
+
+    rate = used / mem_info.get_mem_total()
+    try:
+        print('%{F#5597d9}%{u#5597d9}', f'{icon}', '%{F#c0c5ce}%{u#5597d9}', f'{convert(used, 0)} : {rate:.1%}')
+    except IndexError as err:
+        return
 
 
 icon = ''

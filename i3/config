@@ -10,6 +10,7 @@ font pango:IPAGothic Regular 0
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# add
 new_window pixel 3
 new_float pixel 2
 workspace_auto_back_and_forth no
@@ -27,7 +28,7 @@ bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
 # focus the parent container
-bindsym $mod+a focus parent
+bindsym $mod+p focus parent
 # focus the child container
 bindsym $mod+c focus child
 
@@ -122,7 +123,8 @@ bindsym Print exec --no-startup-id scrot -q 100 -u '%Y-%m-%d_%H:%M:%S.png' -e '[
 bindsym Shift+Print exec --no-startup-id scrot -q 100 '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/Content/pictures/screenshot/ ]] && mv $f ~/Content/pictures/screenshot/'
 
 # resize window (you can also use the mouse for that)
-mode "resize" {
+set $mode_resize 
+mode "$mode_resize" {
     # These bindings trigger as soon as you enter the resize mode
     bindsym Shift+comma resize shrink width 10 px or 10 ppt
     bindsym Shift+period resize grow width 10 px or 10 ppt
@@ -134,9 +136,10 @@ mode "resize" {
     bindsym Escape mode "default"
     bindsym space mode "default"
 }
-bindsym $mod+r mode "resize"
+bindsym $mod+r mode "$mode_resize"
 
-mode "launcher" {
+set $mode_launcher 
+mode "$mode_launcher" {
     bindsym t exec --no-startup-id alacritty, mode "default"
     bindsym Shift+t exec --no-startup-id termite, mode "default"
     bindsym b exec --no-startup-id chromium, mode "default"
@@ -148,9 +151,9 @@ mode "launcher" {
     bindsym Escape mode "default"
     bindsym space mode "default"
 }
-bindsym $mod+Return mode "launcher"
+bindsym $mod+Return mode "$mode_launcher"
 
-set $mode_display (m)irroring, (d)ual-display, e(x)it
+set $mode_display xrandr
 mode "$mode_display" {
     bindsym m exec --no-startup-id xrandr --output eDP1 --output HDMI1 --mode 1366x768, mode "default"
     bindsym d exec --no-startup-id xrandr --output HDMI1 --left-of eDP1 --mode 1366x768, mode "default"
@@ -167,9 +170,9 @@ bindsym $mod+x mode "$mode_display"
 # bar {
 #     status_command i3blocks --config ${DOTFILES}/i3/i3blocks/config
 #     #status_command i3status
-# 
+#
 #     font pango:IPAGothic Regular 11
-# 
+#
 #     mode dock
 #     position top
 #     separator_symbol " │ "
@@ -189,7 +192,7 @@ bindsym $mod+x mode "$mode_display"
 #         #modeの色
 #         binding_mode       #2f343a #fffffe #000000
 #     }
-# 
+#
 # }
 exec_always --no-startup-id ${DOTFILES}/polybar/launch.sh
 

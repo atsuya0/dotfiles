@@ -9,7 +9,7 @@ function install_min_packages() {
     termite chromium \
     zsh zsh-completions zsh-syntax-highlighting \
     neovim python-neovim python-pip xsel \
-    pacman-contrib feh tree ranger unzip iw tlp
+    pacman-contrib feh tree ranger iw tlp
 
   type zsh &> /dev/null \
     && chsh -s $(which zsh)

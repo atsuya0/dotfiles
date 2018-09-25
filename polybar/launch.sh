@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -eu
+
 killall -q polybar
 
 while pgrep -u ${UID} -x polybar > /dev/null;do
