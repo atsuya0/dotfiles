@@ -54,8 +54,8 @@ function init_i3() {
   local dot="${DOTFILES}/i3"
   place_config_files "${dot}/config" "${XDG_CONFIG_HOME}/i3" \
     || return 1
-  place_config_files "${dot}/i3blocks" "${XDG_CONFIG_HOME}/i3blocks" \
-    || return 1
+  # place_config_files "${dot}/i3blocks" "${XDG_CONFIG_HOME}/i3blocks" \
+  #   || return 1
 }
 
 # x11

@@ -1,0 +1,91 @@
+# x window system
+xorg-server
+xorg-xinit # startx
+xorg-xbacklight # backlight
+xorg-server-xephyr # nest
+xorg-xrandr # dual monitor
+
+# shell
+zsh
+zsh-completions
+zsh-syntax-highlighting
+
+# font
+otf-ipafont
+ttf-font-awesome
+noto-fonts-emoji
+
+# input method framework
+fcitx-mozc
+fcitx-gtk3
+fcitx-configtool
+
+# sound
+alsa-utils
+pulseaudio
+
+# terminal
+termite
+alacritty
+alacritty-terminfo
+tmux
+
+# editor
+neovim
+python-neovim
+
+# browser
+chromium # gui
+w3m # cui
+
+# programming lang
+python
+python-pip # package manager
+go
+rustup
+
+
+# window manager
+i3-wm
+i3blocks
+i3lock
+
+# file manager
+ranger # cui
+pcmanfm-gtk3 # gui
+
+# command
+xsel # clip board
+tree
+fzf # filter
+iw # network
+jq # json
+
+# bluetooth
+bluez
+bluez-utils
+pulseaudio-bluetooth
+
+# file system
+dosfstools # fat32
+ntfs-3g # windows
+
+# virtual
+docker
+docker-compose
+virtualbox
+virtualbox-host-modules-arch
+
+# sound player
+cmus
+libmad
+
+# etc
+pacman-contrib # pacman
+openssh # ssh
+rofi # launcher
+feh # image viewer
+scrot # screen shot
+tlp # power
+libmtp # mtp
+neofetch # system information

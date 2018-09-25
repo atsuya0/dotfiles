@@ -2,14 +2,9 @@
 
 # [todo] graphic driver(xf86-video-intel)のinstall
 
-function install_min_packages() {
-  sudo pacman -S --needed --noconfirm xorg-server xorg-xinit xorg-xbacklight \
-    otf-ipafont noto-fonts-emoji fcitx-mozc fcitx-gtk3 fcitx-configtool \
-    alsa-utils pulseaudio \
-    termite chromium \
-    zsh zsh-completions zsh-syntax-highlighting \
-    neovim python-neovim python-pip xsel \
-    pacman-contrib feh tree ranger iw tlp
+function install_packages() {
+  sudo pacman -S --needed --noconfirm \
+    $(cat $(dirname $0)/package.list | sed 's/#.*//;s/ //g;/^$/d')
 
   type zsh &> /dev/null \
     && chsh -s $(which zsh)
@@ -18,14 +13,6 @@ function install_min_packages() {
   type tlp &> /dev/null \
     && sudo systemctl enable tlp.service tlp-sleep.service \
     && sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
-}
-
-function install_option_packages() {
-  sudo pacman -S --needed --noconfirm fzf tmux docker docker-compose xorg-xrandr \
-    cmus libmad bluez bluez-utils pulseaudio-bluetooth libmtp ntfs-3g \
-    xorg-server-xephyr jq go rustup dosfstools w3m neofetch openssh \
-    virtualbox scrot rofi alacritty alacritty-terminfo ttf-font-awesome
-
   add_docker_group
 }
 
@@ -33,16 +20,6 @@ function add_docker_group() {
   groups | grep docker \
     && sudo groupadd docker \
     && sudo gpasswd -a $(whoami) docker
-}
-
-function install_i3() {
-  sudo pacman -S --needed --noconfirm i3-wm i3blocks i3lock
-}
-
-function install_jwm() {
-  sudo pacman -S --needed --noconfirm jwm \
-    && cp /etc/jwm/system.jwm ${HOME}/.jwmrc \
-    && sed -i 's/xterm/termite/g' ${HOME}/.jwmrc
 }
 
 function install_fonts() {
@@ -58,10 +35,6 @@ function install_fonts() {
   done
 
   fc-cache
-}
-
-function install_packages_for_virtualbox() {
-  sudo pacman -S --needed --noconfirm xf86-video-vesa xf86-video-fbdev virtualbox-guest-utils virtualbox-guest-modules-arch
 }
 
 function set_time() {
@@ -99,7 +72,7 @@ function download_packages_from_aur() {
   local polybar='polybar.tar.gz'
   curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/${polybar} \
     && tar -xzf ${polybar} \
-    && rm ${polybar}
+    && rm ${polybar} \
     && sudo pacman -S --noconfirm jsoncpp
 
   local nvm='nvm.tar.gz'
@@ -115,23 +88,14 @@ function download_packages_from_aur() {
 
 function main() {
   sudo sed -i 's/^#\(Color\)$/\1/' /etc/pacman.conf
-
   sudo pacman -Syu --noconfirm
   sudo hostnamectl set-hostname $1
+  install_packages
   set_time
   set_locale
   set_touchpad
-  install_min_packages
   install_fonts
-
-  if [[ $1 == 'virtualbox' ]]; then
-    install_jwm
-    install_packages_for_virtualbox
-    sudo systemctl enable dhcpcd@enp0s3
-  else
-    install_i3
-    install_option_packages
-  fi
+  download_packages_from_aur
 }
 
 [[ $(id -u) -eq 0 ]] && return 1
