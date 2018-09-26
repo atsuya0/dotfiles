@@ -69,11 +69,11 @@ EOF
 }
 
 function download_packages_from_aur() {
-  local polybar='polybar.tar.gz'
-  curl -fsSLO https://aur.archlinux.org/cgit/aur.git/snapshot/${polybar} \
-    && tar -xzf ${polybar} \
-    && rm ${polybar} \
-    && sudo pacman -S --noconfirm jsoncpp
+  # local polybar='polybar.tar.gz'
+  # curl -fsSLO https://aur.archlinux.org/cgit/aur.git/snapshot/${polybar} \
+  #   && tar -xzf ${polybar} \
+  #   && rm ${polybar} \
+  #   && sudo pacman -S --noconfirm jsoncpp
 
   local nvm='nvm.tar.gz'
   curl -fsSLO https://aur.archlinux.org/cgit/aur.git/snapshot${nvm} \

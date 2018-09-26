@@ -107,16 +107,18 @@ bindsym $mod+Shift+e exec --no-startup-id \
 -f 'pango:IPAGothic Regular 10'"
 
 #音量調整
-bindsym F8 exec --no-startup-id pactl set-sink-volume $([[ $(pactl list sinks | grep 'RUNNING') != '' ]] && (pactl list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]') || (pactl list sinks | head -1 | grep -o '[0-9]')) -5% && pkill -SIGRTMIN+1 i3blocks && tmux refresh -S
-bindsym F9 exec --no-startup-id pactl set-sink-volume $([[ $(pactl list sinks | grep 'RUNNING') != '' ]] && (pactl list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]') || (pactl list sinks | head -1 | grep -o '[0-9]')) +5% && pkill -SIGRTMIN+1 i3blocks && tmux refresh -S
-bindsym F10 exec --no-startup-id pactl set-sink-mute $([[ $(pactl list sinks | grep 'RUNNING') != '' ]] && (pactl list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]') || (pactl list sinks | head -1 | grep -o '[0-9]')) toggle && pkill -SIGRTMIN+1 i3blocks && tmux refresh -S
+bindsym F8 exec --no-startup-id ${DOTFILES}/i3/volume.sh down
+bindsym F9 exec --no-startup-id ${DOTFILES}/i3/volume.sh up
+bindsym F10 exec --no-startup-id ${DOTFILES}/i3/volume.sh mute
 #XF86AudioLowerVolume
 #XF86AudioRaiseVolume
 #XF86AudioMute
 
 #輝度調整
-bindsym F6 exec --no-startup-id [[ $(xbacklight -get | cut -d. -f1) -gt 9 ]] && xbacklight -dec 10 && pkill -SIGRTMIN+2 i3blocks
-bindsym F7 exec --no-startup-id xbacklight -inc 10 && pkill -SIGRTMIN+2 i3blocks
+bindsym F6 exec --no-startup-id \
+  [[ $(xbacklight -get | cut -d. -f1) -gt 9 ]] && xbacklight -dec 10 && pkill -SIGRTMIN+2 i3blocks
+bindsym F7 exec --no-startup-id \
+  xbacklight -inc 10 && pkill -SIGRTMIN+2 i3blocks
 #XF86MonBrightnessUp
 #XF86MonBrightnessDown
 

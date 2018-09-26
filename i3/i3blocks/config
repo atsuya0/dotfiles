@@ -2,14 +2,7 @@
 label=
 command=uptime | sed 's/.*up \([^,]*\),.*/\1/'
 color=#d0dcef
-interval=1
-
-[lightness]
-label=☀
-command=xbacklight -get | xargs printf '%.0f%%'
-color=#d0dcef
-interval=once
-signal=2
+interval=60
 
 [memory]
 label=.
@@ -26,14 +19,21 @@ interval=1
 
 [network]
 label=
-command=[[ $(iw dev wlp4s0 link) != 'Not connected.' ]] && echo "$(iw dev wlp4s0 link | sed '/SSID/!d;s/ //g;s/[^:]*://') / -$(iw dev wlp4s0 link | grep signal | grep -o '[0-9]*')dBm"
+command=[[ $(iw dev wlp4s0 link) != 'Not connected.' ]] && echo "$(iw dev wlp4s0 link | sed '/SSID/!d;s/ //g;s/[^:]*://') : -$(iw dev wlp4s0 link | grep signal | grep -o '[0-9]*')dBm"
 color=#d0dcef
 interval=1
+
+[lightness]
+label=☀
+command=xbacklight -get | xargs printf '%.0f%%'
+color=#d0dcef
+interval=once
+signal=2
 
 [volume]
 label=
 command=${DOTFILES}/i3/i3blocks/volume.sh
-interval=1
+interval=once
 signal=1
 
 [date]
@@ -45,4 +45,4 @@ interval=1
 [battery]
 #label=
 command=${DOTFILES}/i3/i3blocks/battery.sh
-interval=1
+interval=30
