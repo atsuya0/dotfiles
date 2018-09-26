@@ -174,14 +174,14 @@ bindsym $mod+x mode "$mode_display"
 
 set $background #2b303b
 set $foreground #c0c5ce
-set $black #65737e
+set $black #2b303b
 set $red #bf616a
 set $green #a3be8c
 set $yellow #ebcb8b
-set $blue #5597d9
+set $blue #8fa1b3
 set $magenta #b48ead
 set $cyan #96b5b4
-set $white #eff1f5
+set $white #c0c5ce
 
 bar {
     status_command i3blocks
@@ -202,11 +202,11 @@ bar {
         background $background
         focused_background $background
         #文字の色
-        statusline $foreground
-        focused_statusline $foreground
+        statusline $blue
+        focused_statusline $blue
         #区切り文字の色
-        separator $black
-        focused_separator $black
+        separator $blue
+        focused_separator $blue
         #workspaceのbottanの色
 
         # border bg fg

@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-#$([[ $(pactl list sinks | grep 'RUNNING') != '' ]] && (pactl list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]') || (pactl list sinks | head -1 | grep -o '[0-9]'))
-
 function volume() {
   pactl list sinks | grep 'Volume' | grep -o '[0-9]*%' | head -1
 }
@@ -19,7 +17,7 @@ function toggle() {
 function main() {
   type pactl &> /dev/null || return 1
 
-  local sinks="pactl list sinks short | cut -f1 | sed 1d"
+  local sinks='pactl list sinks short | cut -f1 | sed 1d'
 
   case $1 in
     'up' )

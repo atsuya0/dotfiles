@@ -25,5 +25,6 @@ type xbacklight &> /dev/null \
 
 # 音量を5%に設定 muteに設定
 type pactl &> /dev/null \
-  && pactl set-sink-volume 0 5% \
-  && pactl set-sink-mute 0 1
+  && sinks='pactl list sinks short | cut -f1' \
+  && eval ${sinks} | xargs -I{} pactl set-sink-volume {} 5% \
+  && eval ${sinks} | xargs -I{} pactl set-sink-mute {} 1

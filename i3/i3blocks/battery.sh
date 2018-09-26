@@ -12,7 +12,7 @@ function print() {
 
 function main() {
   local high=('#08d137' '')
-  local middle=('#d0dcef' '')
+  local middle=('#8fa1b3' '')
   local low=('#f73525' '')
 
   local battery=$([[ -e /sys/class/power_supply/BAT1 ]] && cat /sys/class/power_supply/BAT1/capacity)

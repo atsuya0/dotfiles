@@ -1,32 +1,32 @@
 [uptime]
 label=
 command=uptime | sed 's/.*up \([^,]*\),.*/\1/'
-color=#d0dcef
+color=#8fa1b3
 interval=60
 
 [memory]
 label=.
 command=${DOTFILES}/i3/i3blocks/memory.py
 #command=free -h | awk 'match($0, /^Mem/){print $3 " / " $2}'
-color=#d0dcef
+color=#8fa1b3
 interval=1
 
 [load average]
 label=
 command=echo "$(uptime | sed 's/.*load average: \(.*\)/\1/' | cut -d, -f1)/$(grep 'processor' /proc/cpuinfo | wc -l)"
-color=#d0dcef
+color=#8fa1b3
 interval=1
 
 [network]
 label=
 command=[[ $(iw dev wlp4s0 link) != 'Not connected.' ]] && echo "$(iw dev wlp4s0 link | sed '/SSID/!d;s/ //g;s/[^:]*://') : -$(iw dev wlp4s0 link | grep signal | grep -o '[0-9]*')dBm"
-color=#d0dcef
+color=#8fa1b3
 interval=1
 
 [lightness]
 label=☀
 command=xbacklight -get | xargs printf '%.0f%%'
-color=#d0dcef
+color=#8fa1b3
 interval=once
 signal=2
 
@@ -39,7 +39,7 @@ signal=1
 [date]
 label=
 command=date +'%m/%d %H:%M'
-color=#d0dcef
+color=#8fa1b3
 interval=1
 
 [battery]
