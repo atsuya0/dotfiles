@@ -59,12 +59,11 @@ def main():
 
     rate = used / mem_info.get_mem_total()
     try:
-        print('%{F#5597d9}%{u#5597d9}', f'{icon}', '%{F#c0c5ce}%{u#5597d9}', f'{convert(used, 0)} : {rate:.1%}')
+        print(f'{convert(used, 0)} : {rate:.1%}')
     except IndexError as err:
         return
 
 
-icon = ''
 units = ['kB', 'MB', 'GB', 'TB']
 
 if __name__ == '__main__':

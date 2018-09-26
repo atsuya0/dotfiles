@@ -1,5 +1,5 @@
 [uptime]
-label=UT
+label=
 command=uptime | sed 's/.*up \([^,]*\),.*/\1/'
 color=#d0dcef
 interval=1
@@ -12,26 +12,27 @@ interval=once
 signal=2
 
 [memory]
-label=Mem
-command=free -h | awk 'match($0, /^Mem/){print $3 " / " $2}'
+label=.
+command=${DOTFILES}/i3/i3blocks/memory.py
+#command=free -h | awk 'match($0, /^Mem/){print $3 " / " $2}'
 color=#d0dcef
 interval=1
 
 [load average]
-label=LA
-command=echo "$(uptime | sed 's/.*load average: \(.*\)/\1/' | cut -d, -f1) / $(grep 'processor' /proc/cpuinfo | wc -l)"
+label=
+command=echo "$(uptime | sed 's/.*load average: \(.*\)/\1/' | cut -d, -f1)/$(grep 'processor' /proc/cpuinfo | wc -l)"
 color=#d0dcef
 interval=1
 
 [network]
-label=📶
+label=
 command=[[ $(iw dev wlp4s0 link) != 'Not connected.' ]] && echo "$(iw dev wlp4s0 link | sed '/SSID/!d;s/ //g;s/[^:]*://') / -$(iw dev wlp4s0 link | grep signal | grep -o '[0-9]*')dBm"
 color=#d0dcef
 interval=1
 
 [volume]
-label=🔊
-command=~/.config/i3blocks/volume.sh
+label=
+command=${DOTFILES}/i3/i3blocks/volume.sh
 interval=1
 signal=1
 
@@ -42,6 +43,6 @@ color=#d0dcef
 interval=1
 
 [battery]
-label=🔋
-command=~/.config/i3blocks/battery.sh
+#label=
+command=${DOTFILES}/i3/i3blocks/battery.sh
 interval=1

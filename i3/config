@@ -10,11 +10,16 @@ font pango:IPAGothic Regular 0
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# add
-new_window pixel 3
-new_float pixel 2
-workspace_auto_back_and_forth no
+default_border pixel 1
+default_floating_border pixel 1
+hide_edge_borders smart
+workspace_auto_back_and_forth yes
 focus_on_window_activation smart
+focus_follows_mouse yes
+mouse_warping output
+popup_during_fullscreen smart
+# focus_wrapping no
+show_marks yes
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -90,7 +95,7 @@ bindsym $mod+Shift+9 move container to workspace 9
 bindsym $mod+Shift+0 move container to workspace 10
 
 # reload the configuration file
-#bindsym $mod+Shift+c reload
+bindsym $mod+Shift+w reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
@@ -165,43 +170,61 @@ mode "$mode_display" {
 }
 bindsym $mod+x mode "$mode_display"
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-# bar {
-#     status_command i3blocks --config ${DOTFILES}/i3/i3blocks/config
-#     #status_command i3status
-#
-#     font pango:IPAGothic Regular 11
-#
-#     mode dock
-#     position top
-#     separator_symbol " │ "
-#     workspace_buttons yes
-#     binding_mode_indicator yes
-#     colors {
-#         #背景の色
-#         background #1e1c23
-#         #文字の色
-#         statusline #ffffff
-#         #区切り文字の色
-#         separator #4b5963
-#         #workspaceのbottanの色
-#         focused_workspace  #285577 #285577 #ffffff
-#         inactive_workspace #333333 #1e1c23 #888888
-#         urgent_workspace   #2f343a #900000 #000000
-#         #modeの色
-#         binding_mode       #2f343a #fffffe #000000
-#     }
-#
-# }
-exec_always --no-startup-id ${DOTFILES}/polybar/launch.sh
+set $background #2b303b
+set $foreground #c0c5ce
+set $black #65737e
+set $red #bf616a
+set $green #a3be8c
+set $yellow #ebcb8b
+set $blue #5597d9
+set $magenta #b48ead
+set $cyan #96b5b4
+set $white #eff1f5
+
+bar {
+    status_command i3blocks
+    #status_command i3status
+
+    font pango:FontAwesome, IPAGothic Regular 11
+
+    mode dock
+    position top
+    separator_symbol " │ "
+    workspace_buttons yes
+    strip_workspace_numbers yes
+    binding_mode_indicator yes
+    tray_output none
+    tray_padding 0
+    colors {
+        #背景の色
+        background $background
+        focused_background $background
+        #文字の色
+        statusline $foreground
+        focused_statusline $foreground
+        #区切り文字の色
+        separator $black
+        focused_separator $black
+        #workspaceのbottanの色
+
+        # border bg fg
+        focused_workspace  $blue $blue $background
+        active_workspace $background $background $foreground
+        inactive_workspace $background $background $foreground
+        urgent_workspace   $red $red $background
+        #modeの色
+        binding_mode       $blue $blue $background
+    }
+
+}
+# exec_always --no-startup-id ${DOTFILES}/polybar/launch.sh
 
 #                       border  backgr. text    indicator child_border
-client.focused          #315171 #315171 #ffffff #2e9ef4   #315171
-client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
-client.unfocused        #1e1c23 #1e1c23 #888888 #292d2e   #1e1c23
-client.urgent           #2f343a #900000 #ffffff #900000   #900000
-client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+client.focused          $blue $blue $blue $blue $blue
+client.focused_inactive $black $black $black $black $black
+client.unfocused $background $background $background $background $background
+client.urgent           $red $red $red $red $red
+client.placeholder      #000000 #0c0c0c #ffffff #000000 #0c0c0c
 client.background       #000000
 
 #default

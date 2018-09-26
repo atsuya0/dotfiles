@@ -5,8 +5,8 @@
     <!-- The root menu. -->
     <RootMenu onroot="12">
         <Program label="terminal">lxterminal</Program>
-        <Program label="epiphany-browser">epiphany-browser</Program>
         <Program label="google-chrome">google-chrome</Program>
+        <Program label="chromium">chromium</Program>
         <Separator/>
         <Program icon="lock.png" label="Lock">
             xlock -mode blank

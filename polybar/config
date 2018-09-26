@@ -12,8 +12,7 @@ cyan = #96b5b4
 white = #eff1f5
 
 [bar/bar1]
-monitor = ${env:MONITOR:HDMI1}
-monitor-fallback = eDP1
+monitor = ${env:MONITOR:eDP1}
 bottom = false
 width = 100%
 height = 23

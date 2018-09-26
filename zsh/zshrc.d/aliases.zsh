@@ -25,6 +25,8 @@ alias lock='i3lock -c 6b91aa'
 
 alias -g @g='| grep'
 alias -g @l='| less'
+alias -g @u='| uniq'
+alias -g @s='| sort'
 alias -g @j='| jq'
 alias -g ..2='../..'
 alias -g ..3='../../..'

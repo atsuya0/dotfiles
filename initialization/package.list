@@ -12,6 +12,7 @@ zsh-syntax-highlighting
 
 # font
 otf-ipafont
+awesome-terminal-fonts
 ttf-font-awesome
 noto-fonts-emoji
 
@@ -68,7 +69,6 @@ pulseaudio-bluetooth
 
 # file system
 dosfstools # fat32
-ntfs-3g # windows
 
 # virtual
 docker

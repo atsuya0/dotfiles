@@ -1,18 +1,30 @@
-#!/usr/bin/zsh
+#!/usr/bin/bash
 
-local char=('◜' '◝' '◞' '◟')
-[[ $(cat /sys/class/power_supply/ADP1/online) == '1' ]] && echo -n "${char[$(expr $(expr $(date +%S) % 4) + 1)]} "
 
-local battery=$([[ -e /sys/class/power_supply/BAT1 ]] && cat /sys/class/power_supply/BAT1/capacity)
+function print() {
+  [[ $(cat /sys/class/power_supply/ADP1/online) == '1' ]] \
+    && local online=''
 
-local color='#d0dcef'
-[[ -n ${battery} ]] && { \
+  [[ $# -gt 2 ]] \
+    && echo -e "${online:-$1} $2 \n\n$3" \
+    || echo -e "${online:----} "
+}
+
+function main() {
+  local high=('#08d137' '')
+  local middle=('#d0dcef' '')
+  local low=('#f73525' '')
+
+  local battery=$([[ -e /sys/class/power_supply/BAT1 ]] && cat /sys/class/power_supply/BAT1/capacity)
+  [[ -z ${battery} ]] && print && return
+
   if [[ ${battery} -gt 79 ]];then
-    color='#08d137'
+    print ${high[1]} "${battery}%" ${high[0]}
   elif [[ ${battery} -lt 21 ]];then
-    color='#f73525'
+    print ${low[1]} "${battery}%" ${low[0]}
+  else
+    print ${middle[1]} "${battery}%" ${middle[0]}
   fi
-  echo "${battery}% "
-} || echo
+}
 
-echo -e "\n${color}"
+main

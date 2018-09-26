@@ -30,8 +30,8 @@ function install_fonts() {
   mkdir -p ${font}
 
   for face in ${faces[@]}; do
-    curl -L ${fira_code}/{FiraCode-${face}.ttf} -o ${font}/#1
-    curl -L ${hack}/{Hack-${face}.ttf} -o ${font}/#1
+    curl -fsSL ${fira_code}/{FiraCode-${face}.ttf} -o ${font}/#1
+    curl -fsSL ${hack}/{Hack-${face}.ttf} -o ${font}/#1
   done
 
   fc-cache
@@ -70,23 +70,26 @@ EOF
 
 function download_packages_from_aur() {
   local polybar='polybar.tar.gz'
-  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/${polybar} \
+  curl -fsSLO https://aur.archlinux.org/cgit/aur.git/snapshot/${polybar} \
     && tar -xzf ${polybar} \
     && rm ${polybar} \
     && sudo pacman -S --noconfirm jsoncpp
 
   local nvm='nvm.tar.gz'
-  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot${nvm} \
+  curl -fsSLO https://aur.archlinux.org/cgit/aur.git/snapshot${nvm} \
     && tar -xzf ${nvm} \
     && rm ${nvm}
 
   local webstorm='webstorm.tar.gz'
-  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/${webstorm} \
+  curl -fsSLO https://aur.archlinux.org/cgit/aur.git/snapshot/${webstorm} \
     && tar -xzf ${webstorm} \
     && rm ${webstorm}
 }
 
 function main() {
+  [[ $(id -u) -eq 0 ]] && return 1
+  [[ $# -eq 0 ]] && echo 'hostname' && return 1
+
   sudo sed -i 's/^#\(Color\)$/\1/' /etc/pacman.conf
   sudo pacman -Syu --noconfirm
   sudo hostnamectl set-hostname $1
@@ -98,6 +101,4 @@ function main() {
   download_packages_from_aur
 }
 
-[[ $(id -u) -eq 0 ]] && return 1
-[[ $# -eq 0 ]] && echo 'hostname' && return 1
-main $1
+main $@
