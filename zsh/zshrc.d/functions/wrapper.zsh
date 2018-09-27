@@ -129,7 +129,7 @@ function vim(){ # vimで開くファイルをfilterで選択する。
       | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
     [[ -n ${file} ]] && command "${editor}" "${file}"
   else
-    command "${editor}" $@
+    command ${editor} $@
   fi
 }
 

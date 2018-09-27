@@ -43,6 +43,5 @@ color=#8fa1b3
 interval=1
 
 [battery]
-#label=
 command=${DOTFILES}/i3/i3blocks/battery.sh
 interval=30

@@ -1,6 +1,5 @@
 #!/usr/bin/bash
 
-
 function print() {
   [[ $(cat /sys/class/power_supply/ADP1/online) == '1' ]] \
     && local online=''

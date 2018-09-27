@@ -69,21 +69,17 @@ EOF
 }
 
 function download_packages_from_aur() {
-  # local polybar='polybar.tar.gz'
-  # curl -fsSLO https://aur.archlinux.org/cgit/aur.git/snapshot/${polybar} \
-  #   && tar -xzf ${polybar} \
-  #   && rm ${polybar} \
-  #   && sudo pacman -S --noconfirm jsoncpp
+  local packages=(
+    'nvm'
+    'webstorm'
+    'visual-studio-code-bin'
+  )
 
-  local nvm='nvm.tar.gz'
-  curl -fsSLO https://aur.archlinux.org/cgit/aur.git/snapshot${nvm} \
-    && tar -xzf ${nvm} \
-    && rm ${nvm}
-
-  local webstorm='webstorm.tar.gz'
-  curl -fsSLO https://aur.archlinux.org/cgit/aur.git/snapshot/${webstorm} \
-    && tar -xzf ${webstorm} \
-    && rm ${webstorm}
+  for package in ${packages[@]}; do
+    curl -fsSLO "https://aur.archlinux.org/cgit/aur.git/snapshot/${package}.tar.gz" \
+      && tar -xzf ${package} \
+      && rm ${package}
+  done
 }
 
 function main() {
