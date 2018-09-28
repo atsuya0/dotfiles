@@ -13,7 +13,7 @@ function main() {
 
   [[ ${muted} == 'no' ]] \
     && local color='#8fa1b3' \
-    || local color='#6e7177'
+    || local color='#434447'
 
   echo -e "[${blocks}${spaces}]\n\n${color}"
 }

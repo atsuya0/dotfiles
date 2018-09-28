@@ -151,6 +151,7 @@ mode "$mode_launcher" {
     bindsym Shift+t exec --no-startup-id termite, mode "default"
     bindsym b exec --no-startup-id chromium, mode "default"
     bindsym f exec --no-startup-id pcmanfm, mode "default"
+    bindsym c exec --no-startup-id code, mode "default"
     bindsym w exec --no-startup-id webstorm, mode "default"
     bindsym v exec --no-startup-id virtualbox, mode "default"
 
@@ -195,8 +196,8 @@ bar {
     workspace_buttons yes
     strip_workspace_numbers yes
     binding_mode_indicator yes
-    tray_output none
-    tray_padding 0
+    tray_output primary
+    tray_padding 2
     colors {
         #背景の色
         background $background

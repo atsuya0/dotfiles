@@ -1,78 +1,58 @@
-function bash() { # bash終了時に.bash_historyを削除する。
-  cmd_exists bash || return
-  command bash $@
-  trap "[[ -f ${HOME}/.bash_history ]] && command rm ${HOME}/.bash_history" EXIT
-}
-
 function ls() { # 何も表示されないならば隠しファイルの表示を試みる。
   [[ $(command ls $@ 2> /dev/null) == '' ]] \
     && command ls -FA --color=auto $@ 2> /dev/null \
     || command ls -F --color=auto $@
 }
 
-function cp() {
+# 良い命名が思いつかなかった
+function _mcvp() {
   # 引数が指定されていないなら選択的インターフェースで選択する
   # 1回目の選択でコピー元を選択する。複数選択可。
   # 2回目でコピー先を選択する。ヘッダにコピー元のファイル・ディレクトリが表示される。
 
-  [[ $# -ne 0 ]] && command cp -iv $@ && return
+  [[ $# -ne 1 ]] && return 1
+  local cmd=$1
 
   local dir
   for dir in ${ignore_absolute_pathes}; do
     local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
   done
+  local fzf_options="--select-1 \
+    --preview='tree -c {} | head -200' \
+    --preview-window='right:hidden' \
+    --bind='ctrl-v:toggle-preview'"
 
   # 元
-  source=($(eval find -mindepth 1 ${argument} -print 2> /dev/null \
-    | cut -c3- \
-    | fzf --select-1 --preview='tree -c {} | head -200' \
-      --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
+  local source=($(eval find -mindepth 1 ${argument} -print 2> /dev/null \
+    | cut -c3- | eval fzf ${fzf_options}))
 
   [[ ${#source[@]} -eq 0 ]] && return
 
   # 宛先
-  destination=$(eval find -mindepth 1 ${argument} -print 2> /dev/null \
-    | cut -c3- \
-    | fzf --select-1 --header="${source}" \
-    --preview='tree -c {} | head -200' --preview-window='right:hidden' \
-    --bind='ctrl-v:toggle-preview')
+  local destination=$(eval find -mindepth 1 ${argument} -print 2> /dev/null \
+    | cut -c3- | eval fzf --header="'${source[@]}'" ${fzf_options})
 
-  [[ -n ${destination} ]] && command cp -riv "${source}" -t "${destination}"
+  [[ -n ${destination} ]] && eval ${cmd} ${source[@]} -t ${destination}
 }
 
-function mv() { # cp と同じ
-  [[ $# -ne 0 ]] && command mv -iv $@ && return
+function cp() {
+  [[ $# -ne 0 ]] && { command cp -iv $@; return ;}
+  _mcvp 'cp -riv'
+}
 
-  local dir
-  for dir in ${ignore_absolute_pathes}; do
-    local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
-  done
-
-  source=($(eval find -mindepth 1 ${argument} -print \
-    | cut -c3- \
-    | fzf --select-1 --preview='tree -c {} | head -200' \
-    --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'))
-
-  [[ ${#source[@]} -eq 0 ]] && return
-
-  destination=$(eval find -mindepth 1 ${argument} -print \
-    | cut -c3- \
-    | fzf --select-1 --header="${source}" \
-    --preview='tree -c {} | head -200' --preview-window='right:hidden' \
-    --bind='ctrl-v:toggle-preview')
-
-  [[ -n ${destination} ]] && command mv -iv "${source}" -t "${destination}"
+function mv() {
+  [[ $# -ne 0 ]] && { command mv -iv $@; return ;}
+  _mcvp 'mv -iv'
 }
 
 function mount() {
   # fat32なら現在のユーザで弄れるようにする
   # ディレクトリを省略すると~/mntにマウントする
 
-  [[ $# -eq 0 ]] && command mount && return
+  [[ $# -eq 0 ]] && { command mount; return ;}
 
   local mnt="${HOME}/mnt"
-  [[ -e ${mnt} ]] || mkdir "${mnt}"
-  [[ $# -eq 1 ]] && set $1 "${mnt}"
+  [[ $# -eq 1 ]] && mkdir ${mnt} && set $1 ${mnt}
 
   [[ $(sudo file -s $1 | cut -d' ' -f2) == 'DOS/MBR' ]] \
     && sudo \mount -o uid=$(id -u),gid=$(id -g) $1 $2 \
@@ -80,12 +60,13 @@ function mount() {
 }
 
 function umount() {
-  [[ $# -eq 0 ]] \
-    && local mnt="${HOME}/mnt" \
-    && sudo \umount "${mnt}" \
-    && rmdir "${mnt}" \
-    && return
-  command umount $@
+  [[ $# -ne 0 ]] \
+    && { command umount $@; return ;}
+
+  local mnt="${HOME}/mnt"
+  [[ -d ${mnt} ]] \
+    && sudo \umount ${mnt} \
+    && rmdir ${mnt}
 }
 
 function history() { # historyの実行時に引数を指定しないなら全ての履歴を表示。
@@ -119,7 +100,6 @@ function vim(){ # vimで開くファイルをfilterで選択する。
     # 無視するディレクトリ(ディレクトリ名指定)
     local ignore_dirs=(
       .git node_modules vendor target gems cache google-chrome data_docker-compose
-      data-mariadb
     )
     for dir in ${ignore_dirs}; do
       arg="${arg} -path "\'\*${dir}\*\'" -prune -o"
@@ -131,12 +111,6 @@ function vim(){ # vimで開くファイルをfilterで選択する。
   else
     command ${editor} $@
   fi
-}
-
-function urxvt() { # 簡単にフォントサイズを指定して起動する。
-  [[ $# -eq 0 ]] && command urxvt $@ && return
-  expr $1 + 1 &> /dev/null
-  [[ $? -ne 2 ]] && command urxvt --font "xft:Ricty Discord:size=$1"
 }
 
 function ranger() { # rangerのサブシェルでネストしないようにする。
@@ -160,6 +134,6 @@ function w3m(){
 
 function scrot() { # スクリーンショット
   [[ $# -eq 0 ]] \
-    && command scrot -q 100 '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/Content/pictures/screenshot/ ]] && mv $f ~/Content/pictures/screenshot/' \
+    && command scrot -u -q 100 '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/Content/pictures/screenshot/ ]] && mv $f ~/Content/pictures/screenshot/' \
     || command scrot $@
 }

@@ -4,6 +4,7 @@ typeset -gr node_funcs=(
   'npm'
   'ng'
   'create-react-app'
+  'firebase'
 )
 
 function init_nvm() { # nvm(Node.jsのversion管理)の初期設定を読み込む

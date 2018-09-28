@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -eu
+
 function is_not_empty() {
   [[ -z $(find $1 -maxdepth 0 -type d -empty) ]] \
     && return 0 \
@@ -73,6 +75,13 @@ function init_rofi() {
     || return 1
 }
 
+function init_ranger() {
+  type ranger &> /dev/null || return 1
+  ranger --copy-config=all \
+    && sed -i 's/.*preview_images[[:space:]].*/set preview_images true/' \
+      "${XDG_CONFIG_HOME}/ranger/rc.conf"
+}
+
 function main() {
   [[ $(id -u) -eq 0 ]] && return 1
   [[ -z ${DOTFILES} ]] && export DOTFILES=${HOME}/dotfiles
@@ -84,6 +93,7 @@ function main() {
   init_i3 || echo 'Place failed: i3'
   init_x11 || echo 'Place failed: x11'
   init_rofi || echo 'Place failed: rofi'
+  init_ranger || echo 'Cannot create ranger config file'
 }
 
 main

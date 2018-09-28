@@ -10,7 +10,7 @@ HISTCONTROL=ignoreboth
 HISTSIZE=10000
 HISTFILESIZE=10000
 #履歴に追加しないコマンド
-HISTIGNORE=history:exit:cd*:ls*:ll:rm*:pushd*:dirs:popd*:poweroff:reboot:lsblk:umount*:mkdir*:rmdir*:date:tree*:unzip*:touch*:ranger:feh*:export*:which*:startx:
+HISTIGNORE=history:exit:cd*:ls*:ll*:rm*:pushd*:dirs:popd*:poweroff:reboot:lsblk:umount*:mkdir*:rmdir*:date*:tree*:touch*:ranger:feh*:export*:which*:startx:
 #履歴に時刻を付ける
 HISTTIMEFORMAT='%m/%d/%T | '
 
@@ -26,16 +26,18 @@ bind C-B:menu-complete-backword
 
 [[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
 #コマンド履歴を共有
-function Share_History {
+function share_history {
     history -a #キャッシュを~/.bash_historyに書き込む
     history -c #キャッシュを削除
     history -r #キャッシュに~/.bash_histroyを書き込む
 }
 #プロントを表示する度に実行するコマンド
-PROMPT_COMMAND='Share_History'
+PROMPT_COMMAND='share_history'
 
 function ls() {
-  [[ -z $(command ls $@) ]] && command ls -FA --color=auto $@ || command ls -F --color=auto $@
+  [[ -z $(command ls $@) ]] \
+    && command ls -FA --color=auto $@ \
+    || command ls -F --color=auto $@
 }
 
 function up() {

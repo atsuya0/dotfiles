@@ -69,6 +69,7 @@ pulseaudio-bluetooth
 
 # file system
 dosfstools # fat32
+# ntfs-3g
 
 # virtual
 docker
