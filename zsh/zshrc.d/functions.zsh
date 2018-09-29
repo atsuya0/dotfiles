@@ -47,8 +47,13 @@ function wifi() {
 }
 
 
-function cmd_exists(){ # 関数やaliasに囚われないtype,which。 vim()で使う。
-  [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] && return 0 || return 1
+function cmd_exists(){
+   # 関数やaliasに囚われないtype,which。 vim()で使う。
+   # readlink -fで相対pathを設定している場合の対処
+  [[ -n $(echo ${PATH//:/\\n} \
+    | xargs readlink -f \
+    | xargs -I{} find {} -type f -name $1) \
+  ]] && return 0 || return 1
 }
 
 function dtr() { # 電源を入れてからのネットワークのデータ転送量を表示。
@@ -67,14 +72,7 @@ function interactive() { # 引数に指定したコマンドを実行するの�
   [[ ${input} == 'yes' ]] && command $@
 }
 
-function os() { # OSとKernelの情報を表示 (hostnamectl statusで表示できた)
-  echo -n 'OS\t'
-  uname -o | tr -d '\n'
-  cat /etc/os-release | sed '/^PRETTY_NAME/!d;s/.*"\(.*\)".*/(\1)/'
-  uname -sr | sed 's/\(.*\) \(.*\)/Kernel\t\1(\2)/'
-}
-
-function bat() { # 電池残量
+function battery() { # 電池残量
   typeset -r bat='/sys/class/power_supply/BAT1'
   [[ -e ${bat} ]] && cat "${bat}/capacity" | sed 's/$/%/' || echo 'No Battery'
 }
@@ -94,7 +92,7 @@ function bak() { # ファイルのバックアップをとる
 }
 
 function init_test() {
-  [[ -e ./test.sh ]] && return 1
+  [[ -f ./test.sh ]] && return 1
   echo '#!/usr/bin/bash\n' > ./test.sh
   chmod +x ./test.sh
 }
@@ -197,7 +195,7 @@ function rs() { # ファイル名から空白を除去
   done
 }
 
-function rn() { # ファイル名を正規表現で変更する。perl製のrenameような。
+function rn() { # ファイル名を正規表現で変更する。perl製のrename like。
   for i in {2..$#}; do
     local new=$(echo ${argv[${i}]} | sed $1)
     [[ -e ${argv[${i}]} && ${argv[${i}]} != ${new} ]] && mv "${argv[${i}]}" "${new}"

@@ -5,7 +5,6 @@ typeset -gr path=(
     | xargs -I{} echo {}/bin
   )
   /usr/bin
-  /usr/bin/core_perl
 )
 
 export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理

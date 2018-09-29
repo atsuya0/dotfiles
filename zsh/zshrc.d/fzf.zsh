@@ -10,8 +10,8 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
   typeset -r fzf_dir='/usr/share/fzf'
   readonly local  keybind="${fzf_dir}/key-bindings.zsh"
   typeset -r completion="${fzf_dir}/completion.zsh"
-  [[ -s ${keybind} ]] && source "${keybind}"
-  [[ -s ${completion} ]] && source "${completion}"
+  [[ -f ${keybind} ]] && source "${keybind}"
+  [[ -f ${completion} ]] && source "${completion}"
 }
 
 function _fzf_cd_widget() {
@@ -30,5 +30,5 @@ function _fzf_cd_widget() {
   _path_prompt
   zle reset-prompt
 }
-zle   -N  _fzf_cd_widget
+zle -N _fzf_cd_widget
 bindkey '\ec' _fzf_cd_widget

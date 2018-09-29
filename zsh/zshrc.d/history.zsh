@@ -36,16 +36,24 @@ add-zsh-hook zshaddhistory _record_cmd
 
 function _save_cmd() {
   local exit_status=$?
-  #_cmd=$(echo ${_cmd} | tr -s ' ') # 連続する空白を1つにする; sed /  */ で連続する空白を使う
+  _cmd=$(echo ${_cmd} | tr -s ' ') # 連続する空白を1つにす
   [[ ! ${_cmd} =~ ' ' ]] && return # 引数やオプションを指定していない場合は記録しない
   [[ ${_cmd} =~ '^ ' ]] && return
 
   # 履歴に記録しないコマンドを記述
-  local ignore_cmds=(\
-    cds up trash md gcm gco gaf ll \
-    ls cd mv cp rm mkdir rmdir touch man less history source '\.' export type which file stat \
-    vi vim sudoedit command builtin chromium unzip tree test '\[' '\[\[' \
-    nvim code python go \
+  local ignore_cmds=(
+    ls cd mv cp rm mkdir rmdir touch man less history source '\.'
+    vi export type which file stat command builtin grep ln cat
+    test '\[' '\[\[' sudoedit mount umount kill pkill pgrep echo
+    expr seq find pactl jobs fc-list tput chmod
+    'sudo systemctl start' 'sudo systemctl stop' 'systemctl status'
+    'pacman -Si' 'pacman -Ss' 'pacman -Qi' 'pacman -Qs'
+
+    pacman vim code python go chromium tree nvim scrot xsel feh
+    rofi 'npm search'
+
+    up down cdh gcm gp gmv second sc trash trs
+    md wifi dtr bak battery init_test bt rs rn
   )
 
   local ignore_cmd

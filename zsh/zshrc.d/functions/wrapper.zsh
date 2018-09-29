@@ -86,26 +86,26 @@ function vim(){ # vimで開くファイルをfilterで選択する。
   if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
 
     # 無視するディレクトリ(絶対path指定)
-    local arg dir
+    local args dir
     for dir in ${ignore_absolute_pathes}; do
-      arg="${arg} -path ${dir/$(pwd)/.} -prune -o"
+      args="${args} -path ${dir/$(pwd)/.} -prune -o"
     done
     # 無視する拡張子
     local ignore_filetypes=( pdf png jpg jpeg mp3 mp4 tar.gz zip )
     local ftype
     for ftype in ${ignore_filetypes}; do
-      arg="${arg} -path "\'\*${ftype}\'" -prune -o"
+      args="${args} -path "\'\*${ftype}\'" -prune -o"
     done
 
     # 無視するディレクトリ(ディレクトリ名指定)
     local ignore_dirs=(
-      .git node_modules vendor target gems cache google-chrome data_docker-compose
+      .git node_modules vendor target gems cache google-chrome
     )
     for dir in ${ignore_dirs}; do
-      arg="${arg} -path "\'\*${dir}\*\'" -prune -o"
+      args="${args} -path "\'\*${dir}\*\'" -prune -o"
     done
 
-    local file=$(eval find ${arg} -type f -print | cut -c3- \
+    local file=$(eval find ${args} -type f -print | cut -c3- \
       | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
     [[ -n ${file} ]] && command "${editor}" "${file}"
   else

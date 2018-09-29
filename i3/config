@@ -212,8 +212,8 @@ bar {
 
         # border bg fg
         focused_workspace  $blue $blue $background
-        active_workspace $background $background $foreground
-        inactive_workspace $background $background $foreground
+        active_workspace $background $background $blue
+        inactive_workspace $background $background $blue
         urgent_workspace   $red $red $background
         #modeの色
         binding_mode       $blue $blue $background
