@@ -26,3 +26,5 @@ type pactl &> /dev/null \
   && sinks='pactl list sinks short | cut -f1' \
   && eval ${sinks} | xargs -I{} pactl set-sink-volume {} 5% \
   && eval ${sinks} | xargs -I{} pactl set-sink-mute {} 1
+
+type light-locker &> /dev/null && light-locker &

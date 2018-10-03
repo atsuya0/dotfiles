@@ -53,10 +53,12 @@ function init_alacritty() {
 
 # i3
 function init_i3() {
-  local dot="${DOTFILES}/i3"
-  place_config_files "${dot}/config" "${XDG_CONFIG_HOME}/i3" \
+  place_config_files "${DOTFILES}/i3" "${XDG_CONFIG_HOME}/i3" \
     || return 1
-  place_config_files "${dot}/i3blocks" "${XDG_CONFIG_HOME}/i3blocks" \
+}
+
+function init_i3blocks() {
+  place_config_files "${DOTFILES}/i3blocks" "${XDG_CONFIG_HOME}/i3blocks" \
     || return 1
 }
 
@@ -91,6 +93,7 @@ function main() {
   init_nvim || echo 'Place failed: nvim'
   init_termite || echo 'Place failed: termite'
   init_i3 || echo 'Place failed: i3'
+  init_i3blocks || echo 'Place failed: i3blocks'
   init_x11 || echo 'Place failed: x11'
   init_rofi || echo 'Place failed: rofi'
   init_ranger || echo 'Cannot create ranger config file'

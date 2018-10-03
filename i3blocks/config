@@ -6,7 +6,7 @@ interval=60
 
 [memory]
 label=.
-command=${DOTFILES}/i3/i3blocks/memory.py
+command=~/.config/i3blocks/memory.py
 #command=free -h | awk 'match($0, /^Mem/){print $3 " / " $2}'
 color=#8fa1b3
 interval=1
@@ -32,7 +32,7 @@ signal=2
 
 [volume]
 label=
-command=${DOTFILES}/i3/i3blocks/volume.sh
+command=~/.config/i3blocks/volume.sh
 interval=once
 signal=1
 
@@ -43,5 +43,5 @@ color=#8fa1b3
 interval=1
 
 [battery]
-command=${DOTFILES}/i3/i3blocks/battery.sh
+command=~/.config/i3blocks/battery.sh
 interval=30

@@ -11,49 +11,22 @@
 [[ -f "${ZDOTDIR}/zshrc.d/functions/trash.zsh" ]] \
   && source "${ZDOTDIR}/zshrc.d/functions/trash.zsh"
 
-function vol() {
-  # vol up    -> 音量を5%上げる
-  # vol down  -> 音量を5%下げる
-  # vol mute  -> muteの切り替え
-  # vol       -> 音量を表示
-
-  function get_index() {
-    [[ $(pactl list sinks | grep 'RUNNING') != '' ]] \
-      && pactl list sinks | grep -B 1 'RUNNING' | grep -o '[0-9]' \
-      || pactl list sinks | head -1 | grep -o '[0-9]'
-  }
-
-  if [[ $1 == 'up' ]]; then
-    pactl set-sink-volume "$(get_index)" +5%
-  elif [[ $1 == 'down' ]]; then
-    pactl set-sink-volume "$(get_index)" -5%
-  elif [[ $1 == 'mute' ]]; then
-    pactl set-sink-mute "$(get_index)" toggle
-  else
-    local run
-    [[ $(pactl list sinks | grep 'RUNNING') != '' ]] && run="grep -A 10 'RUNNING'" || run='tee'
-    pactl list sinks | eval "${run}" | grep -o '[0-9]*%' | head -1
-  fi
-}
-
 function wifi() {
+  
   if [[ $1 == '-r' ]]; then # 再始動
-    netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo netctl restart
-  elif [[ $1 == '-s' ]]; then
-    netctl list | sed '/^\*/!d;s/[\* ]*//' | xargs sudo netctl stop
-  elif type fzf &> /dev/null; then
-    netctl list | fzf --select-1 | xargs sudo netctl start
+    local ssid=$(netctl list | sed '/^\*/!d;s/[\* ]*//')
+    sudo netctl restart ${ssid}
+  elif type fzf &> /dev/null && ! netctl list | grep '^*' &> /dev/null; then
+    local ssid=$(netctl list | fzf --select-1)
+    [[ -n ${ssid} ]] && sudo netctl start ${ssid// /}
   fi
 }
 
 
 function cmd_exists(){
    # 関数やaliasに囚われないtype,which。 vim()で使う。
-   # readlink -fで相対pathを設定している場合の対処
-  [[ -n $(echo ${PATH//:/\\n} \
-    | xargs readlink -f \
-    | xargs -I{} find {} -type f -name $1) \
-  ]] && return 0 || return 1
+  [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] \
+    && return 0 || return 1
 }
 
 function dtr() { # 電源を入れてからのネットワークのデータ転送量を表示。
@@ -102,7 +75,7 @@ function init_test() {
 function bt() {
   typeset -r ADDR='AC:CF:85:B7:9D:9A'
 
-  [[ $(systemctl is-active bluetooth) == 'inactive' ]] && sudo systemctl start bluetooth.service
+  systemctl is-active bluetooth &> /dev/null || sudo systemctl start bluetooth.service
   () {
     echo 'power on' \
       && sleep 1 \
@@ -110,11 +83,13 @@ function bt() {
       && sleep 3 \
       && echo 'quit'
   } ${ADDR} | bluetoothctl
-  /usr/bin/dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_${ADDR//:/_} org.bluez.Network1.Connect string:'nap'
-  sudo dhcpcd bnep0
+
+  /usr/bin/dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_${ADDR//:/_} org.bluez.Network1.Connect string:'nap' \
+    && sleep 1 \
+    && sudo dhcpcd bnep0
 }
 
-function fin() { # コマンドが終了したことを知らせる(ex: command ; fin)
+function fin() { # コマンドが終了したことを知らせる(ex: cmd; fin)
   type i3-nagbar &> /dev/null && i3-nagbar -t warning -m 'finish' -f 'pango:IPAGothic Regular 10' &> /dev/null
 }
 

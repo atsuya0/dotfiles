@@ -45,11 +45,14 @@ python-pip # package manager
 go
 rustup
 
-
 # window manager
 i3-wm
 i3blocks
-i3lock
+
+# display manager
+lightdm
+light-locker
+lightdm-gtk-greeter
 
 # file manager
 ranger # cui

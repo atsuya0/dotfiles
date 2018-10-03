@@ -107,9 +107,9 @@ bindsym $mod+Shift+e exec --no-startup-id \
 -f 'pango:IPAGothic Regular 10'"
 
 #音量調整
-bindsym F8 exec --no-startup-id ${DOTFILES}/i3/volume.sh down
-bindsym F9 exec --no-startup-id ${DOTFILES}/i3/volume.sh up
-bindsym F10 exec --no-startup-id ${DOTFILES}/i3/volume.sh mute
+bindsym F8 exec --no-startup-id ~/dotfiles/i3/sound.sh down
+bindsym F9 exec --no-startup-id ~/dotfiles/i3/sound.sh up
+bindsym F10 exec --no-startup-id ~/dotfiles/i3/sound.sh mute
 #XF86AudioLowerVolume
 #XF86AudioRaiseVolume
 #XF86AudioMute

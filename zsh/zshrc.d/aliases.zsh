@@ -22,7 +22,7 @@ alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias poweroff='interactive systemctl poweroff'
 alias reboot='interactive systemctl reboot'
 alias logout='interactive i3-msg exit'
-alias lock='i3lock -c 6b91aa'
+alias lock='light-locker-command -l'
 
 alias -g @g='| grep'
 alias -g @l='| less'

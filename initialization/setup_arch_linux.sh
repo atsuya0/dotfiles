@@ -5,11 +5,18 @@
 function install_packages() {
   sudo pacman -S --needed --noconfirm \
     $(cat $(dirname $0)/package.list | sed 's/#.*//;s/ //g;/^$/d')
+  setup_packges
+}
 
+function setup_packges() {
   type zsh &> /dev/null \
     && chsh -s $(which zsh)
   type pip &> /dev/null \
     && pip install --upgrade neovim
+  type lightdm &> /dev/null \
+    && sudo systemctl enable lightdm.service \
+    && sed -i 's/^\(ENV=\)\(lightdm-gtk-greeter\)/\1env GTK_THEME=Adwaita:dark \2/' /usr/share/xgreeters/lightdm-gtk-greeter.desktop
+/usr/share/xgreeters/lightdm-gtk-greeter.desktop
   type tlp &> /dev/null \
     && sudo systemctl enable tlp.service tlp-sleep.service \
     && sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
