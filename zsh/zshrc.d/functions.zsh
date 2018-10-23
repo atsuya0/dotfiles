@@ -12,7 +12,6 @@
   && source "${ZDOTDIR}/zshrc.d/functions/trash.zsh"
 
 function wifi() {
-  
   if [[ $1 == '-r' ]]; then # 再始動
     local ssid=$(netctl list | sed '/^\*/!d;s/[\* ]*//')
     sudo netctl restart ${ssid}
@@ -23,8 +22,7 @@ function wifi() {
 }
 
 
-function cmd_exists(){
-   # 関数やaliasに囚われないtype,which。 vim()で使う。
+function cmd_exists(){ # 関数やaliasに囚われないtype,which。 vim()で使う。
   [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] \
     && return 0 || return 1
 }
@@ -53,15 +51,18 @@ function battery() { # 電池残量
 function bak() { # ファイルのバックアップをとる
   local file
 
-  if [[ $1 == '-r' ]]; then # .bakを取り除く
+  case $1 in
+  '-r' ) # .bakを取り除く
     for file in $argv[2,-1]; do
       mv -i "${file}"  "${file%.bak}"
     done
-  else # ファイル名の末尾に.bakをつけた複製を作成する
+  ;;
+  * ) # ファイル名の末尾に.bakをつけた複製を作成する
     for file in $@; do
       eval cp -ir "${file}{,.bak}"
     done
-  fi
+  ;;
+  esac
 }
 
 function init_test() {
@@ -75,7 +76,8 @@ function init_test() {
 function bt() {
   typeset -r ADDR='AC:CF:85:B7:9D:9A'
 
-  systemctl is-active bluetooth &> /dev/null || sudo systemctl start bluetooth.service
+  systemctl is-active bluetooth &> /dev/null \
+    || sudo systemctl start bluetooth.service
   () {
     echo 'power on' \
       && sleep 1 \
@@ -84,13 +86,10 @@ function bt() {
       && echo 'quit'
   } ${ADDR} | bluetoothctl
 
-  /usr/bin/dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_${ADDR//:/_} org.bluez.Network1.Connect string:'nap' \
+  /usr/bin/dbus-send --system --type=method_call --dest=org.bluez \
+    /org/bluez/hci0/dev_${ADDR//:/_} org.bluez.Network1.Connect string:'nap' \
     && sleep 1 \
     && sudo dhcpcd bnep0
-}
-
-function fin() { # コマンドが終了したことを知らせる(ex: cmd; fin)
-  type i3-nagbar &> /dev/null && i3-nagbar -t warning -m 'finish' -f 'pango:IPAGothic Regular 10' &> /dev/null
 }
 
 function crypt() {
@@ -134,20 +133,24 @@ function md() { # マルチディスプレイ
   local primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)
   local second=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
 
-  if [[ $1 == 'school' ]]; then
+  case $1 in
+  'school' )
     xrandr --output ${second} --left-of ${primary} --mode 1600x900 \
       && return 0 \
       || return 1
-  elif [[ $1 == 'home' ]]; then
+  ;;
+  'home' )
     xrandr --output ${second} --left-of ${primary} --mode 1366x768 \
       && return 0 \
       || return 1
-  elif [[ $1 == 'off' ]]; then
+  ;;
+  'off' )
     [[ 3 -gt $(xrandr --listactivemonitors | wc -l) ]] && return 1
     xrandr --output ${second} --off \
       && return 0 \
       || return 1
-  fi
+  ;;
+  esac
 
   type fzf &> /dev/null || return 1
   local mode=$(xrandr | sed -n "/^${second}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
@@ -199,4 +202,13 @@ function fonts() {
   for i in {$(($1 * 1000))..$(($1 * 1000 + 2000))}; do
     echo -n -e "$(printf '\\u%x' $i) "
   done
+}
+
+function crawl() {
+  type crawl-img &> /dev/null || return 1
+  type notify-send &> /dev/null || return 1
+  [[ $# -eq 0 ]] && return 1
+
+  crawl-img -f $1
+  notify-send 'Image downloading is complete.'
 }

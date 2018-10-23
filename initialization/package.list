@@ -93,3 +93,5 @@ scrot # screen shot
 tlp # power
 libmtp # mtp
 neofetch # system information
+libnotify # notify-send
+dunst # notify daemon

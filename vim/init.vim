@@ -76,12 +76,12 @@ noremap! <F1> <Nop>
 "ESCを押した時にIMEを無効化
 noremap <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
 noremap! <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
-"空行を追加する
-nnoremap <leader>j o<esc>
-nnoremap <leader>k O<esc>
-" 空白を追加
-nnoremap <leader>l a<space><esc>
-nnoremap <leader>h i<space><esc>
+"空
+nmap <Leader>s [space]
+nnoremap [space]j o<esc>
+nnoremap [space]k O<esc>
+nnoremap [space]l a<space><esc>
+nnoremap [space]h i<space><esc>
 "ウィンドウの大きさを変える比率を上げる
 nnoremap <C-w>< 0<C-w><
 nnoremap <C-w>> 0<C-w>>
@@ -113,7 +113,16 @@ nnoremap ZQ <Nop>
 "#を入力するとインデントが無効になるのを阻止する
 inoremap # X#
 
-"ファイルの種別ごとの設定-------------------------------------------
+"関数-------------------------------------------
+function! s:removeTrailingBlanks()
+  let line = line('.')
+  let col = col('.')
+  %s/\s\+$//
+  call cursor(line, col)
+endfunction
+command! Rtb call s:removeTrailingBlanks()
+
+"イベント-------------------------------------------
 augroup go_conf
   autocmd!
   autocmd FileType go set noexpandtab

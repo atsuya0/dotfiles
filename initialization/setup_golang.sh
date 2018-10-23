@@ -1,11 +1,5 @@
 #!/usr/bin/bash
 
-function download_libraries() {
-  for library in $@; do
-    go get -u ${library}
-  done
-}
-
 function install_my_tool() {
   local root="github.com/$(git config --global user.name)"
   [[ -d ${GOPATH}/src/${root}/$1 ]] && return 1
@@ -21,15 +15,18 @@ function main() {
   type go &> /dev/null || return 1
   [[ -z ${GOPATH} ]] && return 1
 
+  mkdir -p ${GOPATH}/{src,bin,pkg}
+
   declare -a libraries=(
     'github.com/nsf/gocode'
     'golang.org/x/tools/cmd/goimports'
     'github.com/golang/dep/cmd/dep'
     'github.com/spf13/cobra/cobra'
   )
+  go get -u ${libraries}
 
-  mkdir -p ${GOPATH}/{src,bin,pkg}
-  download_libraries ${libraries}
+  type dep &> /dev/null || return 1
+  type git &> /dev/null || return 1
 
   declare -a tools=(
     'go-choice'
@@ -37,9 +34,6 @@ function main() {
     'trash'
     'crawl-img'
   )
-
-  type dep &> /dev/null || return 1
-  type git &> /dev/null || return 1
   for tool in ${tools}; do
     install_my_tool ${tool}
   done

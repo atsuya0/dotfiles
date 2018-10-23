@@ -43,14 +43,14 @@ function _save_cmd() {
   # 履歴に記録しないコマンドを記述
   local ignore_cmds=(
     ls cd mv cp rm mkdir rmdir touch man less history source '\.'
-    vi export type which file stat command builtin grep ln cat
+    vi export type which file stat command builtin grep ln cat wall
     test '\[' '\[\[' sudoedit mount umount kill pkill pgrep echo
     expr seq find pactl jobs fc-list tput chmod
     'sudo systemctl start' 'sudo systemctl stop' 'systemctl status'
     'pacman -Si' 'pacman -Ss' 'pacman -Qi' 'pacman -Qs'
 
     pacman vim code python go chromium tree nvim scrot xsel feh
-    rofi 'npm search'
+    rofi 'npm search' notify-send
 
     up down cdh gcm gp gmv second sc trash trs
     md wifi dtr bak battery init_test bt rs rn

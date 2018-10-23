@@ -4,7 +4,6 @@ declare -A list=(
   ['Logout']='i3-msg exit'
   ['Poweroff']='systemctl poweroff'
   ['Reboot']='systemctl reboot'
-  ['Lock']='light-locker-command --lock'
 )
 
 function print_key() {
@@ -12,12 +11,15 @@ function print_key() {
 }
 
 function main() {
-  if [[ ${1##* } == 'yes' ]]; then
-    eval "${list[${1%% *}]}"
-  elif [[ ${1##* } == 'no' ]]; then
+  local y='(yes)' n='(no)'
+
+  if [[ $2 == $y ]]; then
+    eval "${list[$1]}"
+  elif [[ $2 == $n ]]; then
     print_key
   elif [[ -n $1 ]]; then
-    echo -e "$1 / no\n$1 / yes"
+    echo $1 $n
+    echo $1 $y
   else
     print_key
   fi
