@@ -34,11 +34,11 @@ function down() {
 }
 alias dw='down'
 
-function _save_pwd() { # 移動履歴をファイルに記録する。~, / は記録しない。
+function __save_pwd__() { # 移動履歴をファイルに記録する。~, / は記録しない。
   typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
   [[ ${#pwd} -gt 2 ]] && echo "${pwd}" >> "${_CD_FILE}"
 }
-add-zsh-hook chpwd _save_pwd
+add-zsh-hook chpwd __save_pwd__
 
 function cdh() { # 移動履歴からfilterを使って選んでcd
   local dir

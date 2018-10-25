@@ -1,10 +1,10 @@
-() { # 初期設定
-  typeset -r init_file="${ZDOTDIR}/zshrc.d/init.zsh"
-  [[ -s ${init_file} ]] && source ${init_file}
-}
 () { # 環境変数の設定
   typeset -r env_file="${ZDOTDIR}/zshrc.d/env.zsh"
   [[ -s ${env_file} ]] && source ${env_file}
+}
+() { # 初期設定
+  typeset -r init_file="${ZDOTDIR}/zshrc.d/init.zsh"
+  [[ -s ${init_file} ]] && source ${init_file}
 }
 
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>' # 区切りとして扱わない文字。

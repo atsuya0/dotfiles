@@ -10,7 +10,8 @@ function _trash() {
       'restore' \
       'list' \
       'size' \
-      'delete'
+      'delete' \
+      'auto-delete'
     )
 
     _describe -t commands Commands _c
@@ -39,6 +40,8 @@ function _trash() {
         (size)
         ;;
         (delete)
+        ;;
+        (auto-delete)
         ;;
       esac
     ;;

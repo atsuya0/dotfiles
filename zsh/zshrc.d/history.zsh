@@ -28,13 +28,13 @@ zle -N history-beginning-search-backward-end history-search-end
 # コマンドの終了ステータスを見てファイルに記録するか否かを決めたいので、
 # ここではファイルには記録しない。
 # 0 記録する, 1 記録しない, 2 メモリにだけ記録する
-function _record_cmd() {
+function __record_cmd__() {
   typeset -g _cmd=${1%%$'\n'}
   return 2
 }
-add-zsh-hook zshaddhistory _record_cmd
+add-zsh-hook zshaddhistory __record_cmd__
 
-function _save_cmd() {
+function __save_cmd__() {
   local exit_status=$?
   _cmd=$(echo ${_cmd} | tr -s ' ') # 連続する空白を1つにす
   [[ ! ${_cmd} =~ ' ' ]] && return # 引数やオプションを指定していない場合は記録しない
@@ -63,4 +63,4 @@ function _save_cmd() {
   # コマンドが正常終了した場合はファイルに記録する
   [[ ${exit_status} == 0 ]] && print -sr -- "${_cmd}"
 }
-add-zsh-hook precmd _save_cmd
+add-zsh-hook precmd __save_cmd__

@@ -40,6 +40,7 @@ set hlsearch "検索語をハイライト nvim-default
 set ignorecase "大文字小文字区別なく検索
 set smartcase "大文字が含まれていたら区別する
 set wrapscan "最後まで行ったら最初に戻る
+set inccommand=split "s/a/b/ ときなどに対話的になる
 
 "外観---------------------------------------------------------------
 set background=dark
@@ -102,12 +103,17 @@ noremap! <C-b> <esc>i
 noremap! <C-a> <esc>I
 noremap! <C-e> <esc>A
 noremap! <M-d> <esc>lx
-" デフォルトで折り返し行の上下移動を行う
+
 noremap j gj
 noremap k gk
-" 5行移動
-noremap <C-j> 5j
-noremap <C-k> 5k
+
+noremap <C-n> 5j
+noremap <C-p> 5k
+
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 "思いがけず強制終了してしまうのを阻止する
 nnoremap ZQ <Nop>
 "#を入力するとインデントが無効になるのを阻止する

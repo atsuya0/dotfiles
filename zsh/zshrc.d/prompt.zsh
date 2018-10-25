@@ -1,4 +1,4 @@
-function _path_prompt() { # カレントディレクトリのpathを画面の横幅に応じて短縮する。
+function __path_prompt__() { # カレントディレクトリのpathを画面の横幅に応じて短縮する。
   typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
   local num
   # 表示するディレクトリ名の文字数を決める
@@ -11,21 +11,22 @@ function _path_prompt() { # カレントディレクトリのpathを画面の横
     || PROMPT="%{${fg[blue]}${bg[black]}%}%n%{${fg[magenta]}${bg[black]}%}@%{${fg[blue]}${bg[black]}%}%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
 }
 autoload -Uz add-zsh-hook
-add-zsh-hook precmd _path_prompt
+add-zsh-hook precmd __path_prompt__
 
-function _git_prompt() {
+function __git_prompt__() {
   RPROMPT=''
   type git &> /dev/null || return 1
   git status &> /dev/null || return 1
   local git_info=("${(f)$(git status --porcelain --branch)}")
+  local icon=''
+  local branch="${icon} $(echo ${git_info[1]} | sed 's/## \([^\.]*\).*/\1/')"
 
-  local branch="[ $(echo ${git_info[1]} | sed 's/## \([^\.]*\).*/\1/')]"
   if [[ $(echo ${git_info[1]} | grep -o '\[.*\]') =~ '[ahead .*]' ]]; then
-    branch="%{${fg[blue]}%}${branch}"
+    branch="%{${fg_bold[blue]}%}${branch}%{${reset_color}%}"
   elif [[ $(echo ${git_info[1]} | grep -o '\[.*\]') =~ '[behind .*]' ]]; then
-    branch="%{${fg[red]}%}${branch}"
+    branch="%{${fg_bold[red]}%}${branch}%{${reset_color}%}"
   else
-    branch="%{${fg[green]}%}${branch}"
+    branch="%{${fg_bold[green]}%}${branch}%{${reset_color}%}"
   fi
 
   local file uncommited=0 unadded=0 untracked=0
@@ -38,13 +39,15 @@ function _git_prompt() {
       (( uncommited++ ))
     fi
   done
-  local git_status
-  [[ 0 -ne ${uncommited} ]] && git_status="%{${fg[yellow]}%}!${uncommited} "
-  [[ 0 -ne ${unadded} ]] && git_status="${git_status}%{${fg[red]}%}+${unadded} "
-  [[ 0 -ne ${untracked} ]] && git_status="${git_status}%{${fg[green]}%}?${untracked} "
-  RPROMPT="${git_status}${branch}"
+
+  function format_status() {
+    [[ 0 -ne ${1} ]] \
+      && echo "%{${fg[${2}]}%}${3}${1}%{${reset_color}%} "
+  }
+
+  RPROMPT="${branch} $(format_status ${uncommited} 'yellow' '!')$(format_status ${unadded} 'red' '+')$(format_status ${untracked} 'green' '?')"
 }
-add-zsh-hook precmd _git_prompt
+add-zsh-hook precmd __git_prompt__
 
 # コマンド実行後にRPROMPTを非表示
 setopt transient_rprompt

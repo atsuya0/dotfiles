@@ -3,7 +3,7 @@ repo = 'Shougo/denite.nvim'
 on_event = 'BufRead'
 if = 'has("nvim")'
 hook_add = '''
-  nmap <Leader>u [denite]
+  nmap <Leader>d [denite]
   nnoremap <silent> [denite]b :Denite buffer<CR>
   nnoremap <silent> [denite]l :Denite line<CR>
   nnoremap <silent> [denite]f :Denite file_rec<CR>
@@ -14,9 +14,13 @@ hook_add = '''
 '''
 hook_source = '''
   call denite#custom#option('default', 'prompt', '>>>')
-  call denite#custom#source('file_rec', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
-  call denite#custom#source('grep', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
-  call denite#custom#filter('matcher_ignore_globs', 'ignore_globs', ['.git/', 'vendor/', 'node_modules', 'images/', 'img/'])
+  call denite#custom#source('file_rec', 'matchers',
+    \ ['matcher_fuzzy', 'matcher_ignore_globs'])
+  call denite#custom#source('grep', 'matchers',
+    \ ['matcher_fuzzy', 'matcher_ignore_globs'])
+  call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
+    \ ['.git/', 'vendor/', 'node_modules', 'images/', 'img/'])
+  call denite#custom#var('grep', 'default_opts', ['-nH']) " remove -i
 '''
 
 # [[plugins]] # completion for javascript

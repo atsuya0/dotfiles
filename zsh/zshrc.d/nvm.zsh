@@ -7,7 +7,7 @@ typeset -gr node_funcs=(
   'firebase'
 )
 
-function init_nvm() { # nvm(Node.jsのversion管理)の初期設定を読み込む
+function __init_nvm__() { # nvm(Node.jsのversion管理)の初期設定を読み込む
   unset -f $@
   local nvm_dir='/usr/share/nvm'
   [[ -e "${nvm_dir}/nvm.sh" ]] && source "${nvm_dir}/nvm.sh"
@@ -15,7 +15,7 @@ function init_nvm() { # nvm(Node.jsのversion管理)の初期設定を読み込�
 
 for func in ${node_funcs}; do
   function ${func} {
-    init_nvm ${node_funcs}
+    __init_nvm__ ${node_funcs}
     $0 $@
   }
 done

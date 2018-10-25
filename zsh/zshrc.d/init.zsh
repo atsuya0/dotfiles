@@ -1,13 +1,14 @@
 [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp)
 
-# installed tmux && installed fzf && sessionが存在しない && GUI && True Color対応の仮想端末であるmlterm => tmux起動
-type tmux &> /dev/null && type fzf &> /dev/null \
-&& [[ -z ${TMUX} \
-      && -n ${WINDOWID} \
-      && $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) =~ 'termite|mlterm|alacritty' \
-]] && () {
+function __exec_tmux__() {
+  type tmux &> /dev/null || return 1
+  type fzf &> /dev/null || return 1
+  [[ -z ${WINDOWID} ]] && return 1
+  [[ $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) \
+    =~ 'mlterm|alacritty' ]] || return 1
+
   local new='new-session'
-  id=$(
+  local id=$(
     echo "$(tmux list-sessions 2> /dev/null)\n${new}:" \
       | sed /^$/d | fzf --select-1 --reverse | cut -d: -f1
   )
@@ -17,4 +18,9 @@ type tmux &> /dev/null && type fzf &> /dev/null \
   elif [[ -n ${id} ]]; then
     tmux attach-session -t "${id}"
   fi
+}
+
+[[ -z ${TMUX} ]] && () {
+  type trash &> /dev/null && trash auto-delete
+  __exec_tmux__ || return 1
 } && return

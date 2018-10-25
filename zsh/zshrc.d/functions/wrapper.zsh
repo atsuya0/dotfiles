@@ -4,8 +4,8 @@ function ls() { # 何も表示されないならば隠しファイルの表示�
     || command ls -F --color=auto $@
 }
 
-# 良い命名が思いつかなかった
-function _mcvp() {
+# 良い関数名が思いつかなかった
+function __mcvp__() {
   # 引数が指定されていないなら選択的インターフェースで選択する
   # 1回目の選択でコピー元を選択する。複数選択可。
   # 2回目でコピー先を選択する。ヘッダにコピー元のファイル・ディレクトリが表示される。
@@ -37,12 +37,12 @@ function _mcvp() {
 
 function cp() {
   [[ $# -ne 0 ]] && { command cp -iv $@; return ;}
-  _mcvp 'cp -riv'
+  __mcvp__ 'cp -riv'
 }
 
 function mv() {
   [[ $# -ne 0 ]] && { command mv -iv $@; return ;}
-  _mcvp 'mv -iv'
+  __mcvp__ 'mv -iv'
 }
 
 function mount() {

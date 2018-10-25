@@ -14,7 +14,7 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
   [[ -f ${completion} ]] && source "${completion}"
 }
 
-function _fzf_cd_widget() {
+function __fzf_cd_widget__() {
   # ALT_Cにbindされてるwidgetを上書きしている。
   # 現階層以下のディレクトリからfzfを使って選び移動する。
 
@@ -30,5 +30,5 @@ function _fzf_cd_widget() {
   _path_prompt
   zle reset-prompt
 }
-zle -N _fzf_cd_widget
-bindkey '\ec' _fzf_cd_widget
+zle -N __fzf_cd_widget__
+bindkey '\ec' __fzf_cd_widget__
