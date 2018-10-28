@@ -1,14 +1,18 @@
+function print_parents() {
+  pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^/]*$/!ba;d'
+}
+
 # 親階層に移動する
 # up 2    -> cd ../..
 # up      -> filterを使って選択する
 function up() {
   local str
   if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
-    str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^/]*$/!ba;d' \
+    type print_parents &> /dev/null || return 1
+    str=$(print_parents \
       | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   elif expr ${1-dummy} + 1 &> /dev/null; then
-    # str=$(seq -s '' $1 | sed 's@.@\.\./@g')
-    str=$(seq -s: $1 | sed 's/://g;s@.@\.\./@g')
+    str=$(seq -s '' $1 | sed 's@.@\.\./@g')
   else
     str=$1
   fi
@@ -17,9 +21,7 @@ function up() {
 }
 
 function _up() {
-  _values \
-    'parents' \
-    $(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d')
+  _values 'parents' $(print_parents)
 }
 compdef _up up
 
@@ -28,8 +30,10 @@ function down() {
   # down 3
 
   type fzf &> /dev/null || return 1
-  dir=$(eval find -mindepth 1 -maxdepth ${1:-1} -type d -print \
-    | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  local dir=$(eval find -mindepth 1 -maxdepth ${1:-1} -type d -print \
+    | cut -c3- | \
+    fzf --select-1 --preview='tree -C {} | head -200' \
+      --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
 }
 alias dw='down'

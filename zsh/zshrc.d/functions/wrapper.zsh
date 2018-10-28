@@ -64,13 +64,15 @@ function umount() {
     && { command umount $@; return ;}
 
   local mnt="${HOME}/mnt"
-  [[ -d ${mnt} ]] \
-    && sudo \umount ${mnt} \
-    && rmdir ${mnt}
+  [[ -d ${mnt} ]] || return 1
+  sudo \umount ${mnt} || return 1
+  rmdir ${mnt}
 }
 
 function history() { # historyの実行時に引数を指定しないなら全ての履歴を表示。
-  [[ $# -eq 0 ]] && builtin history -i 1 || builtin history $@
+  [[ $# -eq 0 ]] \
+    && builtin history -i 1 \
+    || builtin history $@
 }
 
 function vim(){ # vimで開くファイルをfilterで選択する。
@@ -83,34 +85,32 @@ function vim(){ # vimで開くファイルをfilterで選択する。
     typeset -r editor='vi'
   fi
 
-  if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
+  [[ $# -ne 0 ]] && { command ${editor} $@; return ;}
+  type fzf &> /dev/null || { command ${editor} $@; return ;}
 
-    # 無視するディレクトリ(絶対path指定)
-    local args dir
-    for dir in ${ignore_absolute_pathes}; do
-      args="${args} -path ${dir/$(pwd)/.} -prune -o"
-    done
-    # 無視する拡張子
-    local ignore_filetypes=( pdf png jpg jpeg mp3 mp4 tar.gz zip )
-    local ftype
-    for ftype in ${ignore_filetypes}; do
-      args="${args} -path "\'\*${ftype}\'" -prune -o"
-    done
+  # 無視するディレクトリ(絶対path指定)
+  local args dir
+  for dir in ${ignore_absolute_pathes}; do
+    args="${args} -path ${dir/$(pwd)/.} -prune -o"
+  done
+  # 無視する拡張子
+  local ignore_filetypes=( pdf png jpg jpeg mp3 mp4 tar.gz zip )
+  local ftype
+  for ftype in ${ignore_filetypes}; do
+    args="${args} -path "\'\*${ftype}\'" -prune -o"
+  done
 
-    # 無視するディレクトリ(ディレクトリ名指定)
-    local ignore_dirs=(
-      .git node_modules vendor target gems cache google-chrome
-    )
-    for dir in ${ignore_dirs}; do
-      args="${args} -path "\'\*${dir}\*\'" -prune -o"
-    done
+  # 無視するディレクトリ(ディレクトリ名指定)
+  local ignore_dirs=(
+    .git node_modules vendor target gems cache google-chrome
+  )
+  for dir in ${ignore_dirs}; do
+    args="${args} -path "\'\*${dir}\*\'" -prune -o"
+  done
 
-    local file=$(eval find ${args} -type f -print | cut -c3- \
-      | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-    [[ -n ${file} ]] && command "${editor}" "${file}"
-  else
-    command ${editor} $@
-  fi
+  local file=$(eval find ${args} -type f -print | cut -c3- \
+    | fzf --select-1 --preview='less {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  [[ -n ${file} ]] && command "${editor}" "${file}"
 }
 
 function ranger() { # rangerのサブシェルでネストしないようにする。

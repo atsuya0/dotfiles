@@ -3,14 +3,14 @@
 function __exec_tmux__() {
   type tmux &> /dev/null || return 1
   type fzf &> /dev/null || return 1
-  [[ -z ${WINDOWID} ]] && return 1
+  [[ -n ${WINDOWID} ]] || return 1
   [[ $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) \
     =~ 'mlterm|alacritty' ]] || return 1
 
   local new='new-session'
   local id=$(
     echo "$(tmux list-sessions 2> /dev/null)\n${new}:" \
-      | sed /^$/d | fzf --select-1 --reverse | cut -d: -f1
+    | sed /^$/d | fzf --select-1 --reverse | cut -d: -f1
   )
 
   if [[ ${id} == ${new} ]]; then

@@ -175,6 +175,7 @@ bindsym $mod+x mode "$mode_display"
 
 set $background #2b303b
 set $foreground #c0c5ce
+set $secondary #3f4751
 set $black #2b303b
 set $red #bf616a
 set $green #a3be8c
@@ -206,8 +207,8 @@ bar {
         statusline $blue
         focused_statusline $blue
         #区切り文字の色
-        separator $blue
-        focused_separator $blue
+        separator $secondary
+        focused_separator $secondary
         #workspaceのbottanの色
 
         # border bg fg

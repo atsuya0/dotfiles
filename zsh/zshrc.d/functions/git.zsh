@@ -20,7 +20,7 @@ function ga() { # git add をfilterで選択して行う。<C-v>でgit diffを�
 
 function gcm() { # commit message 記しやすい
   is_managed || return 1
-  [[ $# -eq 0 ]] && return 1
+  [[ $# -ne 0 ]] || return 1
 
   git commit -m $1
 }
@@ -40,9 +40,9 @@ function gp() { # git push
 
 function gmv() { # git mv
   is_managed || return 1
-  [[ $# -eq 0 ]] && return 1
+  [[ $# -ne 0 ]] || return 1
+  [[ ${argv[$(expr $# - 1)]} == '-t' ]] || return 1
 
-  [[ ${argv[$(expr $# - 1)]} != '-t' ]] && return 1
   local target=${argv[$#]}
   for i in {1..$(expr $# - 2)}; do
     git mv "${argv[$i]}" "${target}"

@@ -17,27 +17,39 @@ function jwm() { # dockerでjwmを動かす。
     && local exists='true' \
     || Xephyr -wr -resizeable :1 &> /dev/null &
 
-  local share="${HOME}/workspace/docker/jwm/share" docker='/home/docker'
-  [[ -d ${share} ]] || return 1
+  function share() {
+    local root="${HOME}/workspace/docker/jwm/share" docker='/home/docker'
+    [[ -d ${root} ]] || return 1
 
-  docker run $@ \
-    -v "${share}/data:${docker}/data" \
-    -v "${share}/epiphany:${docker}/.config/epiphany" \
-    -v "${share}/google-chrome:${docker}/.config/google-chrome" \
+    [[ $1 == 's' ]] \
+      && echo "-v ${root}/data:${docker}/data" \
+      && echo "-v ${root}/epiphany:${docker}/.config/epiphany" \
+      && echo "-v ${root}/google-chrome:${docker}/.config/google-chrome"
+  }
+
+  docker run $(share $1) \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "/run/user/${UID}/pulse/native:/tmp/pulse/native" \
     -v "${HOME}/.config/pulse/cookie:/tmp/pulse/cookie" \
     -it --rm "${USER}/jwm" &> /dev/null
 
-  [[ -z ${exists} ]] && pkill Xephyr &> /dev/null
+  [[ -z ${exists} ]] && pkill Xephyr
 }
 
 function drm() { # dockerのコンテナを選択して破棄
-  is_docker_running && type fzf &> /dev/null && typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
-  [[ -n ${container} ]] && echo "${container}" | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
+  is_docker_running || return 1
+  type fzf &> /dev/null || return 1
+
+  typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
+  [[ -n ${container} ]] \
+    && echo "${container}" | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
 }
 
 function drmi() { # dockerのimageを選択して破棄
-  is_docker_running && type fzf &> /dev/null && typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
-  [[ -n ${image} ]] && echo "${image}" | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
+  is_docker_running || return 1
+  type fzf &> /dev/null || return 1
+
+  typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
+  [[ -n ${image} ]] \
+    && echo "${image}" | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
 }

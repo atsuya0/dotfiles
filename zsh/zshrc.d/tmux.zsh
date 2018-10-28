@@ -2,7 +2,7 @@
 function __tmux_status__() {
   # tmuxのSession番号を表示。commandがzshのときにはmodeも表示。
 
-  [[ -z ${TMUX} ]] && return
+  [[ -z ${TMUX} ]] && return 1
   typeset -r sep=''
   [[ ${KEYMAP} == 'vicmd' ]] \
   && typeset -r mode="#[fg=black,bg=green]#{?#{==:#{pane_current_command},zsh}, -- NORM -- #[default]#[fg=green]#[bg=blue]#{?client_prefix,#[bg=yellow],}${sep},}" \

@@ -1,15 +1,10 @@
-[[ -f "${ZDOTDIR}/zshrc.d/functions/cd.zsh" ]] \
-  && source "${ZDOTDIR}/zshrc.d/functions/cd.zsh"
-[[ -f "${ZDOTDIR}/zshrc.d/functions/docker.zsh" ]] \
-  && source "${ZDOTDIR}/zshrc.d/functions/docker.zsh"
-[[ -f "${ZDOTDIR}/zshrc.d/functions/git.zsh" ]] \
-  && source "${ZDOTDIR}/zshrc.d/functions/git.zsh"
-[[ -f "${ZDOTDIR}/zshrc.d/functions/wrapper.zsh" ]] \
-  && source "${ZDOTDIR}/zshrc.d/functions/wrapper.zsh"
-[[ -f "${ZDOTDIR}/zshrc.d/functions/second.zsh" ]] \
-  && source "${ZDOTDIR}/zshrc.d/functions/second.zsh"
-[[ -f "${ZDOTDIR}/zshrc.d/functions/trash.zsh" ]] \
-  && source "${ZDOTDIR}/zshrc.d/functions/trash.zsh"
+() {
+  local dir="${ZDOTDIR}/zshrc.d/functions" file
+  [[ -d ${dir} && -z $(find ${dir} -maxdepth 0 -type d -empty) ]] || return 1
+  for file in ${dir}/*.zsh; do
+    source ${file}
+  done
+}
 
 function wifi() {
   if [[ $1 == '-r' ]]; then # 再始動
@@ -24,7 +19,8 @@ function wifi() {
 
 function cmd_exists(){ # 関数やaliasに囚われないtype,which。 vim()で使う。
   [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] \
-    && return 0 || return 1
+    && return 0
+  return 1
 }
 
 function dtr() { # 電源を入れてからのネットワークのデータ転送量を表示。
@@ -79,11 +75,11 @@ function bt() {
   systemctl is-active bluetooth &> /dev/null \
     || sudo systemctl start bluetooth.service
   () {
-    echo 'power on' \
-      && sleep 1 \
-      && echo "connect $1" \
-      && sleep 3 \
-      && echo 'quit'
+    echo 'power on'
+    sleep 1
+    echo "connect $1"
+    sleep 3
+    echo 'quit'
   } ${ADDR} | bluetoothctl
 
   /usr/bin/dbus-send --system --type=method_call --dest=org.bluez \
@@ -135,27 +131,24 @@ function md() { # マルチディスプレイ
 
   case $1 in
   'school' )
-    xrandr --output ${second} --left-of ${primary} --mode 1600x900 \
-      && return 0 \
-      || return 1
+    xrandr --output ${second} --left-of ${primary} --mode 1600x900
+    return
   ;;
   'home' )
-    xrandr --output ${second} --left-of ${primary} --mode 1366x768 \
-      && return 0 \
-      || return 1
+    xrandr --output ${second} --left-of ${primary} --mode 1366x768
+    return
   ;;
   'off' )
-    [[ 3 -gt $(xrandr --listactivemonitors | wc -l) ]] && return 1
-    xrandr --output ${second} --off \
-      && return 0 \
-      || return 1
+    [[ $(xrandr --listactivemonitors | wc -l) -gt 2 ]] \
+      && xrandr --output ${second} --off
+    return
   ;;
   esac
 
   type fzf &> /dev/null || return 1
   local mode=$(xrandr | sed -n "/^${second}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
-  [[ -z ${mode} ]] && return 1
-  xrandr --output ${second} --left-of ${primary} --mode ${mode}
+  [[ -n ${mode} ]] \
+    && xrandr --output ${second} --left-of ${primary} --mode ${mode}
 }
 function _md() {
   _values \

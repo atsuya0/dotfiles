@@ -21,6 +21,6 @@ bindkey -M viins '\ef' forward-word #ALT : \e ^[
 bindkey -M viins '\eb' backward-word
 bindkey -M viins '\ed' kill-word
 bindkey -M viins '\e.' insert-last-word
-# 入力に対して履歴に一致したコマンドを表示する機能をバインド
+# 入力に対して履歴に一致したコマンドを表示する
 bindkey -M viins '\en' history-beginning-search-forward-end
 bindkey -M viins '\ep' history-beginning-search-backward-end
