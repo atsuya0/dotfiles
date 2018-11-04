@@ -7,7 +7,7 @@ function __path_prompt__() { # カレントディレクトリのpathを画面の
 
   # CUI/neovim と GUI で表示を変える
   [[ -z ${WINDOWID} || $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) == 'nvim' ]] \
-    && PROMPT="%n@%m ${fg[blue]}$(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g")${reset_color} " \
+    && PROMPT="%n@%m ${fg[blue]}$(sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g" <<< ${pwd})${reset_color} " \
     || PROMPT="%{${fg[blue]}${bg[black]}%}%n%{${fg[magenta]}${bg[black]}%}@%{${fg[blue]}${bg[black]}%}%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
 }
 autoload -Uz add-zsh-hook
@@ -19,7 +19,7 @@ function __git_prompt__() {
   git status &> /dev/null || return 1
   local git_info=("${(f)$(git status --porcelain --branch)}")
   local icon=''
-  local branch="${icon} $(echo ${git_info[1]} | sed 's/## \([^\.]*\).*/\1/')"
+  local branch="${icon} $(sed 's/## \([^\.]*\).*/\1/' <<< ${git_info[1]})"
 
   if [[ $(echo ${git_info[1]} | grep -o '\[.*\]') =~ '[ahead .*]' ]]; then
     branch="%{${fg_bold[blue]}%}${branch}%{${reset_color}%}"
@@ -31,11 +31,11 @@ function __git_prompt__() {
 
   local file uncommited=0 unadded=0 untracked=0
   for file in ${git_info[2,-1]}; do
-    if [[ $(echo ${file} | cut -c1-2) == '??' ]]; then
+    if [[ $(cut -c1-2 <<< ${file}) == '??' ]]; then
       (( untracked++ ))
-    elif [[ $(echo ${file} | cut -c1-2) =~ '( |M|A|R|U)(M|D|U)' ]]; then
+    elif [[ $(cut -c1-2 <<< ${file}) =~ '( |M|A|R|U)(M|D|U)' ]]; then
       (( unadded++ ))
-    elif [[ $(echo ${file} | cut -c1-2) =~ '(M|A|R|D) ' ]]; then
+    elif [[ $(cut -c1-2 <<< ${file}) =~ '(M|A|R|D) ' ]]; then
       (( uncommited++ ))
     fi
   done

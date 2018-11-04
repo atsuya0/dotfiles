@@ -8,7 +8,8 @@ set fileencodings=utf-8,cp932,euc-jp,sjis,iso-2022-jp
 set clipboard+=unnamedplus
 set history=10000 "nvim-default
 set mouse=a "nvim-default
-set listchars="tab:> ,trail:-,nbsp:+" "nvim-default
+set list
+set listchars=tab:\¦\ ,trail:@,nbsp:%
 "タブを押すと共通の文字列まで補完しステータスラインに
 "補完候補を表示する。更にタブを押すと完全補完を行い
 "タブで候補を変えていく。
@@ -107,8 +108,8 @@ noremap! <M-d> <esc>lx
 noremap j gj
 noremap k gk
 
-noremap <C-n> 5j
-noremap <C-p> 5k
+noremap <C-n> 3j
+noremap <C-p> 3k
 
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j

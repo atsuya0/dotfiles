@@ -18,11 +18,11 @@ function jwm() { # dockerでjwmを動かす。
     || Xephyr -wr -resizeable :1 &> /dev/null &
 
   function share() {
+    [[ $1 != 's' ]] && return 1
     local root="${HOME}/workspace/docker/jwm/share" docker='/home/docker'
     [[ -d ${root} ]] || return 1
 
-    [[ $1 == 's' ]] \
-      && echo "-v ${root}/data:${docker}/data" \
+    echo "-v ${root}/data:${docker}/data" \
       && echo "-v ${root}/epiphany:${docker}/.config/epiphany" \
       && echo "-v ${root}/google-chrome:${docker}/.config/google-chrome"
   }

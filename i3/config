@@ -107,9 +107,9 @@ bindsym $mod+Shift+e exec --no-startup-id \
 -f 'pango:IPAGothic Regular 10'"
 
 #音量調整
-bindsym F8 exec --no-startup-id ~/dotfiles/i3/sound.sh down
-bindsym F9 exec --no-startup-id ~/dotfiles/i3/sound.sh up
-bindsym F10 exec --no-startup-id ~/dotfiles/i3/sound.sh mute
+bindsym F8 exec --no-startup-id ~/dotfiles/script/sound.sh down
+bindsym F9 exec --no-startup-id ~/dotfiles/script/sound.sh up
+bindsym F10 exec --no-startup-id ~/dotfiles/script/sound.sh mute
 #XF86AudioLowerVolume
 #XF86AudioRaiseVolume
 #XF86AudioMute
@@ -151,6 +151,7 @@ mode "$mode_launcher" {
     bindsym Shift+t exec --no-startup-id termite, mode "default"
     bindsym b exec --no-startup-id chromium, mode "default"
     bindsym f exec --no-startup-id pcmanfm, mode "default"
+    bindsym m exec --no-startup-id typora, mode "default"
     bindsym c exec --no-startup-id code, mode "default"
     bindsym w exec --no-startup-id webstorm, mode "default"
     bindsym v exec --no-startup-id virtualbox, mode "default"

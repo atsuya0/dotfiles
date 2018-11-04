@@ -1,3 +1,13 @@
+[[plugins]] # visually displaying indent levels
+repo = 'Yggdroot/indentLine'
+on_event = 'BufRead'
+hook_add = '''
+  let g:indentLine_char = "¦"
+'''
+hook_source = '''
+  autocmd Filetype json let g:indentLine_conceallevel = 0
+'''
+
 [[plugins]] # unite all interfaces
 repo = 'Shougo/denite.nvim'
 on_event = 'BufRead'
@@ -19,7 +29,7 @@ hook_source = '''
   call denite#custom#source('grep', 'matchers',
     \ ['matcher_fuzzy', 'matcher_ignore_globs'])
   call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
-    \ ['.git/', 'vendor/', 'node_modules', 'images/', 'img/'])
+    \ ['.git/', 'vendor/', 'node_modules/', 'images/', 'img/'])
   call denite#custom#var('grep', 'default_opts', ['-nH']) " remove -i
 '''
 

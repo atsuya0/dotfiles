@@ -9,7 +9,10 @@
 function wifi() {
   if [[ $1 == '-r' ]]; then # 再始動
     local ssid=$(netctl list | sed '/^\*/!d;s/[\* ]*//')
+    [[ -z ${ssid} ]] && echo 'Not connected' && return 1
     sudo netctl restart ${ssid}
+  elif [[ $1 == '-s' ]]; then
+    sudo netctl stop-all
   elif type fzf &> /dev/null && ! netctl list | grep '^*' &> /dev/null; then
     local ssid=$(netctl list | fzf --select-1)
     [[ -n ${ssid} ]] && sudo netctl start ${ssid// /}
@@ -23,13 +26,16 @@ function cmd_exists(){ # 関数やaliasに囚われないtype,which。 vim()で�
   return 1
 }
 
-function dtr() { # 電源を入れてからのネットワークのデータ転送量を表示。
+# The amount of transferred data after turning on the power.
+function dtr() {
   cat /proc/net/dev | awk \
     '{if(match($0, /wlp4s0/)!=0) print "Wifi        : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"} \
     {if(match($0, /bnep0/)!=0) print "Bluetooth Tethering : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"}'
 }
 
-function interactive() { # 引数に指定したコマンドを実行するのに確認をとる。
+
+# ex) interactive systemctl poweroff
+function interactive() {
   local input
   while [[ ${input} != 'yes' && ${input} != 'no' ]]; do
     printf '\ryes / no'
@@ -39,12 +45,14 @@ function interactive() { # 引数に指定したコマンドを実行するの�
   [[ ${input} == 'yes' ]] && command $@
 }
 
-function battery() { # 電池残量
+function bat() { # Battery
   typeset -r bat='/sys/class/power_supply/BAT1'
-  [[ -e ${bat} ]] && cat "${bat}/capacity" | sed 's/$/%/' || echo 'No Battery'
+  [[ -e ${bat} ]] \
+    && cat "${bat}/capacity" | sed 's/$/%/' \
+    || echo 'No Battery'
 }
 
-function bak() { # ファイルのバックアップをとる
+function bak() { # Backup files with .bak after filename extension.
   local file
 
   case $1 in
@@ -67,8 +75,8 @@ function init_test() {
   chmod +x ./test.sh
 }
 
-# bluetoothテザリング。
-# anacondaのdbus-sendを使わないようにする。AC_CF_85_B7_9D_9Aはスマホのmacアドレス。
+# Bluetooth tethering
+# Do not use the anaconda's dbus-send.  The AC_CF_85_B7_9D_9A is MAC address of the smartphone。
 function bt() {
   typeset -r ADDR='AC:CF:85:B7:9D:9A'
 
@@ -124,7 +132,7 @@ function _crypt() {
 }
 compdef _crypt crypt
 
-function md() { # マルチディスプレイ
+function md() { # multi displays
   type xrandr &> /dev/null || return 1
   local primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)
   local second=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
@@ -155,25 +163,24 @@ function _md() {
     'args' \
     'school' \
     'home' \
-    'off' \
-    'select' \
+    'off'
 }
 compdef _md md
 
-function rs() { # ファイル名から空白を除去
+function rs() { # Remove spaces from file names.
   for file in $@; do
-    [[ -e ${file} && ${file} =~ ' ' ]] && mv "${file}" "$(echo ${file} | sed 's/ //g')"
+    [[ -e ${file} && ${file} =~ ' ' ]] && mv "${file}" "${file// /}"
   done
 }
 
-function rn() { # ファイル名を正規表現で変更する。perl製のrename like。
+function rn() { # Rename files using regular expression. Like Perl's rename.
   for i in {2..$#}; do
-    local new=$(echo ${argv[${i}]} | sed $1)
+    local new=$(sed $1 <<< ${argv[${i}]})
     [[ -e ${argv[${i}]} && ${argv[${i}]} != ${new} ]] && mv "${argv[${i}]}" "${new}"
   done
 }
 
-function cc() { # ファイルの文字数を数える
+function cc() { # Character Counter
   [[ -s $1 ]] && cat $1 | sed ':l;N;$!bl;s/\n//g' | wc -m
 }
 

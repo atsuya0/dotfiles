@@ -15,7 +15,7 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
 }
 
 function __fzf_cd_widget__() {
-  # ALT_Cにbindされてるwidgetを上書きしている。
+  # ALT_Cにbindされてるfzfが用意しているwidgetを上書きしている。
   # 現階層以下のディレクトリからfzfを使って選び移動する。
 
   local dir
@@ -27,8 +27,8 @@ function __fzf_cd_widget__() {
     | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
 
-  _path_prompt
+  __path_prompt__
   zle reset-prompt
 }
-zle -N __fzf_cd_widget__
-bindkey '\ec' __fzf_cd_widget__
+# zle -N __fzf_cd_widget__
+# bindkey '\ec' __fzf_cd_widget__

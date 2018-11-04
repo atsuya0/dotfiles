@@ -80,9 +80,10 @@ function hours_minutes() {
 function battery() {
   function online() {
     if [[ $(cat /sys/class/power_supply/ADP1/online) == '1' ]];then
-      local char=('◜' '◝' '◟' '◞')
-      local i=$(expr $(date +%S) % 4)
-      value 'blue' ${char[i]}
+      # local chars=('◜' '◝' '◞' '◟')
+      local chars=('' '' '' '' '')
+      local i=$(expr $(date +%S) % ${#chars[@]})
+      value 'blue' "${chars[${i}]}"
     else
       echo ''
     fi
@@ -103,7 +104,7 @@ function battery() {
 }
 
 if [[ $1 == 'short' ]];then
-  echo "$(memory)$(load_average)"
+  echo "$(memory)$(load_average) "
 else
-  echo "$(memory)$(load_average)$(wlan)$(sound)$(hours_minutes)$(battery)"
+  echo "$(memory)$(load_average)$(wlan)$(sound)$(hours_minutes)$(battery) "
 fi

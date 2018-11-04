@@ -5,10 +5,10 @@
 function install_packages() {
   sudo pacman -S --needed --noconfirm \
     $(cat $(dirname $0)/package.list | sed 's/#.*//;s/ //g;/^$/d')
-  setup_packges
+  setup_packages
 }
 
-function setup_packges() {
+function setup_packages() {
   type zsh &> /dev/null \
     && chsh -s $(which zsh)
   type pip &> /dev/null \
@@ -80,6 +80,7 @@ function download_packages_from_aur() {
     'nvm'
     'webstorm'
     'visual-studio-code-bin'
+    'typora'
   )
 
   for package in ${packages[@]}; do
@@ -91,7 +92,7 @@ function download_packages_from_aur() {
 
 function main() {
   [[ $(id -u) -eq 0 ]] && return 1
-  [[ $# -eq 0 ]] && echo 'hostname' && return 1
+  [[ $# -eq 0 ]] && echo 'A hostname is required as an argument.' && return 1
 
   sudo sed -i 's/^#\(Color\)$/\1/' /etc/pacman.conf
   sudo pacman -Syu --noconfirm

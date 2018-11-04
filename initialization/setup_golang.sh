@@ -22,6 +22,7 @@ function main() {
     'golang.org/x/tools/cmd/goimports'
     'github.com/golang/dep/cmd/dep'
     'github.com/spf13/cobra/cobra'
+    'github.com/julienschmidt/httprouter'
   )
   go get -u ${libraries}
 

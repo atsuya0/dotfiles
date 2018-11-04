@@ -49,3 +49,38 @@ function gmv() { # git mv
   done
 }
 
+function gl() {
+  local -a subcmds=(
+    'branch'
+    'branch --all'
+    'branch -m'
+    'branch -d'
+    'checkout'
+    'remote -v'
+    'remote add origin https://github.com/'
+    'status'
+    'add'
+    'commit -m'
+    'commit --amend'
+    'push origin'
+    'log'
+    'log --merges'
+    'log --no-merges'
+    'log --online'
+    'reflog'
+    'reset'
+    'reset --soft'
+    'reset --mixed'
+    'reset --hard'
+  )
+
+  function print_array() {
+    local subcmd
+    for subcmd in ${@}; do
+      echo ${subcmd}
+    done
+  }
+
+  local subcmd=$(print_array ${subcmds} | fzf)
+  [[ -n ${subcmd} ]] && print -z git ${subcmd}
+}

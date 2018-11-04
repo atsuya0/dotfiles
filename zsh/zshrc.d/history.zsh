@@ -36,7 +36,7 @@ add-zsh-hook zshaddhistory __record_cmd__
 
 function __save_cmd__() {
   local exit_status=$?
-  _cmd=$(echo ${_cmd} | tr -s ' ') # 連続する空白を1つにす
+  _cmd=$(tr -s ' ' <<< ${_cmd}) # 連続する空白を1つにす
   [[ ! ${_cmd} =~ ' ' ]] && return # 引数やオプションを指定していない場合は記録しない
   [[ ${_cmd} =~ '^ ' ]] && return
 

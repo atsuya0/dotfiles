@@ -57,9 +57,7 @@ typeset -r ignore_absolute_pathes=(
   ${HOME}/.java
   ${HOME}/.Trash
   ${GOPATH}/pkg
-  ${GOPATH}/src/gopkg.in
-  ${GOPATH}/src/github.com
-  ${GOPATH}/src/golang.org
+  ${GOPATH}/src
 )
 
 autoload -Uz colors && colors

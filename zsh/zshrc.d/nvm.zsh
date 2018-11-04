@@ -3,6 +3,7 @@ typeset -gr node_funcs=(
   'node'
   'npm'
   'ng'
+  'vue'
   'create-react-app'
   'firebase'
 )
