@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -euC
+
 killall -q polybar
 
 while pgrep -u ${UID} -x polybar > /dev/null;do
@@ -7,10 +9,11 @@ while pgrep -u ${UID} -x polybar > /dev/null;do
 done
 
 if [[ $# -eq 0 ]]; then
-  export MONITOR=$(type xrandr &> /dev/null \
+  MONITOR=$(type xrandr &> /dev/null \
     && xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | tail -1)
 else
-  export MONITOR=$1
+  MONITOR=$1
 fi
+export MONITOR
 
 polybar -r --config=${DOTFILES}/polybar/config bar1 &

@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -euC
+
 declare -A list=(
   ['Logout']='i3-msg exit'
   ['Poweroff']='systemctl poweroff'

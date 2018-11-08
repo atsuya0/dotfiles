@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -euC
+
 type xrandr &> /dev/null || return
 
 primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)

@@ -2,6 +2,8 @@
 
 # [todo] graphic driver(xf86-video-intel)のinstall
 
+set -euC
+
 function install_packages() {
   sudo pacman -S --needed --noconfirm \
     $(cat $(dirname $0)/package.list | sed 's/#.*//;s/ //g;/^$/d')
@@ -77,14 +79,12 @@ EOF
 
 function download_packages_from_aur() {
   local packages=(
-    'nvm'
-    'webstorm'
-    'visual-studio-code-bin'
-    'typora'
+    'nvm.tar.gz'
+    'visual-studio-code-bin.tar.gz'
   )
 
   for package in ${packages[@]}; do
-    curl -fsSLO "https://aur.archlinux.org/cgit/aur.git/snapshot/${package}.tar.gz" \
+    curl -fsSLO "https://aur.archlinux.org/cgit/aur.git/snapshot/${package}" \
       && tar -xzf ${package} \
       && rm ${package}
   done

@@ -1,14 +1,17 @@
 #!/usr/bin/bash
 
+set -euC
+
 function install_my_tool() {
-  local root="github.com/$(git config --global user.name)"
+  local root
+  root="github.com/$(git config --global user.name)"
   [[ -d ${GOPATH}/src/${root}/$1 ]] && return 1
 
-  git clone https://${root}/$1.git ${GOPATH}/src/${root}/$1 || return 1
-  cd ${GOPATH}/src/${root}/$1
+  git clone "https://${root}/$1.git" "${GOPATH}/src/${root}/$1" || return 1
+  cd "${GOPATH}/src/${root}/$1"
   [[ -f 'Gopkg.toml' ]] && dep ensure
   go install
-  cd $(dirname $(readlink -f $0))
+  cd "$(dirname $(readlink -f $0))"
 }
 
 function main() {

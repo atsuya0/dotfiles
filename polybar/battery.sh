@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-set -eu
+set -euC
 
 function print_battery() {
   source "$(dirname $0)/format.sh"
@@ -13,7 +13,8 @@ function print_battery() {
 }
 
 function main() {
-  local battery=$([[ -e /sys/class/power_supply/BAT1 ]] && cat /sys/class/power_supply/BAT1/capacity)
+  local battery
+  battery=$([[ -e /sys/class/power_supply/BAT1 ]] && cat /sys/class/power_supply/BAT1/capacity)
   [[ -z ${battery} ]] && echo && return
 
   if [[ ${battery} -gt 79 ]];then

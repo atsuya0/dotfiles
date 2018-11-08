@@ -212,3 +212,26 @@ function crawl() {
   crawl-img -f $1
   notify-send 'Image downloading is complete.'
 }
+
+function ct() {
+  local -A opthash
+  zparseopts -D -A opthash -- I X: -help
+
+  if [[ -n "${opthash[(i)--help]}" ]]; then
+    echo '-I'
+    echo '-X [method]'
+    echo '$1 is path'
+
+    return
+  fi
+
+  local head method
+  [[ -n "${opthash[(i)-I]}" ]] && head='-I'
+  [[ -n "${opthash[(i)-X]}" ]] && method="${opthash[-X]}"
+
+  local methods=('GET' 'POST' 'PUT' 'DELETE')
+  [[ -z ${method} ]] \
+    && method=$(echo ${methods} | sed 's/ /\n/g' | fzf)
+
+  curl ${head} -X ${method:-GET} "http://localhost:9000$1"
+}

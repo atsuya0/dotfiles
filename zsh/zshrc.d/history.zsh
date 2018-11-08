@@ -50,10 +50,10 @@ function __save_cmd__() {
     'pacman -Si' 'pacman -Ss' 'pacman -Qi' 'pacman -Qs'
 
     pacman vim code python go chromium tree nvim scrot xsel feh
-    rofi 'npm search' notify-send
+    rofi 'npm search' notify-send tmux
 
     up down cdh gcm gp gmv second sc trash trs
-    md wifi dtr bak battery init_test bt rs rn
+    md wifi dtr bak battery init_test bt rs rn ct
   )
 
   local ignore_cmd

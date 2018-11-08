@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -euC
+
 function get_volume() {
   pactl list sinks | grep 'Volume' | grep -o '[0-9]*%' | head -1
 }
@@ -14,13 +16,15 @@ function get_sinks() {
 }
 
 function sync_volume() {
-  local volume=$(get_volume)
+  local volume
+  volume=$(get_volume)
   get_sinks | xargs -I{} pactl set-sink-volume {} ${volume}
 }
 
 function sync_muted() {
   declare -A state=( ['yes']=1 ['no']=0 )
-  local muted=${state[$(get_muted)]}
+  local muted
+  muted=${state[$(get_muted)]}
   get_sinks | xargs -I{} pactl set-sink-mute {} ${muted}
 }
 

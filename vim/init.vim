@@ -78,7 +78,7 @@ noremap! <F1> <Nop>
 "ESCを押した時にIMEを無効化
 noremap <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
 noremap! <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
-"空
+" space
 nmap <Leader>s [space]
 nnoremap [space]j o<esc>
 nnoremap [space]k O<esc>
@@ -89,7 +89,7 @@ nnoremap <C-w>< 0<C-w><
 nnoremap <C-w>> 0<C-w>>
 nnoremap <C-w>- 0<C-w>-
 nnoremap <C-w>+ 0<C-w>+
-"補完
+"completion
 noremap! <C-x>n <C-x><C-n>
 noremap! <C-x>p <C-x><C-p>
 noremap! <C-x>l <C-x><C-l>
@@ -108,12 +108,10 @@ noremap! <M-d> <esc>lx
 noremap j gj
 noremap k gk
 
-noremap <C-n> 3j
-noremap <C-p> 3k
-
+noremap <C-j> 3j
+noremap <C-k> 3k
+" Moving cursor to other windows
 nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 "思いがけず強制終了してしまうのを阻止する
 nnoremap ZQ <Nop>

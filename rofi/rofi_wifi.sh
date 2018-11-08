@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -euC
+
 declare -A list=(
   ['home']='wlp4s0-184F3214892B-5G'
   ['school']='wlp4s0-SOFTBUNYA41-2_5'

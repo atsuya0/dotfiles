@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-set -eu
+set -euC
 
 function is_not_empty() {
   [[ -z $(find $1 -maxdepth 0 -type d -empty) ]] \
@@ -96,8 +96,8 @@ function init_ranger() {
 
 function main() {
   [[ $(id -u) -eq 0 ]] && return 1 # The root user exists.
-  [[ -z ${DOTFILES} ]] && export DOTFILES=${HOME}/dotfiles
-  [[ -z ${XDG_CONFIG_HOME} ]] && export XDG_CONFIG_HOME=${HOME}/.config
+  [[ -z ${DOTFILES} ]] && export DOTFILES="${HOME}/dotfiles"
+  [[ -z ${XDG_CONFIG_HOME} ]] && export XDG_CONFIG_HOME="${HOME}/.config"
 
   init_zsh
   init_nvim || echo 'Place failed: nvim'
