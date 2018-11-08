@@ -1,6 +1,6 @@
 # .zlogin
 () { # ゴミ箱に移動してから1ヶ月経つファイル・ディレクトリを削除
-  local trash="${HOME}/.Trash"
+  typeset -r trash="${HOME}/.Trash"
   [[ ! -s ${trash} ]] && return
 
   for file in $(command ls ${trash});do
@@ -14,7 +14,7 @@
 
 function mt() { # ファイルをゴミ箱に入れる。 別途スクリプトで自動でゴミを消す。
   typeset -r trash="${HOME}/.Trash"
-  local fzf_option="--preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
+  typeset -r fzf_option="--preview-window='right:hidden' --bind='ctrl-v:toggle-preview'"
   [[ -s ${trash} ]] || mkdir ${trash}
 
   if [[ $1 == '-r' ]]; then # ゴミ箱からファイルを拾う

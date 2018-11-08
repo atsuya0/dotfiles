@@ -10,8 +10,8 @@ function up() {
   if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
     type print_parents &> /dev/null || return 1
     str=$(print_parents \
-      | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-  elif expr ${1-dummy} + 1 &> /dev/null; then
+      | fzf --preview='tree -C {}' --preview-window='right' --bind='ctrl-v:toggle-preview')
+  elif [[ $1 =~ ^[0-9]+$ ]]; then
     str=$(seq -s '' $1 | sed 's@.@\.\./@g')
   else
     str=$1
@@ -26,16 +26,38 @@ function _up() {
 compdef _up up
 
 function down() {
-  # 指定した層までを探索してfilterで選択し移動する。
-  # down 3
-
   type fzf &> /dev/null || return 1
-  local dir=$(eval find -mindepth 1 -maxdepth ${1:-1} -type d -print \
+
+  local -A opthash
+  zparseopts -D -A opthash -- d: a
+
+  local dir
+  if [[ -z "${opthash[(i)-a]}" ]]; then
+    typeset -r paths=$(ignore_absolute_paths)
+  fi
+
+  local depth
+  [[ "${opthash[-d]}" =~ ^[0-9]+$ ]] \
+    && depth="-maxdepth ${opthash[-d]}" \
+    || depth="-maxdepth 5"
+
+  dir=$(eval find -mindepth 1 ${depth} ${paths} -type d -print 2> /dev/null \
     | cut -c3- | \
     fzf --select-1 --preview='tree -C {} | head -200' \
       --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
 }
+
+function _down() {
+  function number() {
+    _values 'number' $(seq 4)
+  }
+  _arguments \
+    '-d[depth]: :number' \
+    '-a[all]'
+}
+compdef _down down
+
 alias dw='down'
 
 function __save_pwd__() { # 移動履歴をファイルに記録する。~, / は記録しない。

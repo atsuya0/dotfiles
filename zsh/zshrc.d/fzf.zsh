@@ -18,12 +18,7 @@ function __fzf_cd_widget__() {
   # ALT_Cにbindされてるfzfが用意しているwidgetを上書きしている。
   # 現階層以下のディレクトリからfzfを使って選び移動する。
 
-  local dir
-  for dir in ${ignore_absolute_pathes}; do
-    local argument="${argument} -path ${dir/$(pwd)/.} -prune -o"
-  done
-
-  dir=$(eval find -mindepth 1 ${argument} -type d -print 2> /dev/null \
+  typeset -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
     | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
   eval builtin cd ${dir:-.}
 

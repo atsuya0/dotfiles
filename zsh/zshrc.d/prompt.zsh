@@ -17,8 +17,8 @@ function __git_prompt__() {
   RPROMPT=''
   type git &> /dev/null || return 1
   git status &> /dev/null || return 1
-  local git_info=("${(f)$(git status --porcelain --branch)}")
-  local icon=''
+  typeset -r git_info=("${(f)$(git status --porcelain --branch)}")
+  typeset -r icon=''
   local branch="${icon} $(sed 's/## \([^\.]*\).*/\1/' <<< ${git_info[1]})"
 
   if [[ $(echo ${git_info[1]} | grep -o '\[.*\]') =~ '[ahead .*]' ]]; then

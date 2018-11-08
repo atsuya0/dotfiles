@@ -10,7 +10,7 @@ typeset -gr node_funcs=(
 
 function __init_nvm__() { # nvm(Node.jsのversion管理)の初期設定を読み込む
   unset -f $@
-  local nvm_dir='/usr/share/nvm'
+  typeset -r nvm_dir='/usr/share/nvm'
   [[ -e "${nvm_dir}/nvm.sh" ]] && source "${nvm_dir}/nvm.sh"
 }
 

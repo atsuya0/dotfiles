@@ -42,10 +42,8 @@ function main() {
       pactl set-sink-mute 0 toggle && sync_muted
     ;;
     'set' )
-      local ex='sound.sh set [0-9]*'
-      [[ -z $2 ]] && echo ${ex} && return 1
-      ! expr $2 + 1 &> /dev/null && echo ${ex} && return 1
-
+      [[ $2 =~ ^[0-9]+$ ]] \
+        || { echo 'set [0-9]*' && return 1 ;}
       pactl set-sink-volume 0 "$2%" && sync_volume
     ;;
     * )

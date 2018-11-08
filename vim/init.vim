@@ -78,12 +78,9 @@ noremap! <F1> <Nop>
 "ESCを押した時にIMEを無効化
 noremap <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
 noremap! <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
-" space
-nmap <Leader>s [space]
-nnoremap [space]j o<esc>
-nnoremap [space]k O<esc>
-nnoremap [space]l a<space><esc>
-nnoremap [space]h i<space><esc>
+" Blank line
+nnoremap <Leader>j o<esc>
+nnoremap <Leader>k O<esc>
 "ウィンドウの大きさを変える比率を上げる
 nnoremap <C-w>< 0<C-w><
 nnoremap <C-w>> 0<C-w>>

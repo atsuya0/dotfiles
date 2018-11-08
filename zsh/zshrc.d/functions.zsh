@@ -1,38 +1,95 @@
 () {
-  local dir="${ZDOTDIR}/zshrc.d/functions" file
+  typeset -r dir="${ZDOTDIR}/zshrc.d/functions"
+  local file
   [[ -d ${dir} && -z $(find ${dir} -maxdepth 0 -type d -empty) ]] || return 1
   for file in ${dir}/*.zsh; do
     source ${file}
   done
 }
 
+function fv(){ # vimで開くファイルをfilterで選択する。
+  type fzf &> /dev/null || return 1
+
+  if type nvim &> /dev/null; then
+    typeset -r editor='nvim'
+  elif type vim &> /dev/null; then
+    typeset -r editor='vim'
+  else
+    typeset -r editor='vi'
+  fi
+
+  function ignore_filetypes() {
+    typeset -r ignore_filetypes=(
+      pdf png jpg jpeg mp3 mp4 tar.gz zip
+    )
+    local filetype
+    for filetype in ${ignore_filetypes}; do
+      echo "-path "\'\*${filetype}\'" -prune -o"
+    done
+  }
+
+  function ignore_dirs() {
+    typeset -r ignore_dirs=(
+      .git node_modules vendor target gems cache google-chrome
+    )
+    local dir
+    for dir in ${ignore_dirs}; do
+      echo "-path "\'\*${dir}\*\'" -prune -o"
+    done
+  }
+
+  typeset -r file=$(eval find \
+    $(ignore_filetypes) $(ignore_dirs) $(ignore_absolute_paths) -type f -print \
+    | cut -c3- \
+    | fzf --select-1 --preview='less {}' \
+      --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  [[ -n ${file} ]] && ${editor} ${file}
+}
+
+
+function __sources_to_dir__() {
+  [[ $# -ne 1 ]] && return 1
+  type fzf &> /dev/null || return 1
+  typeset -r cmd=$1
+
+  typeset -r fzf_options="--select-1 \
+    --preview='less {}' \
+    --preview-window='right' \
+    --bind='ctrl-v:toggle-preview'"
+
+  typeset -r src=($(eval find -mindepth 1 $(ignore_absolute_paths) -print 2> /dev/null \
+    | cut -c3- | eval fzf ${fzf_options}))
+  [[ ${#src[@]} -eq 0 ]] && return
+
+  typeset -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -print 2> /dev/null \
+    | cut -c3- | eval fzf --header="'${src[@]}'" ${fzf_options})
+  [[ -n ${dir} ]] && eval ${cmd} ${src[@]} -t ${dir}
+}
+
+function fcp() {
+  __sources_to_dir__ 'cp -riv'
+}
+
+function fmv() {
+  __sources_to_dir__ 'mv -iv'
+}
+
+function hist() {
+  [[ $# -eq 0 ]] && history -i 1 || history $@
+}
+
 function wifi() {
   if [[ $1 == '-r' ]]; then # 再始動
-    local ssid=$(netctl list | sed '/^\*/!d;s/[\* ]*//')
+    typeset -r ssid=$(netctl list | sed '/^\*/!d;s/[\* ]*//')
     [[ -z ${ssid} ]] && echo 'Not connected' && return 1
     sudo netctl restart ${ssid}
   elif [[ $1 == '-s' ]]; then
     sudo netctl stop-all
   elif type fzf &> /dev/null && ! netctl list | grep '^*' &> /dev/null; then
-    local ssid=$(netctl list | fzf --select-1)
+    typeset -r ssid=$(netctl list | fzf --select-1)
     [[ -n ${ssid} ]] && sudo netctl start ${ssid// /}
   fi
 }
-
-
-function cmd_exists(){ # 関数やaliasに囚われないtype,which。 vim()で使う。
-  [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] \
-    && return 0
-  return 1
-}
-
-# The amount of transferred data after turning on the power.
-function dtr() {
-  cat /proc/net/dev | awk \
-    '{if(match($0, /wlp4s0/)!=0) print "Wifi        : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"} \
-    {if(match($0, /bnep0/)!=0) print "Bluetooth Tethering : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"}'
-}
-
 
 # ex) interactive systemctl poweroff
 function interactive() {
@@ -134,8 +191,8 @@ compdef _crypt crypt
 
 function md() { # multi displays
   type xrandr &> /dev/null || return 1
-  local primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)
-  local second=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
+  typeset -r primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)
+  typeset -r second=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
 
   case $1 in
   'school' )
@@ -154,7 +211,7 @@ function md() { # multi displays
   esac
 
   type fzf &> /dev/null || return 1
-  local mode=$(xrandr | sed -n "/^${second}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
+  typeset -r mode=$(xrandr | sed -n "/^${second}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
   [[ -n ${mode} ]] \
     && xrandr --output ${second} --left-of ${primary} --mode ${mode}
 }
@@ -173,34 +230,10 @@ function rs() { # Remove spaces from file names.
   done
 }
 
-function rn() { # Rename files using regular expression. Like Perl's rename.
+function rn() { # Rename files using regular expression. Like Perl's rename command.
   for i in {2..$#}; do
     local new=$(sed $1 <<< ${argv[${i}]})
     [[ -e ${argv[${i}]} && ${argv[${i}]} != ${new} ]] && mv "${argv[${i}]}" "${new}"
-  done
-}
-
-function cc() { # Character Counter
-  [[ -s $1 ]] && cat $1 | sed ':l;N;$!bl;s/\n//g' | wc -m
-}
-
-function colors(){
-  for fore in {30..37}; do
-    echo "\e[${fore}m \\\e[${fore}m \e[m"
-    for mode in 1 4 5; do
-      echo -n "\e[${fore};${mode}m \\\e[${fore};${mode}m \e[m"
-      for back in {40..47}; do
-        echo -n "\e[${fore};${back};${mode}m \\\e[${fore};${back};${mode}m \e[m"
-      done
-      echo
-    done
-    echo
-  done
-}
-
-function fonts() {
-  for i in {$(($1 * 1000))..$(($1 * 1000 + 2000))}; do
-    echo -n -e "$(printf '\\u%x' $i) "
   done
 }
 
@@ -229,9 +262,44 @@ function ct() {
   [[ -n "${opthash[(i)-I]}" ]] && head='-I'
   [[ -n "${opthash[(i)-X]}" ]] && method="${opthash[-X]}"
 
-  local methods=('GET' 'POST' 'PUT' 'DELETE')
+  typeset -r methods=('GET' 'POST' 'PUT' 'DELETE')
   [[ -z ${method} ]] \
+    && fzf &> /dev/null \
     && method=$(echo ${methods} | sed 's/ /\n/g' | fzf)
 
   curl ${head} -X ${method:-GET} "http://localhost:9000$1"
+}
+
+function _ct() {
+  function methods() {
+    _values 'methods' \
+      'GET' 'POST' 'PUT' 'DELETE'
+  }
+  _arguments \
+    '-I[head]' \
+    '-X[method]: :methods' \
+    '--help[help]'
+}
+compdef _ct ct
+
+# mnt /dev/sdb1
+# mnt /dev/sdb1 ~/mnt
+function mnt() {
+  [[ $# -eq 0 ]] && return 1
+
+  typeset -r m_path="${HOME}/mnt"
+  if [[ -d ${2:=${m_path}} ]]; then
+    [[ -z $(find $2 -maxdepth 0 -type d -empty) ]] \
+      && return 1
+  else
+    mkdir $2
+  fi
+
+  sudo mount $1 $2 \
+    && sudo chown -R $(whoami) $2
+}
+
+function umnt() {
+  typeset -r m_path="${HOME}/mnt"
+  sudo umount -R ${1:-${m_path}}
 }

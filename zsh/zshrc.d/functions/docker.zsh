@@ -14,12 +14,12 @@ function jwm() { # dockerでjwmを動かす。
   is_docker_running || return 1
 
   [[ -e /tmp/.X11-unix/X1 ]] \
-    && local exists='true' \
+    && typeset -r exists='true' \
     || Xephyr -wr -resizeable :1 &> /dev/null &
 
   function share() {
     [[ $1 != 's' ]] && return 1
-    local root="${HOME}/workspace/docker/jwm/share" docker='/home/docker'
+    typeset -r root="${HOME}/workspace/docker/jwm/share" docker='/home/docker'
     [[ -d ${root} ]] || return 1
 
     echo "-v ${root}/data:${docker}/data" \

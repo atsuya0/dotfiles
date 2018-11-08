@@ -1,8 +1,8 @@
 alias la='ls -A --color=auto'
 alias ll='ls -FAlht --color=auto'
 alias grep='grep --color=auto'
-# alias mv='mv -i'
-# alias cp='cp -i'
+alias mv='mv -i'
+alias cp='cp -i'
 alias ln='ln -i'
 alias rm="echo \"$(basename $SHELL): command not found: rm\""
 alias mkdir='mkdir -p'
@@ -13,6 +13,7 @@ alias ip='ip -c'
 alias pgrep='pgrep -a'
 alias nano='nano -$ -l -i -O -m -c' # オブションは個々に指定してないと効かない
 
+alias vim='nvim'
 alias tree='tree -C'
 alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
 alias xephyr='Xephyr -wr -resizeable :1' # x serverのネスト。白背景。window可変。

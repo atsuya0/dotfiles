@@ -7,7 +7,7 @@ function __exec_tmux__() {
   [[ $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) \
     =~ 'mlterm|alacritty' ]] || return 1
 
-  local new='new-session'
+  typeset -r new='new-session'
   local id=$(
     echo "$(tmux list-sessions 2> /dev/null)\n${new}:" \
     | sed /^$/d | fzf --select-1 --reverse | cut -d: -f1

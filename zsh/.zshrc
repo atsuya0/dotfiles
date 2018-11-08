@@ -9,7 +9,7 @@
 
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>' # 区切りとして扱わない文字。
 # 実行したプロセスの消費時間が3秒以上かかったら、消費時間の統計情報を表示する。
-REPORTTIME=3
+# REPORTTIME=3
 # 画面のロックと解除を無効(C-s,C-q)
 setopt no_flow_control
 # beep音停止
@@ -22,36 +22,28 @@ setopt correct
 setopt ignore_eof
 # リダイレクトで上書き禁止(>)。上書きをする場合は>!, >|を使う。
 setopt noclobber
-() { # fishのようなsyntax-highlighting
+() {
   typeset -r highlighting='/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'
   [[ -s ${highlighting} ]] && source ${highlighting}
 }
 
-# _fzf_cd_widget(), vim() で用いる。無視するディレクトリを絶対パスで指定する。
-typeset -r ignore_absolute_pathes=(
+typeset -r ignore_absolute_paths=(
   ${HOME}/Downloads
   ${HOME}/.cache/dein/repos
   ${HOME}/.cache/dein/.cache
   ${HOME}/.cache/pip
   ${HOME}/.cache/jedi
-  ${HOME}/.cache/yarn
   ${HOME}/.cache/go-build
   ${HOME}/.cache/fontconfig
   ${HOME}/.cache/neosnippet
-  ${HOME}/.cache/typescript/2.6
   ${HOME}/.cache/chromium
   ${HOME}/.config/chromium
-  ${HOME}/.config/pulse
-  ${HOME}/.config/VirtualBox
   ${HOME}/.config/fcitx
   ${HOME}/.config/Code
   ${HOME}/.config/undo
-  ${HOME}/.node-gyp
-  ${HOME}/.electron-gyp
   ${HOME}/.rustup
   ${HOME}/.cargo
   ${HOME}/.vscode/extensions
-  ${HOME}/.WebStorm2018.2
   ${HOME}/.npm/_cacache
   ${HOME}/.nvm/versions
   ${HOME}/.java
@@ -59,6 +51,12 @@ typeset -r ignore_absolute_pathes=(
   ${GOPATH}/pkg
   ${GOPATH}/src
 )
+function ignore_absolute_paths() {
+  local ignore_absolute_path
+  for ignore_absolute_path in ${ignore_absolute_paths}; do
+    echo "-path ${ignore_absolute_path/$(pwd)/.} -prune -o"
+  done
+}
 
 autoload -Uz colors && colors
 () { # 左右promptの設定
