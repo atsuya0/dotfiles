@@ -52,7 +52,7 @@ function __save_cmd__() {
     pacman vim code python go chromium tree nvim scrot xsel feh
     rofi 'npm search' notify-send tmux
 
-    up down cdh gcm gp gmv second sc trash trs
+    up down dw cdh gcm gp gmv second sc trash trs mnt umnt
     md wifi dtr bak battery init_test bt rs rn ct
   )
 

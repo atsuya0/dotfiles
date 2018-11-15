@@ -95,3 +95,5 @@ libmtp # mtp
 neofetch # system information
 libnotify # notify-send
 dunst # notify daemon
+poppler # preview pdf
+ffmpegthumbnailer # preview video

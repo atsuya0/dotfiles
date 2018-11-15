@@ -7,16 +7,23 @@
   done
 }
 
-function fv(){ # vimで開くファイルをfilterで選択する。
-  type fzf &> /dev/null || return 1
+function cmd_exists(){ # 関数やaliasに囚われないtype,which。
+  [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] \
+    && return 0
+  return 1
+}
 
-  if type nvim &> /dev/null; then
-    typeset -r editor='nvim'
-  elif type vim &> /dev/null; then
-    typeset -r editor='vim'
-  else
-    typeset -r editor='vi'
-  fi
+
+function vim(){ # vimで開くファイルをfilterで選択する。
+  function editor() {
+    if cmd_exists nvim &> /dev/null; then
+      echo "nvim $@"
+    elif cmd_exists vim &> /dev/null; then
+      echo "vim $@"
+    else
+      echo "vi $@"
+    fi
+  }
 
   function ignore_filetypes() {
     typeset -r ignore_filetypes=(
@@ -24,7 +31,7 @@ function fv(){ # vimで開くファイルをfilterで選択する。
     )
     local filetype
     for filetype in ${ignore_filetypes}; do
-      echo "-path "\'\*${filetype}\'" -prune -o"
+      echo '-name' "\*${filetype}" '-prune -o'
     done
   }
 
@@ -34,16 +41,19 @@ function fv(){ # vimで開くファイルをfilterで選択する。
     )
     local dir
     for dir in ${ignore_dirs}; do
-      echo "-path "\'\*${dir}\*\'" -prune -o"
+      echo '-path' "\*${dir}\*" '-prune -o'
     done
   }
 
-  typeset -r file=$(eval find \
+  [[ $# -ne 0 ]] && eval $(editor $@) && return 0
+
+  type fzf &> /dev/null || return 1
+  typeset -r files=$(eval find \
     $(ignore_filetypes) $(ignore_dirs) $(ignore_absolute_paths) -type f -print \
     | cut -c3- \
     | fzf --select-1 --preview='less {}' \
       --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-  [[ -n ${file} ]] && ${editor} ${file}
+  [[ -n ${files} ]] && eval $(editor ${files})
 }
 
 
@@ -301,5 +311,6 @@ function mnt() {
 
 function umnt() {
   typeset -r m_path="${HOME}/mnt"
-  sudo umount -R ${1:-${m_path}}
+  sudo umount -R ${1:=${m_path}}
+  rmdir $1
 }

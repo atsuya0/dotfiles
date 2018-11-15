@@ -147,8 +147,8 @@ bindsym $mod+r mode "$mode_resize"
 
 set $mode_launcher 
 mode "$mode_launcher" {
-    bindsym t exec --no-startup-id alacritty, mode "default"
-    bindsym Shift+t exec --no-startup-id termite, mode "default"
+    bindsym Shift+t exec --no-startup-id alacritty, mode "default"
+    bindsym t exec --no-startup-id termite, mode "default"
     bindsym b exec --no-startup-id chromium, mode "default"
     bindsym f exec --no-startup-id pcmanfm, mode "default"
     bindsym c exec --no-startup-id code, mode "default"

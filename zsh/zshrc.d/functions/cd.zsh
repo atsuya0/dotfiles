@@ -29,11 +29,10 @@ function down() {
   type fzf &> /dev/null || return 1
 
   local -A opthash
-  zparseopts -D -A opthash -- d: a
+  zparseopts -D -A opthash -- d: e
 
-  local dir
-  if [[ -z "${opthash[(i)-a]}" ]]; then
-    typeset -r paths=$(ignore_absolute_paths)
+  if [[ -n "${opthash[(i)-e]}" ]]; then
+    typeset -r hidden='-name .\* -prune -o'
   fi
 
   local depth
@@ -41,7 +40,8 @@ function down() {
     && depth="-maxdepth ${opthash[-d]}" \
     || depth="-maxdepth 5"
 
-  dir=$(eval find -mindepth 1 ${depth} ${paths} -type d -print 2> /dev/null \
+  local dir
+  dir=$(eval find -mindepth 1 $(ignore_absolute_paths) ${hidden} ${depth} -type d -print 2> /dev/null \
     | cut -c3- | \
     fzf --select-1 --preview='tree -C {} | head -200' \
       --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
@@ -54,7 +54,7 @@ function _down() {
   }
   _arguments \
     '-d[depth]: :number' \
-    '-a[all]'
+    '-e[exclude hidden files]'
 }
 compdef _down down
 

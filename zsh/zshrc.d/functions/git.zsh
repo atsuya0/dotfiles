@@ -6,10 +6,10 @@ function is_managed() {
 function ga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
   is_managed || return 1
 
-  local file unadded_files
+  local file header unadded_files
 
   for file in "${(f)$(git status --short)}"; do
-    typeset -r header=$(echo ${file} | cut -c1-2)
+    header=$(echo ${file} | cut -c1-2)
     [[ ${header} == '??' || ${header} =~ '( |M|A|R|U)(M|U)' ]] \
       && unadded_files="${unadded_files}\n$(echo ${file} | rev | cut -d' ' -f1 | rev)"
   done

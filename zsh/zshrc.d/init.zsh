@@ -5,7 +5,7 @@ function __exec_tmux__() {
   type fzf &> /dev/null || return 1
   [[ -n ${WINDOWID} ]] || return 1
   [[ $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) \
-    =~ 'mlterm|alacritty' ]] || return 1
+    =~ 'termite|alacritty' ]] || return 1
 
   typeset -r new='new-session'
   local id=$(

@@ -28,7 +28,6 @@ setopt noclobber
 }
 
 typeset -r ignore_absolute_paths=(
-  ${HOME}/Downloads
   ${HOME}/.cache/dein/repos
   ${HOME}/.cache/dein/.cache
   ${HOME}/.cache/pip
@@ -36,6 +35,7 @@ typeset -r ignore_absolute_paths=(
   ${HOME}/.cache/go-build
   ${HOME}/.cache/fontconfig
   ${HOME}/.cache/neosnippet
+  ${HOME}/.cache/mesa_shader_cache
   ${HOME}/.cache/chromium
   ${HOME}/.config/chromium
   ${HOME}/.config/fcitx
@@ -52,10 +52,9 @@ typeset -r ignore_absolute_paths=(
   ${GOPATH}/src
 )
 function ignore_absolute_paths() {
-  local ignore_absolute_path
-  for ignore_absolute_path in ${ignore_absolute_paths}; do
-    echo "-path ${ignore_absolute_path/$(pwd)/.} -prune -o"
-  done
+  sed 's/ /\n/g' <<< ${ignore_absolute_paths} \
+    | grep "^$(pwd)" \
+    | sed "s@$(pwd)@.@;s/.*/-path & -prune -o/g"
 }
 
 autoload -Uz colors && colors

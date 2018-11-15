@@ -26,7 +26,9 @@ augroup QuickFixConf
   autocmd QuickFixCmdPost *grep* cwindow
 augroup END
 
-"ファイル-----------------------------------------------------------
+set timeoutlen=5000
+
+"file-----------------------------------------------------------
 set hidden "編集中でも他ファイルを開ける
 set nobackup "バックアップ取らない
 set nowritebackup
@@ -34,8 +36,9 @@ set noswapfile "スワップファイルを作らない
 set autoread "外部でファイルが変更されたら自動で読み込み nvim-default
 set undofile
 set undodir=${XDG_CONFIG_HOME}/undo
+set undolevels=100
 
-"検索---------------------------------------------------------------
+"search---------------------------------------------------------------
 set incsearch "順次検索 nvim-default
 set hlsearch "検索語をハイライト nvim-default
 set ignorecase "大文字小文字区別なく検索
@@ -61,7 +64,7 @@ set commentstring=\ %s
 set helpheight=100 "ヘルプ画面を大きく表示
 set laststatus=2 "ステータスラインを常時表示 nvim-default
 
-"インデント---------------------------------------------------------
+"indent---------------------------------------------------------
 set smartindent "インデントを引き継ぐ
 set expandtab "タブではなくスペースを挿入
 set shiftwidth=2 "インデントに使われるスペース数
@@ -70,7 +73,7 @@ set softtabstop=0 "タブで挿入される文字数(0ならtabstopの値)
 set smarttab "nvim-default
 set autoindent "nvim-default
 
-"キーマップ---------------------------------------------------------
+"keybinding---------------------------------------------------------
 let mapleader = "\<space>"
 "ESCと間違えて押すときがあるので無効化にする。
 noremap <F1> <Nop>
@@ -115,16 +118,19 @@ nnoremap ZQ <Nop>
 "#を入力するとインデントが無効になるのを阻止する
 inoremap # X#
 
-"関数-------------------------------------------
+nmap <Leader>s [surround]
+nnoremap [surround]l :SurroundLine
+
+"functions-------------------------------------------
 function! s:removeTrailingBlanks()
   let line = line('.')
   let col = col('.')
   %s/\s\+$//
   call cursor(line, col)
 endfunction
-command! Rtb call s:removeTrailingBlanks()
+command! -nargs=0 Rtb call s:removeTrailingBlanks()
 
-"イベント-------------------------------------------
+"events-------------------------------------------
 augroup go_conf
   autocmd!
   autocmd FileType go set noexpandtab
@@ -133,8 +139,8 @@ augroup END
 augroup python_conf
   autocmd!
   "特定の文字列でインデントする
-  autocmd FileType python set smartindent cinwords=
-  \if,elif,else,for,while,try,except,finally,def,class,with
+  autocmd FileType python set cinwords=
+    \if,elif,else,for,while,try,except,finally,def,class,with
   autocmd FileType python set commentstring=\ #%s
 augroup END
 
@@ -153,7 +159,7 @@ augroup vim_conf
   autocmd FileType vim set commentstring=\ \"%s
 augroup END
 
-"プラグイン---------------------------------------------------------
+"plugins---------------------------------------------------------
 if has('nvim')
   let s:dein_dir = $HOME . '/.cache/dein/'
   let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -189,3 +195,7 @@ highlight clear SpellBad
 highlight clear SpellCap
 highlight clear SpellRare
 highlight SpellBad cterm=underline
+
+" command! -nargs=1 SurroundLine call SurroundLine(<f-args>)
+" command! -nargs=1 SurroundWord call SurroundWord(<f-args>)
+" command! -nargs=1 ChSurround call ChSurround(<f-args>)

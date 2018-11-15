@@ -1,9 +1,3 @@
-function cmd_exists(){ # 関数やaliasに囚われないtype,which。
-  [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] \
-    && return 0
-  return 1
-}
-
 # The amount of transferred data after turning on the power.
 function dtr() {
   cat /proc/net/dev | awk \
