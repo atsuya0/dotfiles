@@ -7,14 +7,14 @@
   done
 }
 
-function cmd_exists(){ # 関数やaliasに囚われないtype,which。
+function cmd_exists() { # The which command that does not find alias or function.
   [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] \
     && return 0
   return 1
 }
 
 
-function vim(){ # vimで開くファイルをfilterで選択する。
+function vim(){ # Choose files to open by fzf.
   function editor() {
     if cmd_exists nvim &> /dev/null; then
       echo "nvim $@"
@@ -71,7 +71,7 @@ function __sources_to_dir__() {
     | cut -c3- | eval fzf ${fzf_options}))
   [[ ${#src[@]} -eq 0 ]] && return
 
-  typeset -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -print 2> /dev/null \
+  typeset -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
     | cut -c3- | eval fzf --header="'${src[@]}'" ${fzf_options})
   [[ -n ${dir} ]] && eval ${cmd} ${src[@]} -t ${dir}
 }
@@ -123,12 +123,12 @@ function bak() { # Backup files with .bak after filename extension.
   local file
 
   case $1 in
-  '-r' ) # .bakを取り除く
+  '-r' ) # remove .bak
     for file in $argv[2,-1]; do
       mv -i "${file}"  "${file%.bak}"
     done
   ;;
-  * ) # ファイル名の末尾に.bakをつけた複製を作成する
+  * )
     for file in $@; do
       eval cp -ir "${file}{,.bak}"
     done
@@ -136,10 +136,18 @@ function bak() { # Backup files with .bak after filename extension.
   esac
 }
 
-function init_test() {
-  [[ -f ./test.sh ]] && return 1
-  echo '#!/usr/bin/bash\n' > ./test.sh
-  chmod +x ./test.sh
+function new_sh() {
+  local name='tmp.sh'
+  [[ -f ./${name} ]] && return 1
+  echo '#!/usr/bin/bash\n' > ./${name}
+  chmod +x ./${name}
+}
+
+function new_py() {
+  local name='tmp.py'
+  [[ -f ./${name} ]] && return 1
+  echo '#!/usr/bin/python3\n' > ./${name}
+  chmod +x ./${name}
 }
 
 # Bluetooth tethering

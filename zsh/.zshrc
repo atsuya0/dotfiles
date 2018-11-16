@@ -40,7 +40,7 @@ typeset -r ignore_absolute_paths=(
   ${HOME}/.config/chromium
   ${HOME}/.config/fcitx
   ${HOME}/.config/Code
-  ${HOME}/.config/undo
+  ${HOME}/.config/nvim/undo
   ${HOME}/.rustup
   ${HOME}/.cargo
   ${HOME}/.vscode/extensions

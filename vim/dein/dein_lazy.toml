@@ -14,9 +14,14 @@ on_event = 'BufRead'
 if = 'has("nvim")'
 hook_add = '''
   nmap <Leader>d [denite]
+  nnoremap <silent> [denite]f :Denite file_rec<CR>
   nnoremap <silent> [denite]b :Denite buffer<CR>
   nnoremap <silent> [denite]l :Denite line<CR>
-  nnoremap <silent> [denite]f :Denite file_rec<CR>
+  nnoremap <silent> [denite]r :Denite register<CR>
+  nnoremap <silent> [denite]: :Denite command<CR>
+  nnoremap <silent> [denite]h :Denite command_history<CR>
+  nnoremap <silent> [denite]c :Denite change<CR>
+  nnoremap <silent> [denite]j :Denite jump<CR>
   nnoremap <silent> [denite]g :Denite grep<CR>
   nnoremap <silent> [denite]G :DeniteCursorWord grep<CR>
   nnoremap <silent> [denite]; :Denite -resume -immediately -select=+1<CR>
@@ -24,13 +29,13 @@ hook_add = '''
 '''
 hook_source = '''
   call denite#custom#option('default', 'prompt', '>>>')
-  call denite#custom#source('file_rec', 'matchers',
-    \ ['matcher_fuzzy', 'matcher_ignore_globs'])
-  call denite#custom#source('grep', 'matchers',
-    \ ['matcher_fuzzy', 'matcher_ignore_globs'])
+  call denite#custom#source(
+    \ 'file_rec', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
+  call denite#custom#source(
+    \ 'grep', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
   call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
     \ ['.git/', 'vendor/', 'node_modules/', 'images/', 'img/'])
-  call denite#custom#var('grep', 'default_opts', ['-nH']) " remove -i
+  call denite#custom#var('grep', 'default_opts', ['-nH'])
 '''
 
 # [[plugins]] # completion for javascript

@@ -6,18 +6,18 @@ function print_parents() {
 # up 2    -> cd ../..
 # up      -> filterを使って選択する
 function up() {
-  local str
+  local parent_path
   if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
     type print_parents &> /dev/null || return 1
-    str=$(print_parents \
+    parent_path=$(print_parents \
       | fzf --preview='tree -C {}' --preview-window='right' --bind='ctrl-v:toggle-preview')
   elif [[ $1 =~ ^[0-9]+$ ]]; then
-    str=$(seq -s '' $1 | sed 's@.@\.\./@g')
+    parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
   else
-    str=$1
+    parent_path=$1
   fi
 
-  builtin cd ${str:-.}
+  builtin cd ${parent_path:-.}
 }
 
 function _up() {

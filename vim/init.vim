@@ -3,39 +3,32 @@ if has('nvim')
   let g:python3_host_prog = substitute(system('which python3'),"\n","","")
   tnoremap <Esc> <C-\><C-n>
 endif
-"ファイルを読み込む際の文字コード
+" Vim tries to use the first mentioned character encoding.
 set fileencodings=utf-8,cp932,euc-jp,sjis,iso-2022-jp
+" To ALWAYS use the clipboard for ALL operations
 set clipboard+=unnamedplus
 set history=10000 "nvim-default
 set mouse=a "nvim-default
 set list
 set listchars=tab:\¦\ ,trail:@,nbsp:%
+" command-line completion operates in an enhanced mode. nvim-default
+set wildmenu
 "タブを押すと共通の文字列まで補完しステータスラインに
 "補完候補を表示する。更にタブを押すと完全補完を行い
 "タブで候補を変えていく。
-set wildmenu "コマンドの補完を拡張 nvim-default
 set wildmode=longest:full,full
 "一行が余りにも長い場合に表示が抑制されるのを防ぐ
 set display=lastline
-"綴り修正
-set spell
-set spelllang=en,cjk
-"grepを実行するとQuickFixリストを表示
-augroup QuickFixConf
-  autocmd!
-  autocmd QuickFixCmdPost *grep* cwindow
-augroup END
 
 set timeoutlen=5000
 
-"file-----------------------------------------------------------
 set hidden "編集中でも他ファイルを開ける
 set nobackup "バックアップ取らない
 set nowritebackup
 set noswapfile "スワップファイルを作らない
 set autoread "外部でファイルが変更されたら自動で読み込み nvim-default
 set undofile
-set undodir=${XDG_CONFIG_HOME}/undo
+set undodir=${XDG_CONFIG_HOME}/nvim/undo
 set undolevels=100
 
 "search---------------------------------------------------------------
@@ -78,9 +71,6 @@ let mapleader = "\<space>"
 "ESCと間違えて押すときがあるので無効化にする。
 noremap <F1> <Nop>
 noremap! <F1> <Nop>
-"ESCを押した時にIMEを無効化
-noremap <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
-noremap! <silent> <esc> <esc>:call system('fcitx-remote -c')<CR>
 " Blank line
 nnoremap <Leader>j o<esc>
 nnoremap <Leader>k O<esc>
@@ -98,63 +88,81 @@ noremap! <C-x>s <C-x><C-s>
 "入力された文字に一致するコマンドを履歴から補完する
 cnoremap <M-p> <Up>
 cnoremap <M-n> <Down>
-" インサートモードでemacsのキーバインドを使う
-noremap! <C-f> <esc>la
-noremap! <C-b> <esc>i
-noremap! <C-a> <esc>I
-noremap! <C-e> <esc>A
-noremap! <M-d> <esc>lx
+" emacs key bindings
+noremap! <C-f> <right>
+noremap! <C-b> <left>
+noremap! <C-a> <C-o>:call cursor(line('.'), 1)<CR>
+noremap! <C-e> <C-o>:call cursor(line('.'), col('$'))<CR>
 
 noremap j gj
 noremap k gk
 
 noremap <C-j> 3j
 noremap <C-k> 3k
-" Moving cursor to other windows
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
+" buffer (next|previous)
+noremap <C-l> :bn<CR>
+noremap <C-h> :bp<CR>
 "思いがけず強制終了してしまうのを阻止する
-nnoremap ZQ <Nop>
+noremap ZQ <Nop>
 "#を入力するとインデントが無効になるのを阻止する
 inoremap # X#
 
-nmap <Leader>s [surround]
-nnoremap [surround]l :SurroundLine
-
 "functions-------------------------------------------
+" ! : can overwrite name
 function! s:removeTrailingBlanks()
   let line = line('.')
   let col = col('.')
-  %s/\s\+$//
+  %substitute/\s\+$//c
   call cursor(line, col)
 endfunction
-command! -nargs=0 Rtb call s:removeTrailingBlanks()
+command! -nargs=0 Rb call s:removeTrailingBlanks()
+
+function! s:CloseAllOtherBuffers()
+  1,.-bdelete
+  .+,$bdelete
+endfunction
+command! -nargs=0 Ob call s:CloseAllOtherBuffers()
 
 "events-------------------------------------------
-augroup go_conf
+augroup Insert
+  autocmd!
+  autocmd InsertLeave * call system('fcitx-remote -c')
+augroup END
+
+augroup QuickFix
+  autocmd!
+  autocmd QuickFixCmdPost *grep* cwindow
+augroup END
+
+augroup ChangeBackground
+  autocmd!
+  autocmd FocusGained * highlight Normal guibg=default
+  autocmd FocusLost * highlight Normal guibg='#27292d'
+augroup END
+
+augroup Go
   autocmd!
   autocmd FileType go set noexpandtab
 augroup END
 
-augroup python_conf
+augroup Python
   autocmd!
-  "特定の文字列でインデントする
   autocmd FileType python set cinwords=
     \if,elif,else,for,while,try,except,finally,def,class,with
   autocmd FileType python set commentstring=\ #%s
 augroup END
 
-augroup html_conf
+augroup HTML
   autocmd!
   autocmd FileType html set commentstring=\ <!--\ %s\ -->
 augroup END
 
-augroup sh_conf
+augroup sh
   autocmd!
   autocmd FileType sh set commentstring=\ #%s
 augroup END
 
-augroup vim_conf
+augroup Vim
   autocmd!
   autocmd FileType vim set commentstring=\ \"%s
 augroup END
@@ -163,14 +171,12 @@ augroup END
 if has('nvim')
   let s:dein_dir = $HOME . '/.cache/dein/'
   let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
-  "プラグインマネージャが存在しなければインストール
-  if &runtimepath !~# '/dein.vim'
+  if &runtimepath !~# '/dein.vim' "Not install dein.vim
     if !isdirectory(s:dein_repo_dir)
       call system('git clone https://github.com/Shougo/dein.vim ' . s:dein_repo_dir)
     endif
     execute 'set runtimepath+=' . s:dein_repo_dir
   endif
-  "toml形式で別ファイルに記述しているプラグインを読み込む
   let s:toml_dir = s:dein_dir . '/toml/dein.toml'
   let s:toml_lazy_dir = s:dein_dir . '/toml/dein_lazy.toml'
   if dein#load_state(s:dein_dir)
@@ -180,22 +186,16 @@ if has('nvim')
     call dein#end()
     call dein#save_state()
   endif
-  "インストールしていないものがあれば行う
   if dein#check_install()
     call dein#install()
   endif
-  colorscheme one
+  " colorscheme one
+  colorscheme quantum
 endif
-"filetype plugin indent on "vimがよしなにshiftwidthなどを変えてくる
 syntax enable
 
-"-------------------------------------------
-"綴り誤りをアンダーラインで際立たせる
-highlight clear SpellBad
-highlight clear SpellCap
-highlight clear SpellRare
-highlight SpellBad cterm=underline
-
-" command! -nargs=1 SurroundLine call SurroundLine(<f-args>)
-" command! -nargs=1 SurroundWord call SurroundWord(<f-args>)
-" command! -nargs=1 ChSurround call ChSurround(<f-args>)
+"spell--------------------------------------
+" set spell
+" set spelllang=en,cjk
+" highlight clear SpellBad
+" highlight SpellBad gui=underline

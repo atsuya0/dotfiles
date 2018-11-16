@@ -13,7 +13,7 @@ repo = 'Shougo/neosnippet.vim'
 repo = 'Shougo/neosnippet-snippets'
 
 [[plugins]] # color scheme
-repo = 'cocopon/iceberg.vim'
+repo = 'tyrannicaltoucan/vim-quantum'
 
 [[plugins]] # color scheme
 repo = 'rakr/vim-one'
@@ -33,7 +33,8 @@ hook_add = '''
 [[plugins]] # status line themes
 repo = 'vim-airline/vim-airline-themes'
 hook_add = '''
-  let g:airline_theme='deus'
+  " let g:airline_theme='deus'
+  let g:airline_theme='quantum'
 '''
 
 [[plugins]]
