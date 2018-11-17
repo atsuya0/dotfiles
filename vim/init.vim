@@ -117,7 +117,7 @@ function! s:removeTrailingBlanks()
 endfunction
 command! -nargs=0 Rb call s:removeTrailingBlanks()
 
-function! s:CloseAllOtherBuffers()
+function! s:closeAllOtherBuffers()
   1,.-bdelete
   .+,$bdelete
 endfunction

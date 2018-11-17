@@ -30,6 +30,7 @@ alias -g @u='| uniq'
 alias -g @s='| sort'
 alias -g @j='| jq'
 alias -g lf='$(ls | fzf)'
+alias -g ff='$(find -type f | fzf)'
 alias -g ..2='../..'
 alias -g ..3='../../..'
 

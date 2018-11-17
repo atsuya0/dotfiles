@@ -146,7 +146,14 @@ function new_sh() {
 function new_py() {
   local name='tmp.py'
   [[ -f ./${name} ]] && return 1
-  echo '#!/usr/bin/python3\n' > ./${name}
+cat << "EOF" > ./${name}
+#!/usr/bin/python3
+
+def main():
+
+if __name__ == '__main__':
+    main()
+EOF
   chmod +x ./${name}
 }
 
