@@ -82,7 +82,6 @@ on_i = 1
 
 [[plugins]] # formatting for go
 repo = 'fatih/vim-go'
-depends = ['denite.nvim']
 on_ft = 'go'
 hook_add = '''
   nnoremap <silent> [denite]d :Denite -auto_preview decls<CR>

@@ -168,35 +168,36 @@ augroup Vim
   autocmd FileType vim set commentstring=\ \"%s
 augroup END
 "==================================================
+" Plugins
+"==================================================
+let s:cache = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
+let s:dein_dir = s:cache . '/dein'
+let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
+if &runtimepath !~# '/dein.vim' "Not install dein.vim
+  if !isdirectory(s:dein_repo_dir)
+    call system('git clone https://github.com/Shougo/dein.vim ' . s:dein_repo_dir)
+  endif
+  execute 'set runtimepath+=' . s:dein_repo_dir
+endif
+let s:toml_dir = s:dein_dir . '/toml/dein.toml'
+let s:toml_lazy_dir = s:dein_dir . '/toml/dein_lazy.toml'
+if dein#load_state(s:dein_dir)
+  call dein#begin(s:dein_dir)
+  call dein#load_toml(s:toml_dir,      {'lazy': 0})
+  call dein#load_toml(s:toml_lazy_dir, {'lazy': 1})
+  call dein#end()
+  call dein#save_state()
+endif
+if dein#check_install()
+  call dein#install()
+endif
+"==================================================
 " neovim
 "==================================================
 if has('nvim')
   set sh=zsh
   let g:python3_host_prog = substitute(system('which python3'),"\n","","")
   tnoremap <Esc> <C-\><C-n>
-
-  " load plugins
-  let s:cache = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
-  let s:dein_dir = s:cache . '/dein'
-  let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
-  if &runtimepath !~# '/dein.vim' "Not install dein.vim
-    if !isdirectory(s:dein_repo_dir)
-      call system('git clone https://github.com/Shougo/dein.vim ' . s:dein_repo_dir)
-    endif
-    execute 'set runtimepath+=' . s:dein_repo_dir
-  endif
-  let s:toml_dir = s:dein_dir . '/toml/dein.toml'
-  let s:toml_lazy_dir = s:dein_dir . '/toml/dein_lazy.toml'
-  if dein#load_state(s:dein_dir)
-    call dein#begin(s:dein_dir)
-    call dein#load_toml(s:toml_dir,      {'lazy': 0})
-    call dein#load_toml(s:toml_lazy_dir, {'lazy': 1})
-    call dein#end()
-    call dein#save_state()
-  endif
-  if dein#check_install()
-    call dein#install()
-  endif
 endif
 "==================================================
 " Spell
