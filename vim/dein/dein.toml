@@ -7,21 +7,13 @@ if = 'has("nvim")'
 hook_add = 'let g:deoplete#enable_at_startup = 1'
 
 [[plugins]] # snippet
-depends = ['neosnippet-snippets']
 repo = 'Shougo/neosnippet.vim'
 
 [[plugins]] # The standard snippets repository for neosnippet.
 repo = 'Shougo/neosnippet-snippets'
 
-[[plugins]] # color scheme
-repo = 'tyrannicaltoucan/vim-quantum'
-
-[[plugins]] # color scheme
-repo = 'rakr/vim-one'
-
 [[plugins]] # status line
 repo = 'vim-airline/vim-airline'
-depends = ['vim-airline-themes']
 hook_add = '''
   let g:airline_symbols = {}
   let g:airline_symbols.maxlinenr = ''
@@ -29,15 +21,8 @@ hook_add = '''
   let g:airline#extensions#tabline#formatter = 'unique_tail'
 '''
 
-[[plugins]] # status line themes
-repo = 'vim-airline/vim-airline-themes'
-hook_add = '''
-  " let g:airline_theme='deus'
-  let g:airline_theme='quantum'
-'''
-
 [[plugins]]
-repo = 'tayusa/surround.nvim'
+repo = '~/workspace/neovim/surround.nvim'
 hook_add = '''
   nmap <Leader>s [surround]
   nnoremap <silent> [surround]l :SurroundLine

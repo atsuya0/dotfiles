@@ -1,6 +1,22 @@
+[[plugins]] # color scheme
+repo = 'tyrannicaltoucan/vim-quantum'
+on_event = ['BufRead', 'BufNewFile']
+hook_source = 'colorscheme quantum'
+
+# [[plugins]] # color scheme
+# repo = 'rakr/vim-one'
+
+[[plugins]] # status line themes
+repo = 'vim-airline/vim-airline-themes'
+on_event = 'ColorScheme'
+hook_add = '''
+  " let g:airline_theme='deus'
+  let g:airline_theme='quantum'
+'''
+
 [[plugins]] # visually displaying indent levels
 repo = 'Yggdroot/indentLine'
-on_event = 'BufRead'
+on_event = ['BufRead', 'BufNewFile']
 hook_add = '''
   let g:indentLine_char = "¦"
 '''
@@ -10,7 +26,7 @@ hook_source = '''
 
 [[plugins]] # unite all interfaces
 repo = 'Shougo/denite.nvim'
-on_event = 'BufRead'
+on_event = ['BufReadPost', 'BufNewFile']
 if = 'has("nvim")'
 hook_add = '''
   nmap <Leader>d [denite]

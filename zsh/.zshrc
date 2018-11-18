@@ -1,5 +1,5 @@
-source "${ZDOTDIR}/zshrc.d/env.zsh" 2> /dev/null
-source "${ZDOTDIR}/zshrc.d/init.zsh" 2> /dev/null
+source "${ZDOTDIR}/zshrc.d/env.zsh"
+source "${ZDOTDIR}/zshrc.d/init.zsh"
 
 # A list of non-alphanumeric characters considered part of a word by the line editor.
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
@@ -50,12 +50,12 @@ function ignore_absolute_paths() {
 }
 
 autoload -Uz colors && colors
-source "${ZDOTDIR}/zshrc.d/prompt.zsh" 2> /dev/null
-source "${ZDOTDIR}/zshrc.d/tmux.zsh" 2> /dev/null
-source "${ZDOTDIR}/zshrc.d/completion.zsh" 2> /dev/null
-source "${ZDOTDIR}/zshrc.d/history.zsh" 2> /dev/null
-source "${ZDOTDIR}/zshrc.d/keybind.zsh" 2> /dev/null
-source "${ZDOTDIR}/zshrc.d/fzf.zsh" 2> /dev/null
-source "${ZDOTDIR}/zshrc.d/nvm.zsh" 2> /dev/null
-source "${ZDOTDIR}/zshrc.d/functions.zsh" 2> /dev/null
-source "${ZDOTDIR}/zshrc.d/aliases.zsh" 2> /dev/null
+source "${ZDOTDIR}/zshrc.d/prompt.zsh"
+source "${ZDOTDIR}/zshrc.d/tmux.zsh"
+source "${ZDOTDIR}/zshrc.d/completion.zsh"
+source "${ZDOTDIR}/zshrc.d/history.zsh"
+source "${ZDOTDIR}/zshrc.d/keybind.zsh"
+source "${ZDOTDIR}/zshrc.d/fzf.zsh"
+source "${ZDOTDIR}/zshrc.d/nvm.zsh"
+source "${ZDOTDIR}/zshrc.d/functions.zsh"
+source "${ZDOTDIR}/zshrc.d/aliases.zsh"

@@ -73,6 +73,7 @@ function __sources_to_dir__() {
 
   typeset -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
     | cut -c3- | eval fzf --header="'${src[@]}'" ${fzf_options})
+
   [[ -n ${dir} ]] && eval ${cmd} ${src[@]} -t ${dir}
 }
 

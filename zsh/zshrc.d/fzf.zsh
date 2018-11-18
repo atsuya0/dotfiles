@@ -10,8 +10,8 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
   typeset -r fzf_dir='/usr/share/fzf'
   readonly local  keybind="${fzf_dir}/key-bindings.zsh"
   typeset -r completion="${fzf_dir}/completion.zsh"
-  [[ -f ${keybind} ]] && source "${keybind}"
-  [[ -f ${completion} ]] && source "${completion}"
+  [[ -f ${keybind} ]] && source ${keybind}
+  [[ -f ${completion} ]] && source ${completion}
 }
 
 function __fzf_cd_widget__() {

@@ -14,7 +14,8 @@ function __exec_tmux__() {
   )
 
   if [[ ${id} == ${new} ]]; then
-    tmux -f "${DOTFILES}/tmux/tmux.conf" -2 new-session -s $1 && exit
+    tmux -f "${DOTFILES}/tmux/tmux.conf" -2 new-session \
+      -s "tmp_$(tmux list-session 2> /dev/null | wc -l)" && exit
   elif [[ -n ${id} ]]; then
     tmux attach-session -t "${id}"
   fi
@@ -22,5 +23,5 @@ function __exec_tmux__() {
 
 [[ -z ${TMUX} ]] && () {
   type trash &> /dev/null && trash auto-delete
-  __exec_tmux__ 'tmp' || return 1
+  __exec_tmux__ || return 1
 } && return

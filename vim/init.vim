@@ -1,45 +1,36 @@
-if has('nvim')
-  set sh=zsh
-  let g:python3_host_prog = substitute(system('which python3'),"\n","","")
-  tnoremap <Esc> <C-\><C-n>
-endif
 " Vim tries to use the first mentioned character encoding.
-set fileencodings=utf-8,cp932,euc-jp,sjis,iso-2022-jp
+set fileencodings=ucs-bom,utf-8,cp932,euc-jp,sjis,iso-2022-jp
 " To ALWAYS use the clipboard for ALL operations
 set clipboard+=unnamedplus
 set history=10000 "nvim-default
 set mouse=a "nvim-default
-set list
-set listchars=tab:\¦\ ,trail:@,nbsp:%
 " command-line completion operates in an enhanced mode. nvim-default
 set wildmenu
-"タブを押すと共通の文字列まで補完しステータスラインに
-"補完候補を表示する。更にタブを押すと完全補完を行い
-"タブで候補を変えていく。
 set wildmode=longest:full,full
-"一行が余りにも長い場合に表示が抑制されるのを防ぐ
-set display=lastline
-
+" Wait for a mapped sequence to complete.(default: 1000)
 set timeoutlen=5000
 
-set hidden "編集中でも他ファイルを開ける
-set nobackup "バックアップ取らない
-set nowritebackup
-set noswapfile "スワップファイルを作らない
 set autoread "外部でファイルが変更されたら自動で読み込み nvim-default
+set hidden "編集中でも他ファイルを開ける
+set nobackup
+set nowritebackup
+set noswapfile
+
 set undofile
 set undodir=${XDG_CONFIG_HOME}/nvim/undo
 set undolevels=100
-
-"search---------------------------------------------------------------
+"==================================================
+" Search
+"==================================================
 set incsearch "順次検索 nvim-default
 set hlsearch "検索語をハイライト nvim-default
 set ignorecase "大文字小文字区別なく検索
 set smartcase "大文字が含まれていたら区別する
 set wrapscan "最後まで行ったら最初に戻る
 set inccommand=split "s/a/b/ ときなどに対話的になる
-
-"外観---------------------------------------------------------------
+"==================================================
+" Style
+"==================================================
 set background=dark
 set number
 set termguicolors
@@ -56,8 +47,13 @@ set foldmethod=marker foldmarker=>->,<-< "折り畳みの設定
 set commentstring=\ %s
 set helpheight=100 "ヘルプ画面を大きく表示
 set laststatus=2 "ステータスラインを常時表示 nvim-default
-
-"indent---------------------------------------------------------
+"一行が余りにも長い場合に表示が抑制されるのを防ぐ
+set display=lastline
+set list
+set listchars=tab:\¦\ ,trail:@,nbsp:% "不可視文字
+"==================================================
+" Indent
+"==================================================
 set smartindent "インデントを引き継ぐ
 set expandtab "タブではなくスペースを挿入
 set shiftwidth=2 "インデントに使われるスペース数
@@ -65,15 +61,16 @@ set tabstop=2 "タブをスペース2つに展開
 set softtabstop=0 "タブで挿入される文字数(0ならtabstopの値)
 set smarttab "nvim-default
 set autoindent "nvim-default
-
-"keybinding---------------------------------------------------------
+"==================================================
+" Keybinding
+"==================================================
 let mapleader = "\<space>"
-"ESCと間違えて押すときがあるので無効化にする。
+" disable
 noremap <F1> <Nop>
 noremap! <F1> <Nop>
 " Blank line
-nnoremap <Leader>j o<esc>
-nnoremap <Leader>k O<esc>
+nnoremap <silent> <leader><CR> :call append(line('.'), '')<CR>
+nnoremap <silent> <leader>- :call append(line('.')-1, '')<CR>
 "ウィンドウの大きさを変える比率を上げる
 nnoremap <C-w>< 0<C-w><
 nnoremap <C-w>> 0<C-w>>
@@ -91,8 +88,9 @@ cnoremap <M-n> <Down>
 " emacs key bindings
 noremap! <C-f> <right>
 noremap! <C-b> <left>
-noremap! <C-a> <C-o>:call cursor(line('.'), 1)<CR>
-noremap! <C-e> <C-o>:call cursor(line('.'), col('$'))<CR>
+noremap! <C-a> <home>
+noremap! <C-e> <end>
+noremap! <C-d> <del>
 
 noremap j gj
 noremap k gk
@@ -106,8 +104,9 @@ noremap <C-h> :bp<CR>
 noremap ZQ <Nop>
 "#を入力するとインデントが無効になるのを阻止する
 inoremap # X#
-
-"functions-------------------------------------------
+"==================================================
+" Functions
+"==================================================
 " ! : can overwrite name
 function! s:removeTrailingBlanks()
   let line = line('.')
@@ -123,7 +122,9 @@ function! s:closeAllOtherBuffers()
 endfunction
 command! -nargs=0 Ob call s:CloseAllOtherBuffers()
 
-"events-------------------------------------------
+"==================================================
+" Events
+"==================================================
 augroup Insert
   autocmd!
   autocmd InsertLeave * call system('fcitx-remote -c')
@@ -166,10 +167,17 @@ augroup Vim
   autocmd!
   autocmd FileType vim set commentstring=\ \"%s
 augroup END
-
-"plugins---------------------------------------------------------
+"==================================================
+" neovim
+"==================================================
 if has('nvim')
-  let s:dein_dir = $HOME . '/.cache/dein/'
+  set sh=zsh
+  let g:python3_host_prog = substitute(system('which python3'),"\n","","")
+  tnoremap <Esc> <C-\><C-n>
+
+  " load plugins
+  let s:cache = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
+  let s:dein_dir = s:cache . '/dein'
   let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
   if &runtimepath !~# '/dein.vim' "Not install dein.vim
     if !isdirectory(s:dein_repo_dir)
@@ -189,12 +197,10 @@ if has('nvim')
   if dein#check_install()
     call dein#install()
   endif
-  " colorscheme one
-  colorscheme quantum
 endif
-syntax enable
-
-"spell--------------------------------------
+"==================================================
+" Spell
+"==================================================
 " set spell
 " set spelllang=en,cjk
 " highlight clear SpellBad
