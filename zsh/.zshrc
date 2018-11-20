@@ -2,7 +2,7 @@ source "${ZDOTDIR}/zshrc.d/env.zsh"
 source "${ZDOTDIR}/zshrc.d/init.zsh"
 
 # A list of non-alphanumeric characters considered part of a word by the line editor.
-WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+WORDCHARS='*?_-.[]~&;!#$%^(){}<>' # /\=|,
 # REPORTTIME=5
 # start/stop characters (usually assigned to ^S/^Q) is disabled
 unsetopt flow_control

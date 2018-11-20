@@ -90,13 +90,16 @@ function hist() {
 }
 
 function wifi() {
-  if [[ $1 == '-r' ]]; then # 再始動
+  local -A options
+  zparseopts -D -A options -- r s
+
+  if [[ -n "${options[(i)-r]}" ]]; then
     typeset -r ssid=$(netctl list | sed '/^\*/!d;s/[\* ]*//')
     [[ -z ${ssid} ]] && echo 'Not connected' && return 1
     sudo netctl restart ${ssid}
-  elif [[ $1 == '-s' ]]; then
+  elif [[ -n "${options[(i)-s]}" ]]; then
     sudo netctl stop-all
-  elif type fzf &> /dev/null && ! netctl list | grep '^*' &> /dev/null; then
+  else
     typeset -r ssid=$(netctl list | fzf --select-1)
     [[ -n ${ssid} ]] && sudo netctl start ${ssid// /}
   fi
@@ -273,10 +276,10 @@ function crawl() {
 }
 
 function ct() {
-  local -A opthash
-  zparseopts -D -A opthash -- I X: -help
+  local -A options
+  zparseopts -D -A options -- I X: -help
 
-  if [[ -n "${opthash[(i)--help]}" ]]; then
+  if [[ -n "${options[(i)--help]}" ]]; then
     echo '-I'
     echo '-X [method]'
     echo '$1 is path'
@@ -284,16 +287,15 @@ function ct() {
     return
   fi
 
-  local head method
-  [[ -n "${opthash[(i)-I]}" ]] && head='-I'
-  [[ -n "${opthash[(i)-X]}" ]] && method="${opthash[-X]}"
+  local method
+  [[ -n "${options[(i)-X]}" ]] && method="${options[-X]}"
 
   typeset -r methods=('GET' 'POST' 'PUT' 'DELETE')
   [[ -z ${method} ]] \
     && fzf &> /dev/null \
     && method=$(echo ${methods} | sed 's/ /\n/g' | fzf)
 
-  curl ${head} -X ${method:-GET} "http://localhost:9000$1"
+  curl ${options[(i)-I]} -X ${method:-GET} "http://localhost:9000$1"
 }
 
 function _ct() {

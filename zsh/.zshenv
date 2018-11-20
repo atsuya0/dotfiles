@@ -18,6 +18,7 @@ export LESS_TERMCAP_ue="$(echo -n '\e[32;1m')"
 export LESS_TERMCAP_us="$(echo -n '\e[32;1m')"
 export MANPAGER='less' # man
 export EDITOR='nvim'
+export VISUAL='nvim'
 export SUDO_EDITOR='nvim -Zu NORC' # sudoedit file_name
 
 export GOPATH="${HOME}/workspace/go"
