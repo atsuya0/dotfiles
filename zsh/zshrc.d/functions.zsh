@@ -105,15 +105,18 @@ function wifi() {
   fi
 }
 
-# ex) interactive systemctl poweroff
+# ex
+#   interactive date
+#   interactive systemctl poweroff
 function interactive() {
   local input
   while [[ ${input} != 'yes' && ${input} != 'no' ]]; do
-    printf '\ryes / no'
+    # printf '\ryes / no'
+    echo 'yes / no'
     read -s input
   done
 
-  [[ ${input} == 'yes' ]] && command $@
+  [[ ${input} == 'yes' ]] && eval $@
 }
 
 function bat() { # Battery
@@ -315,8 +318,8 @@ compdef _ct ct
 function mnt() {
   [[ $# -eq 0 ]] && return 1
 
-  typeset -r m_path="${HOME}/mnt"
-  if [[ -d ${2:=${m_path}} ]]; then
+  typeset -r mount_path="${HOME}/mnt"
+  if [[ -d ${2:=${mount_path}} ]]; then
     [[ -z $(find $2 -maxdepth 0 -type d -empty) ]] \
       && return 1
   else
@@ -328,7 +331,7 @@ function mnt() {
 }
 
 function umnt() {
-  typeset -r m_path="${HOME}/mnt"
-  sudo umount -R ${1:=${m_path}}
+  typeset -r mount_path="${HOME}/mnt"
+  sudo umount -R ${1:=${mount_path}}
   rmdir $1
 }

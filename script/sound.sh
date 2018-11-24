@@ -31,7 +31,7 @@ function sync_muted() {
 function main() {
   type pactl &> /dev/null || return 1
 
-  case $1 in
+  case ${1:-show} in
     'up' )
       pactl set-sink-volume 0 +5% && sync_volume
     ;;
@@ -46,7 +46,7 @@ function main() {
         || { echo 'set [0-9]*' && return 1 ;}
       pactl set-sink-volume 0 "$2%" && sync_volume
     ;;
-    * )
+    'show' )
       echo "volume: $(get_volume), muted: $(get_muted)"
       return 0
     ;;

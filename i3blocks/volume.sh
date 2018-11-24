@@ -29,8 +29,10 @@ function to_meters() {
 function main() {
   type pactl &> /dev/null || return 1
 
+  echo "$(to_meters $(get_volume))"
+  echo
   declare -A colors=( ['yes']='#434447' ['no']='#8fa1b3' )
-  echo -e "$(to_meters $(get_volume))\n\n${colors[$(get_muted)]}"
+  echo "${colors[$(get_muted)]}"
 }
 
 main

@@ -12,6 +12,43 @@ repo = 'Shougo/neosnippet.vim'
 [[plugins]] # The standard snippets repository for neosnippet.
 repo = 'Shougo/neosnippet-snippets'
 
+[[plugins]] # browse files.
+repo = 'Shougo/defx.nvim'
+hook_add = '''
+" nnoremap <silent> <Leader>f :Defx -split=vertical -winwidth=30<CR>
+nnoremap <silent> <Leader>f :Defx<CR>
+augroup Defx
+  autocmd!
+  autocmd FileType defx call s:defx_my_settings()
+augroup END
+
+function! s:defx_my_settings() abort
+  nnoremap <silent><buffer><expr> c defx#do_action('copy')
+  nnoremap <silent><buffer><expr> m defx#do_action('move')
+  nnoremap <silent><buffer><expr> p defx#do_action('paste')
+
+  nnoremap <silent><buffer><expr> <CR> defx#do_action('open')
+  nnoremap <silent><buffer><expr> l defx#do_action('open')
+  nnoremap <silent><buffer><expr> v defx#do_action('open', 'vsplit')
+  nnoremap <silent><buffer><expr> d defx#do_action('new_directory')
+  nnoremap <silent><buffer><expr> f defx#do_action('new_file')
+  nnoremap <silent><buffer><expr> r defx#do_action('rename')
+  nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
+  nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+  nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
+  nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
+  nnoremap <silent><buffer><expr> q defx#do_action('quit')
+  nnoremap <silent><buffer><expr> s defx#do_action('toggle_select') . 'j'
+  nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
+
+  nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
+  nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+  nnoremap <silent><buffer><expr> <C-l> defx#do_action('redraw')
+  nnoremap <silent><buffer><expr> <C-p> defx#do_action('print')
+  nnoremap <silent><buffer><expr> cd defx#do_action('change_vim_cwd')
+endfunction
+'''
+
 [[plugins]] # status line
 repo = 'vim-airline/vim-airline'
 hook_add = '''
@@ -19,6 +56,12 @@ hook_add = '''
   let g:airline_symbols.maxlinenr = ''
   let g:airline#extensions#tabline#enabled = 1
   let g:airline#extensions#tabline#formatter = 'unique_tail'
+'''
+
+[[plugins]] # status line themes
+repo = 'vim-airline/vim-airline-themes'
+hook_add = '''
+  let g:airline_theme='quantum'
 '''
 
 [[plugins]]

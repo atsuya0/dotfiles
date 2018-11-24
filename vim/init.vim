@@ -16,9 +16,21 @@ set nobackup
 set nowritebackup
 set noswapfile
 
+if has('nvim')
+  set sh=zsh
+  let g:python3_host_prog = substitute(system('which python3'),"\n","","")
+  tnoremap <Esc> <C-\><C-n>
+endif
+"==================================================
+" undo
+"==================================================
 set undofile
-set undodir=${XDG_CONFIG_HOME}/nvim/undo
 set undolevels=100
+if has('nvim')
+  set undodir=$XDG_CONFIG_HOME/nvim/undo
+else
+  set undodir=$HOME/.vim/undo
+endif
 "==================================================
 " Search
 "==================================================
@@ -188,14 +200,6 @@ if dein#load_state(s:dein_dir)
 endif
 if dein#check_install()
   call dein#install()
-endif
-"==================================================
-" neovim
-"==================================================
-if has('nvim')
-  set sh=zsh
-  let g:python3_host_prog = substitute(system('which python3'),"\n","","")
-  tnoremap <Esc> <C-\><C-n>
 endif
 "==================================================
 " Spell

@@ -14,7 +14,7 @@ function setup_packages() {
   type zsh &> /dev/null \
     && chsh -s $(which zsh)
   type pip &> /dev/null \
-    && pip install --upgrade neovim
+    && pip install --user pynvim
   type lightdm &> /dev/null \
     && sudo systemctl enable lightdm.service \
     && sed -i 's/^\(ENV=\)\(lightdm-gtk-greeter\)/\1env GTK_THEME=Adwaita:dark \2/' /usr/share/xgreeters/lightdm-gtk-greeter.desktop

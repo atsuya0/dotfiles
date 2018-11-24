@@ -110,7 +110,7 @@ function battery() {
   echo "$(sep 'black')$(online)$(value ${color} ${charge}%)"
 }
 
-if [[ $1 == 'short' ]];then
+if [[ ${1:-long} == 'short' ]];then
   echo "$(memory)$(load_average) "
 else
   echo "$(memory)$(load_average)$(wlan)$(sound)$(hours_minutes)$(battery) "

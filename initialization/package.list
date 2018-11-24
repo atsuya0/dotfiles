@@ -39,7 +39,7 @@ python-neovim
 chromium # gui
 w3m # cui
 
-# programming lang
+# programming languages
 python
 python-pip # package manager
 go
@@ -62,6 +62,7 @@ pcmanfm-gtk3 # gui
 xsel # clip board
 tree
 fzf # filter
+ripgrep # grep
 iw # network
 jq # json
 
@@ -72,7 +73,7 @@ pulseaudio-bluetooth
 
 # file system
 dosfstools # fat32
-# ntfs-3g
+#ntfs-3g
 
 # virtual
 docker

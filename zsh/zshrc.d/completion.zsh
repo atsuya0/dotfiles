@@ -1,3 +1,21 @@
+# 補完結果をできるだけ詰める
+setopt list_packed
+# カッコの対応などを自動的に補完
+setopt auto_param_keys
+# ディレクトリ名の補完で末尾の/を自動的に付加し次の補完に備える
+setopt auto_param_slash
+# ファイル名の展開でディレクトリに一致した場合末尾に/を付加する
+setopt mark_dirs
+# カーソル位置で補完する。
+setopt complete_in_word
+# globを展開しないで候補の一覧から補完する。
+setopt glob_complete
+# 辞書順ではなく数字順に並べる。
+setopt numeric_glob_sort
+# --prefix=~/localというように「=」の後でも
+# 「~」や「=コマンド」などのファイル名展開を行う。
+setopt magic_equal_subst
+
 autoload -Uz compinit && compinit
 # 補完時にハイライト tab,C-n,C-f,C-p,C-b
 zstyle ':completion:*:default' menu select
@@ -19,20 +37,3 @@ zstyle ':completion:*:*files' ignored-patterns '*mp3' '.mp4'
 zstyle ':completion:*' use-cache yes
 # 詳細
 zstyle ':completion:*' verbose yes
-# 補完結果をできるだけ詰める
-setopt list_packed
-# カッコの対応などを自動的に補完
-setopt auto_param_keys
-# ディレクトリ名の補完で末尾の/を自動的に付加し次の補完に備える
-setopt auto_param_slash
-# ファイル名の展開でディレクトリに一致した場合末尾に/を付加する
-setopt mark_dirs
-# カーソル位置で補完する。
-setopt complete_in_word
-# globを展開しないで候補の一覧から補完する。
-setopt glob_complete
-# 辞書順ではなく数字順に並べる。
-setopt numeric_glob_sort
-# --prefix=~/localというように「=」の後でも
-# 「~」や「=コマンド」などのファイル名展開を行う。
-setopt magic_equal_subst

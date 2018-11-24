@@ -1,10 +1,11 @@
 # fzf (A command-line fuzzy finder) 用の設定
 
+export FZF_DEFAULT_COMMAND='rg'
 # <C-y>で文字列をコピー
 export FZF_DEFAULT_OPTS="-m --height=80% --reverse --exit-0 --bind 'ctrl-y:execute-silent(echo {} | xsel -ib)+abort'"
 # <C-v>で見切れたコマンドを表示
 export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap --bind 'ctrl-v:toggle-preview'"
-# FZF_DEFAULT_COMMAND FZF_ALT_C_COMMAND FZF_ALT_C_OPTS
+# FZF_ALT_C_COMMAND FZF_ALT_C_OPTS
 
 () { # fzfの拡張を読み込む
   typeset -r fzf_dir='/usr/share/fzf'

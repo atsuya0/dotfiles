@@ -17,7 +17,7 @@ alias tree='tree -C'
 alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
 alias xephyr='Xephyr -wr -resizeable :1' # x serverのネスト。白背景。window可変。
 alias open='xdg-open'
-alias crm='chromium'
+alias c='chromium'
 alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias poweroff='interactive systemctl poweroff'
 alias reboot='interactive systemctl reboot'
@@ -26,8 +26,6 @@ alias lock='light-locker-command -l'
 
 alias -g @g='| grep'
 alias -g @l='| less'
-alias -g @u='| uniq'
-alias -g @s='| sort'
 alias -g @j='| jq'
 alias -g lf='$(ls | fzf)'
 alias -g ff='$(find -type f | fzf)'
