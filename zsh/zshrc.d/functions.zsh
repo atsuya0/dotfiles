@@ -13,50 +13,6 @@ function cmd_exists() { # The which command that does not find alias or function
   return 1
 }
 
-
-function vim(){ # Choose files to open by fzf.
-  function editor() {
-    if cmd_exists nvim &> /dev/null; then
-      echo "nvim $@"
-    elif cmd_exists vim &> /dev/null; then
-      echo "vim $@"
-    else
-      echo "vi $@"
-    fi
-  }
-
-  function ignore_filetypes() {
-    typeset -r ignore_filetypes=(
-      pdf png jpg jpeg mp3 mp4 tar.gz zip
-    )
-    local filetype
-    for filetype in ${ignore_filetypes}; do
-      echo '-name' "\*${filetype}" '-prune -o'
-    done
-  }
-
-  function ignore_dirs() {
-    typeset -r ignore_dirs=(
-      .git node_modules vendor target gems cache google-chrome
-    )
-    local dir
-    for dir in ${ignore_dirs}; do
-      echo '-path' "\*${dir}\*" '-prune -o'
-    done
-  }
-
-  [[ $# -ne 0 ]] && eval $(editor $@) && return 0
-
-  type fzf &> /dev/null || return 1
-  typeset -r files=$(eval find \
-    $(ignore_filetypes) $(ignore_dirs) $(ignore_absolute_paths) -type f -print \
-    | cut -c3- \
-    | fzf --select-1 --preview='less {}' \
-      --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-  [[ -n ${files} ]] && eval $(editor ${files})
-}
-
-
 function __sources_to_dir__() {
   [[ $# -ne 1 ]] && return 1
   type fzf &> /dev/null || return 1
@@ -144,14 +100,14 @@ function bak() { # Backup files with .bak after filename extension.
 }
 
 function new_sh() {
-  local name='tmp.sh'
+  typeset -r name='tempalte.sh'
   [[ -f ./${name} ]] && return 1
   echo '#!/usr/bin/bash\n' > ./${name}
   chmod +x ./${name}
 }
 
 function new_py() {
-  local name='tmp.py'
+  typeset -r name='tempalte.py'
   [[ -f ./${name} ]] && return 1
 cat << "EOF" > ./${name}
 #!/usr/bin/python3
@@ -326,8 +282,7 @@ function mnt() {
     mkdir $2
   fi
 
-  sudo mount $1 $2 \
-    && sudo chown -R $(whoami) $2
+  sudo mount $1 $2
 }
 
 function umnt() {

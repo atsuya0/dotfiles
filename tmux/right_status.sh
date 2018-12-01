@@ -14,9 +14,9 @@ function value() {
 }
 
 function format() {
-  local black='#[fg=black,bg=blue]'
-  local blue='#[fg=blue,bg=black]'
-  local def='#[default]'
+  local -r black='#[fg=black,bg=blue]'
+  local -r blue='#[fg=blue,bg=black]'
+  local -r def='#[default]'
 
   [[ $# -lt 2 ]] && return 1
 
@@ -53,27 +53,36 @@ function wlan() {
 
 # 音量
 function sound() {
+  function get_volume() {
+    local volume
+    volume="$(pactl list sinks \
+      | grep 'Volume' | grep -o '[0-9]*%' | head -1 | tr -d '%')"
+    [[ ${volume} -gt 100 ]] && echo 100 || echo "${volume}"
+  }
+
+  function get_muted() {
+    pactl list sinks \
+      | grep 'Mute' | sed 's/[[:space:]]//g' | cut -d: -f2 | head -1
+  }
+
+  function to_blocks() {
+    seq -f '%02g' -s '' 1 5 $1 | sed 's/.\{2\}/■/g'
+  }
+
+  function to_spaces() {
+    seq -s '_' $1 5 100 | tr -d '[:digit:]'
+  }
+
+  function to_meters() {
+    echo "[$(to_blocks $1)$(to_spaces $1)]"
+  }
+
   type pactl &> /dev/null \
     || { echo "$(sep 'black')$(value 'blue' '×')" && return 1 ;}
 
-  local cmd volume blocks spaces mute color
-  [[ -n $(pactl list sinks | grep 'RUNNING') ]] \
-    && cmd="grep -A 10 'RUNNING'" \
-    || cmd='tee'
-  volume=$(
-    pactl list sinks \
-    | eval ${cmd} \
-    | grep -o '[0-9]*%' \
-    | head -1 \
-    | sed 's/%//g')
-  blocks=$(seq -f '%02g' -s '' 1 5 ${volume} | sed 's/.\{2\}/■/g')
-  # spaces=$(seq -f '%02g' -s '' ${volume} 5 95 | sed 's/.\{2\}/ /g')
-  spaces=$(seq -s '_' ${volume} 5 100 | tr -d '[:digit:]')
-  mute=$(pactl list sinks | eval ${cmd} | grep 'Mute:' | cut -d' ' -f2)
-  [[ ${mute} == 'no' ]] \
-    && color='blue' \
-    || color='#[fg=colour237,bg=black] '
-  echo "$(sep 'black')$(value ${color} [${blocks}${spaces}])" \
+  declare -A colors=( ['yes']='#[fg=colour237,bg=black]' ['no']='blue' )
+  echo \
+    "$(sep 'black')$(value ${colors[$(get_muted)]} $(to_meters $(get_volume)))" \
     | sed 's/_/ /g'
 }
 
@@ -86,7 +95,7 @@ function hours_minutes() {
 function battery() {
   function online() {
     if [[ $(cat /sys/class/power_supply/ADP1/online) == '1' ]];then
-      local icons=('' '' '' '' '')
+      local -ar icons=('' '' '' '' '')
       local i
       i=$(expr $(date +%S) % ${#chars[@]})
       value 'blue' ${chars[${i}]}
@@ -101,11 +110,11 @@ function battery() {
   local charge
   charge=$(< /sys/class/power_supply/BAT1/capacity)
   if [[ ${charge} -gt 79 ]];then
-    local color='#[fg=#08d137,bg=black]'
+    local -r color='#[fg=#08d137,bg=black]'
   elif [[ ${charge} -gt 20 ]];then
-    local color='#[fg=#509de0,bg=black]'
+    local -r color='#[fg=#509de0,bg=black]'
   else
-    local color='#[fg=#f73525,bg=black]'
+    local -r color='#[fg=#f73525,bg=black]'
   fi
   echo "$(sep 'black')$(online)$(value ${color} ${charge}%)"
 }

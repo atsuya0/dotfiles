@@ -15,16 +15,16 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
   [[ -f ${completion} ]] && source ${completion}
 }
 
-function __fzf_cd_widget__() {
-  # ALT_Cにbindされてるfzfが用意しているwidgetを上書きしている。
-  # 現階層以下のディレクトリからfzfを使って選び移動する。
-
-  typeset -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
-    | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-  eval builtin cd ${dir:-.}
-
-  __path_prompt__
-  zle reset-prompt
-}
+# function __fzf_cd_widget__() {
+#   # ALT_Cにbindされてるfzfが用意しているwidgetを上書きしている。
+#   # 現階層以下のディレクトリからfzfを使って選び移動する。
+#
+#   typeset -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
+#     | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+#   eval builtin cd ${dir:-.}
+#
+#   __path_prompt__
+#   zle reset-prompt
+# }
 # zle -N __fzf_cd_widget__
 # bindkey '\ec' __fzf_cd_widget__

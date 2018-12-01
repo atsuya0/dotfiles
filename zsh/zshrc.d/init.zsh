@@ -4,11 +4,10 @@ tmux list-session &> /dev/null || () {
   type trash &> /dev/null && trash auto-delete
 }
 
-() {
-  [[ -n ${WINDOWID} ]] || return 1
-  [[ $(ps -ho cmd ${PPID} | tr -s ' ' | cut -d' ' -f1) \
-    == 'alacritty' ]] || return 1
-  [[ -f ${DOTFILES}/tmux/management.sh ]] \
-    && ${DOTFILES}/tmux/management.sh \
+() { # tmux
+  [[ -z ${WINDOWID} ]] && return 1
+  [[ "$(ps hco cmd ${PPID})" =~ 'mlterm|alacritty' ]] || return 1
+  [[ -f ${DOTFILES}/script/tmux_management.sh ]] \
+    && ${DOTFILES}/script/tmux_management.sh \
     && exit
 }

@@ -13,10 +13,10 @@ function print_battery() {
 }
 
 function main() {
-  local battery \
-    high=('#08d137' '' 79) \
+  local -ar high=('#08d137' '' 79) \
     middle=('#8fa1b3' '') \
     low=('#f73525' '' 21)
+  local battery
   battery="$([[ -e /sys/class/power_supply/BAT1 ]] && cat /sys/class/power_supply/BAT1/capacity)"
 
   [[ -z ${battery} ]] && { print_battery ; return ;}

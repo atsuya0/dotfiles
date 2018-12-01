@@ -2,7 +2,7 @@ source "${ZDOTDIR}/zshrc.d/env.zsh"
 source "${ZDOTDIR}/zshrc.d/init.zsh"
 
 # A list of non-alphanumeric characters considered part of a word by the line editor.
-WORDCHARS='*?_-.[]~&;!#$%^(){}<>' # /\=|,
+WORDCHARS='*?_-[]~&;!#$%^(){}<>' # /\=|.,
 # REPORTTIME=5
 # start/stop characters (usually assigned to ^S/^Q) is disabled
 unsetopt flow_control
@@ -33,12 +33,14 @@ typeset -r ignore_absolute_paths=(
   ${HOME}/.config/fcitx
   ${HOME}/.config/Code
   ${HOME}/.config/nvim/undo
+  ${HOME}/.local/lib
   ${HOME}/.rustup
   ${HOME}/.cargo
   ${HOME}/.vscode/extensions
   ${HOME}/.npm/_cacache
   ${HOME}/.nvm/versions
   ${HOME}/.java
+  ${HOME}/workspace/docker
   ${HOME}/.Trash
   ${GOPATH}/pkg
   ${GOPATH}/src

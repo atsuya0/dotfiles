@@ -6,12 +6,12 @@ function is_managed() {
 function ga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
   is_managed || return 1
 
-  local file header unadded_files
-
+  local file
   for file in "${(f)$(git status --short)}"; do
-    header=$(echo ${file} | cut -c1-2)
+    local header=$(echo ${file} | cut -c1-2)
     [[ ${header} == '??' || ${header} =~ '( |M|A|R|U)(M|U)' ]] \
-      && unadded_files="${unadded_files}\n$(echo ${file} | rev | cut -d' ' -f1 | rev)"
+      && local unadded_files="${unadded_files}\n$(echo ${file} | rev | cut -d' ' -f1 | rev)" \
+      || local unadded_files
   done
   local selected_files=$(echo ${unadded_files} | sed /^$/d \
     | fzf --preview='git diff --color=always {}' --preview-window='right:95%:hidden' --bind='ctrl-v:toggle-preview')
@@ -47,40 +47,4 @@ function gmv() { # git mv
   for i in {1..$(expr $# - 2)}; do
     git mv "${argv[$i]}" "${target}"
   done
-}
-
-function gl() {
-  local -a subcmds=(
-    'branch'
-    'branch --all'
-    'branch -m'
-    'branch -d'
-    'checkout'
-    'remote -v'
-    'remote add origin https://github.com/'
-    'status'
-    'add'
-    'commit -m'
-    'commit --amend'
-    'push origin'
-    'log'
-    'log --merges'
-    'log --no-merges'
-    'log --online'
-    'reflog'
-    'reset'
-    'reset --soft'
-    'reset --mixed'
-    'reset --hard'
-  )
-
-  function print_array() {
-    local subcmd
-    for subcmd in ${@}; do
-      echo ${subcmd}
-    done
-  }
-
-  local subcmd=$(print_array ${subcmds} | fzf)
-  [[ -n ${subcmd} ]] && print -z git ${subcmd}
 }

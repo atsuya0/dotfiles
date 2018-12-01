@@ -9,7 +9,7 @@ set wildmenu
 set wildmode=longest:full,full
 " Wait for a mapped sequence to complete.(default: 1000)
 set timeoutlen=5000
-
+set lazyredraw " the screen will not be redrawn while executing macros, registers and other commands that have not been typed.
 set autoread "外部でファイルが変更されたら自動で読み込み nvim-default
 set hidden "編集中でも他ファイルを開ける
 set nobackup
@@ -39,12 +39,15 @@ set hlsearch "検索語をハイライト nvim-default
 set ignorecase "大文字小文字区別なく検索
 set smartcase "大文字が含まれていたら区別する
 set wrapscan "最後まで行ったら最初に戻る
-set inccommand=split "s/a/b/ ときなどに対話的になる
+if has('nvim')
+  set inccommand=split "s/a/b/ ときなどに対話的になる
+endif
 "==================================================
 " Style
 "==================================================
 set background=dark
 set number
+set relativenumber
 set termguicolors
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
@@ -63,7 +66,6 @@ set laststatus=2 "ステータスラインを常時表示 nvim-default
 set display=lastline
 set list
 set listchars=tab:\¦\ ,trail:@,nbsp:% "不可視文字
-"==================================================
 " Indent
 "==================================================
 set smartindent "インデントを引き継ぐ
@@ -77,18 +79,22 @@ set autoindent "nvim-default
 " Keybinding
 "==================================================
 let mapleader = "\<space>"
-" disable
+" Disable
 noremap <F1> <Nop>
 noremap! <F1> <Nop>
-" Blank line
-nnoremap <silent> <leader><CR> :call append(line('.'), '')<CR>
-nnoremap <silent> <leader>- :call append(line('.')-1, '')<CR>
+noremap ZQ <Nop>
+" Insert blank line.
+nnoremap <silent> <C-s>j o<esc>
+nnoremap <silent> <C-s>k O<esc>
+" Insert space.
+nnoremap <silent> <C-s>h i<space><esc>
+nnoremap <silent> <C-s>l a<space><esc>
 "ウィンドウの大きさを変える比率を上げる
 nnoremap <C-w>< 0<C-w><
 nnoremap <C-w>> 0<C-w>>
 nnoremap <C-w>- 0<C-w>-
 nnoremap <C-w>+ 0<C-w>+
-"completion
+" Completion
 noremap! <C-x>n <C-x><C-n>
 noremap! <C-x>p <C-x><C-p>
 noremap! <C-x>l <C-x><C-l>
@@ -97,42 +103,40 @@ noremap! <C-x>s <C-x><C-s>
 "入力された文字に一致するコマンドを履歴から補完する
 cnoremap <M-p> <Up>
 cnoremap <M-n> <Down>
-" emacs key bindings
+" Emacs key bindings
 noremap! <C-f> <right>
 noremap! <C-b> <left>
 noremap! <C-a> <home>
 noremap! <C-e> <end>
 noremap! <C-d> <del>
-
+" Move the cursor up or down.
 noremap j gj
 noremap k gk
-
 noremap <C-j> 3j
 noremap <C-k> 3k
-" buffer (next|previous)
+" Go to next or previous buffer.
 noremap <C-l> :bn<CR>
 noremap <C-h> :bp<CR>
-"思いがけず強制終了してしまうのを阻止する
-noremap ZQ <Nop>
-"#を入力するとインデントが無効になるのを阻止する
-inoremap # X#
+" // -> /\/
+cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
 "==================================================
 " Functions
 "==================================================
 " ! : can overwrite name
+
 function! s:removeTrailingBlanks()
   let line = line('.')
   let col = col('.')
   %substitute/\s\+$//c
   call cursor(line, col)
 endfunction
-command! -nargs=0 Rb call s:removeTrailingBlanks()
+command! -nargs=0 Rmb call s:removeTrailingBlanks()
 
 function! s:closeAllOtherBuffers()
   1,.-bdelete
   .+,$bdelete
 endfunction
-command! -nargs=0 Ob call s:CloseAllOtherBuffers()
+command! -nargs=0 Onb call s:CloseAllOtherBuffers()
 
 "==================================================
 " Events
@@ -185,8 +189,8 @@ augroup END
 let s:cache = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
 let s:dein_dir = s:cache . '/dein'
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
-if &runtimepath !~# '/dein.vim' "Not install dein.vim
-  if !isdirectory(s:dein_repo_dir)
+if &runtimepath !~# '/dein.vim'
+  if !isdirectory(s:dein_repo_dir) " Download dein.vim
     call system('git clone https://github.com/Shougo/dein.vim ' . s:dein_repo_dir)
   endif
   execute 'set runtimepath+=' . s:dein_repo_dir
@@ -201,6 +205,7 @@ endif
 if dein#check_install()
   call dein#install()
 endif
+
 "==================================================
 " Spell
 "==================================================

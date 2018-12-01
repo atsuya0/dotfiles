@@ -45,15 +45,14 @@ function __save_cmd__() {
     ls cd mv cp rm mkdir rmdir touch man less history source '\.'
     vi export type which file stat command builtin grep ln cat wall
     test '\[' '\[\[' sudoedit mount umount kill pkill pgrep echo
-    expr seq find pactl jobs fc-list tput chmod
+    expr seq find pactl jobs fc-list chmod pwd ps date print printf
     'sudo systemctl start' 'sudo systemctl stop' 'systemctl status'
     'pacman -Si' 'pacman -Ss' 'pacman -Qi' 'pacman -Qs'
 
-    pacman vim code python go chromium tree nvim scrot xsel feh
-    rofi 'npm search' notify-send tmux
+    vim nvim code python go 'npm search' xsel tmux tree chromium
+    rofi notify-send w3m scrot feh rg
 
-    up down dw cdh gcm gp gmv second sc trash trs mnt umnt
-    md wifi dtr bak battery init_test bt rs rn ct
+    up down dw gcm gp gmv second sc trash trs bak rs rn ct cc fonts
   )
 
   local ignore_cmd

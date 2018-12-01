@@ -10,9 +10,15 @@ function list_other_session_name() {
 }
 
 function choice() {
+  local -r separate="seq -s '-' $(expr $(tput cols) / 2) | tr -d '[:digit:]' | sed 's/.*/\n&\n/'"
+  local -r list_window_title="echo -e \"\033[1;34mlist-windows\033[0;49m\""
+  local -r list_windows="tmux list-windows -t {} | cut -d' ' -f2 | nl"
+  local -r capture_pane_title="echo -e \"\033[1;34mcapture_pane\033[0;49m\""
+  local -r capture_pane="tmux capture-pane -e -J -t {} -p"
+
   fzf --reverse --exit-0 --select-1 \
-    --preview="test -f ${DOTFILES}/tmux/preview.sh \
-      && ${DOTFILES}/tmux/preview.sh {}" \
+    --preview="${separate};${list_window_title};${list_windows}; \
+      ${separate};${capture_pane_title};${capture_pane}" \
     --preview-window="right:80%"
 }
 
@@ -23,8 +29,9 @@ function new_session() {
 }
 
 function start_tmux() {
-  typeset -r new="new-session:$(date +%s | cut -c6-)"
-  local name=$(
+  local -r new="new-session:$(date +%s | cut -c6-)"
+  local name
+  name=$(
     tmux ls -F "#{session_name}" | sed "$(echo '$a') ${new}" | choice
   )
 

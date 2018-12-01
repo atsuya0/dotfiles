@@ -57,7 +57,6 @@ hook_source = '''
 
   call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
     \ ['.git/', 'vendor/', 'node_modules/', 'images/', 'img/'])
-
   call denite#custom#source(
     \ 'file_rec', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
   call denite#custom#source(
@@ -67,6 +66,10 @@ hook_source = '''
     \ 'insert', '<C-j>', '<denite:move_to_next_line>', 'noremap')
   call denite#custom#map(
     \'insert', '<C-k>', '<denite:move_to_previous_line>', 'noremap')
+  call denite#custom#map(
+    \ 'normal', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
+  call denite#custom#map(
+    \ 'insert', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
 '''
 
 [[plugins]] # completion for python
@@ -84,7 +87,7 @@ if = 'has("nvim")'
 on_ft = 'go'
 on_i = 1
 
-[[plugins]] # formatting for go
+[[plugins]] # various features for go
 repo = 'fatih/vim-go'
 on_ft = 'go'
 hook_add = '''

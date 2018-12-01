@@ -32,11 +32,12 @@ function add_docker_group() {
 }
 
 function install_fonts() {
-  local font="${HOME}/.local/share/fonts/"
-  local fira_code='https://github.com/tonsky/FiraCode/raw/master/distr/ttf'
-  local hack='https://github.com/source-foundry/Hack/raw/master/build/ttf'
-  local faces=('Regular' 'Bold' 'Italic')
+  local -r font="${HOME}/.local/share/fonts/"
   mkdir -p ${font}
+
+  local -r fira_code='https://github.com/tonsky/FiraCode/raw/master/distr/ttf'
+  local -r hack='https://github.com/source-foundry/Hack/raw/master/build/ttf'
+  local -ar faces=('Regular' 'Bold' 'Italic')
 
   for face in ${faces[@]}; do
     curl -fsSL ${fira_code}/{FiraCode-${face}.ttf} -o ${font}/#1
@@ -78,15 +79,17 @@ EOF
 }
 
 function download_packages_from_aur() {
-  local packages=(
+  local -ar packages=(
     'nvm.tar.gz'
     'visual-studio-code-bin.tar.gz'
   )
 
+  local -r build='build'
   for package in ${packages[@]}; do
-    curl -fsSLO "https://aur.archlinux.org/cgit/aur.git/snapshot/${package}" \
-      && tar -xzf ${package} \
-      && rm ${package}
+    mkdir ${build}
+    curl -fsSL "https://aur.archlinux.org/cgit/aur.git/snapshot/{${package}}" -o ${build}/#1 \
+      && tar -xzf "${build}/${package}" \
+      && rm -r ${build}
   done
 }
 

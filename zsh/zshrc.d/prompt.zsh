@@ -6,7 +6,7 @@ function __path_prompt__() { # カレントディレクトリのpathを画面の
   [[ 0 -eq ${num} ]] && num=1
 
   # CUI/neovim と GUI で表示を変える
-  [[ -z ${WINDOWID} || $(ps -ho args ${PPID} | tr -s ' ' | cut -d' ' -f1) == 'nvim' ]] \
+  [[ -z ${WINDOWID} || $(ps hco cmd ${PPID}) == 'nvim' ]] \
     && PROMPT="%n@%m ${fg[blue]}$(sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g" <<< ${pwd})${reset_color} " \
     || PROMPT="%{${fg[blue]}${bg[black]}%}%n%{${fg[magenta]}${bg[black]}%}@%{${fg[blue]}${bg[black]}%}%m %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
 }

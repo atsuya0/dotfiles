@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
+# unused
+
 set -euC
 
 function separate() {
-  echo
-  seq -s '-' $(expr $(tput cols) / 2) | tr -d '[:digit:]'
-  echo
+  seq -s '-' $(expr $(tput cols) / 2) | tr -d '[:digit:]' | sed 's/.*/\n&\n/'
 }
 
 function format() {
@@ -28,7 +28,7 @@ function echo_section() {
 }
 
 function main() {
-  echo_section 'list-windows' list_windows $1
+  echo_section 'list_windows' list_windows $1
   echo_section 'capture_pane' capture_pane $1
 }
 

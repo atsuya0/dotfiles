@@ -1,20 +1,19 @@
 function print_parents() {
-  pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^/]*$/!ba;d'
+  pwd | sed -E '/[^\/]$/s@$@/@;:a;s@[^/]+/$@@;p;/^\/$/!ba;d'
 }
 
 # 親階層に移動する
 # up 2    -> cd ../..
-# up      -> filterを使って選択する
+# up      -> use filter
 function up() {
-  local parent_path
   if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
     type print_parents &> /dev/null || return 1
-    parent_path=$(print_parents \
+    local parent_path=$(print_parents \
       | fzf --preview='tree -C {}' --preview-window='right' --bind='ctrl-v:toggle-preview')
   elif [[ $1 =~ ^[0-9]+$ ]]; then
-    parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
+    local parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
   else
-    parent_path=$1
+    local parent_path=$1
   fi
 
   builtin cd ${parent_path:-.}
@@ -35,16 +34,17 @@ function down() {
     typeset -r hidden='-name .\* -prune -o'
   fi
 
-  local depth
   [[ "${opthash[-d]}" =~ ^[0-9]+$ ]] \
-    && depth="-maxdepth ${opthash[-d]}" \
-    || depth="-maxdepth 5"
+    && local depth="-maxdepth ${opthash[-d]}" \
+    || local depth="-maxdepth 5"
 
-  local dir
-  dir=$(eval find -mindepth 1 $(ignore_absolute_paths) ${hidden} ${depth} -type d -print 2> /dev/null \
-    | cut -c3- | \
-    fzf --select-1 --preview='tree -C {} | head -200' \
-      --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
+  local dir=$(
+    eval find -mindepth 1 $(ignore_absolute_paths) ${hidden} ${depth} \
+      -type d -print 2> /dev/null \
+    | cut -c3- \
+    | fzf --select-1 --preview='tree -C {} | head -200' \
+      --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'
+  )
   eval builtin cd ${dir:-.}
 }
 
@@ -67,8 +67,6 @@ function __save_pwd__() { # 移動履歴をファイルに記録する。~, / �
 add-zsh-hook chpwd __save_pwd__
 
 function cdh() { # 移動履歴からfilterを使って選んでcd
-  local dir
-
   case $1 in
     '-l' ) cat "${_CD_FILE}" | sort | uniq -c | sort -r | tr -s ' ' ;; # 記録一覧
     '--delete-all' ) : > "${_CD_FILE}" ;; # 記録の全消去
@@ -84,7 +82,7 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
     * ) # 記録しているディレクトリを表示 使用頻度順
       if [[ $# -eq 0 ]]; then
         type fzf &> /dev/null || return 1
-        dir=$(cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' | cut -d' ' -f3 \
+        local dir=$(cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' | cut -d' ' -f3 \
           | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
         [[ -z ${dir} ]] && return 1
       fi

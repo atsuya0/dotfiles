@@ -8,8 +8,7 @@ function is_not_empty() {
     || return 1
 }
 
-# $1 is file or directory.
-# $1 is souce. $2 is destination.
+# $1 is souce which is file or directory. $2 is destination.
 function place_config_files() {
   [[ $# -lt 2 ]] && return 1
   mkdir -p $2
@@ -34,7 +33,7 @@ EOF
 
 # editor
 function init_nvim() {
-  local dot="${DOTFILES}/vim"
+  local -r dot="${DOTFILES}/vim"
   place_config_files "${dot}/init.vim" "${XDG_CONFIG_HOME}/nvim" \
     || return 1
   place_config_files "${dot}/dein" "${HOME}/.cache/dein/toml" \

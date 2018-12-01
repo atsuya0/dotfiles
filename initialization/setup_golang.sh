@@ -20,7 +20,7 @@ function main() {
 
   mkdir -p ${GOPATH}/{src,bin,pkg}
 
-  declare -a libraries=(
+  local -ar libraries=(
     'github.com/nsf/gocode'
     'golang.org/x/tools/cmd/goimports'
     'github.com/jstemmer/gotags'
@@ -33,12 +33,13 @@ function main() {
   type dep &> /dev/null || return 1
   type git &> /dev/null || return 1
 
-  declare -a tools=(
+  local -ar tools=(
     'go-choice'
     'second'
     'trash'
     'crawl-img'
   )
+  local tool
   for tool in ${tools}; do
     install_my_tool ${tool}
   done

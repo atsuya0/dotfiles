@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- /etc/jwm/system.jwm -->
+<!-- default /etc/jwm/system.jwm -->
 <JWM>
 
     <!-- The root menu. -->
@@ -205,14 +205,15 @@
     <Key key="Return">select</Key>
     <Key key="Escape">escape</Key>
 
-    <Key mask="A" key="#">desktop#</Key>
-    <Key mask="A" key="Tab">nextstacked</Key>
-    <Key mask="A" key="m">root:1</Key>
-    <Key mask="A" key="k">maximize</Key>
-    <Key mask="A" key="h">maxleft</Key>
-    <Key mask="A" key="l">maxright</Key>
-    <Key mask="A" key="i">rdesktop</Key>
-    <Key mask="A" key="u">ldesktop</Key>
+    <!-- Original Key bindings -->
+    <Key mask="4" key="#">desktop#</Key>
+    <Key mask="4" key="Tab">nextstacked</Key>
+    <Key mask="4" key="m">root:1</Key>
+    <Key mask="4" key="k">maximize</Key>
+    <Key mask="4" key="h">maxleft</Key>
+    <Key mask="4" key="l">maxright</Key>
+    <Key mask="4" key="i">rdesktop</Key>
+    <Key mask="4" key="u">ldesktop</Key>
 
     <StartupCommand>
       fcitx-autostart

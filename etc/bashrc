@@ -46,20 +46,26 @@ function share_history() {
 # The value is executed as a command prior to issuing each primary prompt.
 PROMPT_COMMAND='share_history'
 
-function up() {
-  local str
-  if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
-    str=$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d' | \
-      fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
-  elif expr ${1-dummy} + 1 &> /dev/null; then
-    str=$(seq -s: $1 | sed 's/://g;s@.@\.\./@g')
-  elif [[ -d $1 ]]; then
-    str=$1
-  fi
-  command cd ${str:-.}
+function print_parents() {
+  pwd | sed -E '/[^\/]$/s@$@/@;:a;s@[^/]+/$@@;p;/^\/$/!ba;d'
 }
+
+function up() {
+  if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
+    type print_parents &> /dev/null || return 1
+    local -r parent_path=$(print_parents \
+      | fzf --preview='tree -C {}' --preview-window='right' --bind='ctrl-v:toggle-preview')
+  elif [[ $1 =~ ^[0-9]+$ ]]; then
+    local -r parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
+  else
+    local -r parent_path=$1
+  fi
+
+  builtin cd ${parent_path:-.}
+}
+
 function _up() {
-  COMPREPLY=( $(compgen -W "$(pwd | sed ':a;s@/[^/]*$@@;p;/^\/[^\/]*$/!ba;d')" -- ${COMP_WORDS[COMP_CWORD]}) )
+  COMPREPLY=( $(compgen -W "$(print_parents)" -- ${COMP_WORDS[COMP_CWORD]}) )
 }
 complete -F _up up
 

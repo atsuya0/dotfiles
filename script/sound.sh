@@ -16,16 +16,12 @@ function get_sinks() {
 }
 
 function sync_volume() {
-  local volume
-  volume=$(get_volume)
-  get_sinks | xargs -I{} pactl set-sink-volume {} ${volume}
+  get_sinks | xargs -I{} pactl set-sink-volume {} $(get_volume)
 }
 
 function sync_muted() {
-  declare -A state=( ['yes']=1 ['no']=0 )
-  local muted
-  muted=${state[$(get_muted)]}
-  get_sinks | xargs -I{} pactl set-sink-mute {} ${muted}
+  local -rA state=( ['yes']=1 ['no']=0 )
+  get_sinks | xargs -I{} pactl set-sink-mute {} ${state[$(get_muted)]}
 }
 
 function main() {
@@ -53,7 +49,7 @@ function main() {
   esac
 
   pkill -SIGRTMIN+1 i3blocks
-  # tmux refresh -S
+  tmux refresh -S
 }
 
 main $@
