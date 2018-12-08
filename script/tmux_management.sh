@@ -43,11 +43,11 @@ function start_tmux() {
 }
 
 function main() {
-  type tmux &> /dev/null || return 1
-  type fzf &> /dev/null || return 1
+  type tmux &> /dev/null || { echo 'Tmux is required.'; return 1; }
+  type fzf &> /dev/null || { echo 'Fzf is required.';  return 1; }
 
   # No tmux server.
-  tmux list-session &> /dev/null || { new_session 'first' && return ;}
+  tmux list-session &> /dev/null || { new_session 'zz' ; return ;}
 
   # Attached session.
   [[ -n ${TMUX} ]] \

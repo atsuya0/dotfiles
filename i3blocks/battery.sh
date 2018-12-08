@@ -9,7 +9,7 @@ function print_battery() {
 
   [[ $# -gt 2 ]] \
     && echo -e "${online:-$1} $2 \n\n$3" \
-    || echo -e "${online:----} "
+    || echo -e "${online:-?} "
 }
 
 function main() {

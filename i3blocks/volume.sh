@@ -3,10 +3,8 @@
 set -euC
 
 function get_volume() {
-  local volume
-  volume="$(pactl list sinks \
-    | grep 'Volume' | grep -o '[0-9]*%' | head -1 | tr -d '%')"
-  [[ ${volume} -gt 100 ]] && echo 100 || echo "${volume}"
+  pactl list sinks \
+    | grep 'Volume' | grep -o '[0-9]*%' | head -1 | tr -d '%'
 }
 
 function get_muted() {
@@ -26,13 +24,20 @@ function to_meters() {
   echo "[$(to_blocks $1)$(to_spaces $1)]"
 }
 
+function echo_volume() {
+  local -r volume=$(get_volume)
+  [[ ${volume} -gt 100 ]] \
+    && echo ${volume} \
+    || echo "$(to_meters ${volume})"
+}
+
 function main() {
   type pactl &> /dev/null || return 1
 
-  echo "$(to_meters $(get_volume))"
-  echo
+  echo_volume
+
   declare -A colors=( ['yes']='#434447' ['no']='#8fa1b3' )
-  echo "${colors[$(get_muted)]}"
+  echo -e "\n${colors[$(get_muted)]}"
 }
 
 main

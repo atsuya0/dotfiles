@@ -17,7 +17,7 @@ function jwm() { # dockerでjwmを動かす。
 
   [[ -e /tmp/.X11-unix/X1 ]] \
     && typeset -r exists='true' \
-    || Xephyr -wr -fullscreen -resizeable :1 &> /dev/null &
+    || Xephyr -wr -resizeable :1 &> /dev/null &
 
   function share() {
     [[ $1 != 's' ]] && return 1

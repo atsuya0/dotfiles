@@ -41,10 +41,6 @@ function fmv() {
   __sources_to_dir__ 'mv -iv'
 }
 
-function hist() {
-  [[ $# -eq 0 ]] && history -i 1 || history $@
-}
-
 function wifi() {
   local -A options
   zparseopts -D -A options -- r s

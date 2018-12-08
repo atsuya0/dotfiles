@@ -26,7 +26,7 @@ function vim() { # Choose files to open by fzf.
       vendor # golang
       target # rust
       gems # ruby
-      mariadb/data # docker
+      db/data # docker
     )
     local dir
     for dir in ${ignore_dirs}; do
@@ -36,7 +36,8 @@ function vim() { # Choose files to open by fzf.
 
   function choice() {
     eval find ${1:-.} \
-      $(ignore_filetypes) $(ignore_dirs) $(ignore_absolute_paths) -type f \
+      $(ignore_filetypes) $(ignore_dirs) $(ignore_absolute_paths) \
+      -type f -print \
       | fzf --select-1 --preview='less {}' \
         --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'
   }

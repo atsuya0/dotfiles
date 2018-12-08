@@ -66,6 +66,7 @@ set laststatus=2 "ステータスラインを常時表示 nvim-default
 set display=lastline
 set list
 set listchars=tab:\¦\ ,trail:@,nbsp:% "不可視文字
+"==================================================
 " Indent
 "==================================================
 set smartindent "インデントを引き継ぐ
@@ -76,6 +77,29 @@ set softtabstop=0 "タブで挿入される文字数(0ならtabstopの値)
 set smarttab "nvim-default
 set autoindent "nvim-default
 "==================================================
+" Functions and Commands
+"==================================================
+function! s:removeTrailingBlanks()
+  let line = line('.')
+  let col = col('.')
+  %substitute/\s\+$//c
+  call cursor(line, col)
+endfunction
+command! -nargs=0 RemoveTrailingBlanks call s:removeTrailingBlanks()
+
+command! -nargs=0 OnlyCurrentBuf 1,.-bdelete | .+,$bdelete
+
+function! s:changeFocus()
+  for buf in getbufinfo()
+    if buf.name =~ '\[denite\]$'
+      return
+    endif
+  endfor
+  highlight Normal guibg=default
+  highlight NormalNC guibg='#27292d'
+endfunction
+
+"==================================================
 " Keybinding
 "==================================================
 let mapleader = "\<space>"
@@ -85,7 +109,7 @@ noremap! <F1> <Nop>
 noremap ZQ <Nop>
 " Insert blank line.
 nnoremap <silent> <C-s>j o<esc>
-nnoremap <silent> <C-s>k O<esc>
+nnoremap <silent> <C-s>k :call append(line('.')-1, '')<CR>
 " Insert space.
 nnoremap <silent> <C-s>h i<space><esc>
 nnoremap <silent> <C-s>l a<space><esc>
@@ -104,11 +128,19 @@ noremap! <C-x>s <C-x><C-s>
 cnoremap <M-p> <Up>
 cnoremap <M-n> <Down>
 " Emacs key bindings
+" <C-h>, <C-w>, <C-u>
 noremap! <C-f> <right>
 noremap! <C-b> <left>
-noremap! <C-a> <home>
+noremap! <C-a> <C-o>^
 noremap! <C-e> <end>
+noremap! <C-n> <down>
+noremap! <C-p> <up>
 noremap! <C-d> <del>
+noremap! <C-k> <C-o>d$
+noremap! <C-y> <C-o>p
+noremap! <M-f> <C-o>w
+noremap! <M-b> <C-o>b
+noremap! <M-d> <C-o>dw
 " Move the cursor up or down.
 noremap j gj
 noremap k gk
@@ -120,41 +152,23 @@ noremap <C-h> :bp<CR>
 " // -> /\/
 cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
 "==================================================
-" Functions
-"==================================================
-" ! : can overwrite name
-
-function! s:removeTrailingBlanks()
-  let line = line('.')
-  let col = col('.')
-  %substitute/\s\+$//c
-  call cursor(line, col)
-endfunction
-command! -nargs=0 Rmb call s:removeTrailingBlanks()
-
-function! s:closeAllOtherBuffers()
-  1,.-bdelete
-  .+,$bdelete
-endfunction
-command! -nargs=0 Onb call s:CloseAllOtherBuffers()
-
-"==================================================
 " Events
 "==================================================
-augroup Insert
+augroup IME
   autocmd!
   autocmd InsertLeave * call system('fcitx-remote -c')
+augroup END
+
+augroup ChangeFocus
+  autocmd!
+  autocmd WinEnter * call s:changeFocus()
+  autocmd FocusGained * highlight Normal guibg=default
+  autocmd FocusLost * highlight Normal guibg='#27292d'
 augroup END
 
 augroup QuickFix
   autocmd!
   autocmd QuickFixCmdPost *grep* cwindow
-augroup END
-
-augroup ChangeBackground
-  autocmd!
-  autocmd FocusGained * highlight Normal guibg=default
-  autocmd FocusLost * highlight Normal guibg='#27292d'
 augroup END
 
 augroup Go
