@@ -98,7 +98,7 @@ function bak() { # Backup files with .bak after filename extension.
 function new_sh() {
   typeset -r name='tempalte.sh'
   [[ -f ./${name} ]] && return 1
-  echo '#!/usr/bin/bash\n' > ./${name}
+  echo '#!/usr/bin/env bash\n' > ./${name}
   chmod +x ./${name}
 }
 
@@ -106,7 +106,7 @@ function new_py() {
   typeset -r name='tempalte.py'
   [[ -f ./${name} ]] && return 1
 cat << "EOF" > ./${name}
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 def main():
 
@@ -232,25 +232,26 @@ function crawl() {
 
 function ct() {
   local -A options
-  zparseopts -D -A options -- I X: -help
+  zparseopts -D -A options -- I X: d: -help
 
   if [[ -n "${options[(i)--help]}" ]]; then
     echo '-I'
     echo '-X [method]'
+    echo '-d {"id": 1, "name": "taro"}'
     echo '$1 is path'
 
     return
   fi
 
-  local method
+  local data method
   [[ -n "${options[(i)-X]}" ]] && method="${options[-X]}"
+  [[ -n "${options[(i)-d]}" ]] && data="-d ${options[-d]}"
 
   typeset -r methods=('GET' 'POST' 'PUT' 'DELETE')
   [[ -z ${method} ]] \
-    && fzf &> /dev/null \
+    && type fzf &> /dev/null \
     && method=$(echo ${methods} | sed 's/ /\n/g' | fzf)
-
-  curl ${options[(i)-I]} -X ${method:-GET} "http://localhost:9000$1"
+  curl ${options[(i)-I]} -X ${method:-GET} ${data} -H "'Content-Type: application/json'" "http://localhost:9000$1"
 }
 
 function _ct() {

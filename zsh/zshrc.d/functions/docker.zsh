@@ -7,7 +7,7 @@ function is_docker_running() {
 }
 
 function docker-compose() {
-  cmd_exists 'docker-compose' || { echo 'Not installed' ; return 1 ;}
+  cmd_exists 'docker-compose' || { echo 'Not installed'; return 1; }
   is_docker_running && command docker-compose $@
 }
 alias dc='docker-compose'

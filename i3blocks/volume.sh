@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-set -euC
+set -euCo pipefail
 
 function get_volume() {
   pactl list sinks \

@@ -12,6 +12,7 @@ set timeoutlen=5000
 set lazyredraw " the screen will not be redrawn while executing macros, registers and other commands that have not been typed.
 set autoread "外部でファイルが変更されたら自動で読み込み nvim-default
 set hidden "編集中でも他ファイルを開ける
+set completeopt=menu " remove preview
 set nobackup
 set nowritebackup
 set noswapfile

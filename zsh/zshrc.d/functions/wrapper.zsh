@@ -45,7 +45,7 @@ function vim() { # Choose files to open by fzf.
   if [[ $# -ne 0 ]]; then
     [[ -d $1 ]] \
       && typeset -r files=$(choice $1) \
-      || { eval $(editor $@) ; return 0 }
+      || { eval $(editor $@); return 0; }
     [[ -n ${files} ]] && eval $(editor ${files}) ; return 0
     return 1
   fi

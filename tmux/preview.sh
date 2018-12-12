@@ -1,8 +1,8 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # unused
 
-set -euC
+set -euCo pipefail
 
 function separate() {
   seq -s '-' $(expr $(tput cols) / 2) | tr -d '[:digit:]' | sed 's/.*/\n&\n/'

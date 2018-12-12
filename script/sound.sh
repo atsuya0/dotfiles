@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-set -euC
+set -euCo pipefail
 
 function get_volume() {
   pactl list sinks | grep 'Volume' | grep -o '[0-9]*%' | head -1
@@ -39,7 +39,7 @@ function main() {
     ;;
     'set' )
       [[ $2 =~ ^[0-9]+$ ]] \
-        || { echo 'set [0-9]*' && return 1 ;}
+        || { echo 'set [0-9]*'; return 1; }
       pactl set-sink-volume 0 "$2%" && sync_volume
     ;;
     'show' )

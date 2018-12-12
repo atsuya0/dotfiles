@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-set -euC
+set -euCo pipefail
 
 # args(1: icon, 2: data, 3: color)
 function print_battery() {

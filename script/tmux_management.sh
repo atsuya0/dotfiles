@@ -1,9 +1,9 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-set -eC
+set -eCo pipefail
 
 function list_other_session_name() {
-  tmux list-session -F "#{session_id}:#{session_name}" \
+  tmux list-session -F '#{session_id}:#{session_name}' \
     | cut -c2- \
     | grep -v "${TMUX##*,}:" \
     | cut -d: -f2
@@ -14,12 +14,12 @@ function choice() {
   local -r list_window_title="echo -e \"\033[1;34mlist-windows\033[0;49m\""
   local -r list_windows="tmux list-windows -t {} | cut -d' ' -f2 | nl"
   local -r capture_pane_title="echo -e \"\033[1;34mcapture_pane\033[0;49m\""
-  local -r capture_pane="tmux capture-pane -e -J -t {} -p"
+  local -r capture_pane='tmux capture-pane -e -J -t {} -p'
 
   fzf --reverse --exit-0 --select-1 \
     --preview="${separate};${list_window_title};${list_windows}; \
       ${separate};${capture_pane_title};${capture_pane}" \
-    --preview-window="right:80%"
+    --preview-window='right:80%'
 }
 
 function new_session() {
@@ -47,7 +47,7 @@ function main() {
   type fzf &> /dev/null || { echo 'Fzf is required.';  return 1; }
 
   # No tmux server.
-  tmux list-session &> /dev/null || { new_session 'zz' ; return ;}
+  tmux list-session &> /dev/null || { new_session 'zz'; return; }
 
   # Attached session.
   [[ -n ${TMUX} ]] \

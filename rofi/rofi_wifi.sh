@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-set -euC
+set -euCo pipefail
 
 declare -A list=(
   ['home']='wlp4s0-184F3214892B-5G'

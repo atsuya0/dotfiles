@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-set -euC
+set -euCo pipefail
 
 function is_not_empty() {
   [[ -z $(find $1 -maxdepth 0 -type d -empty) ]] \

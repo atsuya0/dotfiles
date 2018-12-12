@@ -56,7 +56,7 @@ hook_source = '''
     \ 'grep', 'default_opts', ['-nH'])
 
   call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
-    \ ['.git/', 'vendor/', 'node_modules/', 'images/', 'img/'])
+    \ ['.git/', 'vendor/', 'node_modules/', 'images/', 'img/', 'db/data/'])
   call denite#custom#source(
     \ 'file_rec', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
   call denite#custom#source(

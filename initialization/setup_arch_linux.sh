@@ -1,8 +1,8 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # [todo] graphic driver(xf86-video-intel)のinstall
 
-set -euC
+set -euCo pipefail
 
 function install_packages() {
   sudo pacman -S --needed --noconfirm \

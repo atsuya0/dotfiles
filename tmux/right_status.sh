@@ -1,6 +1,6 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-set -euC
+set -euCo pipefail
 
 # 区切り文字
 function sep() {
@@ -78,7 +78,7 @@ function sound() {
   }
 
   type pactl &> /dev/null \
-    || { echo "$(sep 'black')$(value 'blue' '×')" && return 1 ;}
+    || { echo "$(sep 'black')$(value 'blue' '×') "; return 1; }
 
   declare -A colors=( ['yes']='#[fg=colour237,bg=black]' ['no']='blue' )
   echo \
@@ -105,7 +105,7 @@ function battery() {
   }
 
   [[ -e '/sys/class/power_supply/BAT1' ]] \
-    || { echo "$(sep 'black')$(online)" && return ;}
+    || { echo "$(sep 'black')$(online)"; return; }
 
   local charge
   charge=$(< /sys/class/power_supply/BAT1/capacity)
