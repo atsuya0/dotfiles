@@ -1,9 +1,28 @@
 # The shell is interactive.
 [[ $- != *i* ]] && return
-
+#----------------------------------------
+# environment variables
+#----------------------------------------
+export XDG_CONFIG_HOME="${HOME}/.config"
+export XDG_CACHE_HOME="${HOME}/.cache"
+export GREP_COLOR='1;33'
+export LESS='-iMRgW -j10 -x2 --no-init --quit-if-one-screen +5'
+export LESS_TERMCAP_mb="$(echo -n '\e[34;1m')"
+export LESS_TERMCAP_md="$(echo -n '\e[34;1m')"
+export LESS_TERMCAP_me="$(echo -n '\e[37m')"
+export LESS_TERMCAP_se="$(echo -n '\e[37m')"
+export LESS_TERMCAP_so="$(echo -n '\e[31;40;1m')"
+export LESS_TERMCAP_ue="$(echo -n '\e[32;1m')"
+export LESS_TERMCAP_us="$(echo -n '\e[32;1m')"
+export MANPAGER='less'
+export EDITOR='nano'
+export VISUAL='nano'
+export SUDO_EDITOR='rnano'
+#----------------------------------------
+# shell variables
+#----------------------------------------
 # prompt
 PS1='\[\033[01;36m\]\u@\h\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\] \$ '
-
 # lines which begin with a space character are not saved. (ignorespace)
 # lines matching the previous history entry to not be saved. (ignoredups)
 HISTCONTROL=ignoreboth
@@ -14,11 +33,9 @@ HISTFILESIZE=10000
 HISTIGNORE=history:exit:cd*:ls*:ll*:rm*:pushd*:dirs:popd*:poweroff:reboot:lsblk:umount*:mkdir*:rmdir*:date*:tree*:touch*:ranger:feh*:export*:which*:startx:
 # history time format
 HISTTIMEFORMAT='%m/%d/%T | '
-
-set -o noclobber
-
-# $ shopt
-# -s: set, -u: unset
+#----------------------------------------
+# shell options(shopt [-s(set),-u(unset)])
+#----------------------------------------
 shopt -s autocd
 shopt -s cdable_vars
 shopt -s cdspell
@@ -32,12 +49,11 @@ shopt -s globstar # **
 shopt -u nocaseglob
 shopt -u nocasematch
 shopt -s nullglob
-
-bind C-F:menu-complete
-bind C-B:menu-complete-backword
-
+#----------------------------------------
+# etc
+#----------------------------------------
+set -o noclobber
 [[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
-
 function share_history() {
     history -a #キャッシュを~/.bash_historyに書き込む
     history -c #キャッシュを削除
@@ -45,7 +61,14 @@ function share_history() {
 }
 # The value is executed as a command prior to issuing each primary prompt.
 PROMPT_COMMAND='share_history'
-
+#----------------------------------------
+# key bindings
+#----------------------------------------
+bind C-F:menu-complete
+bind C-B:menu-complete-backword
+#----------------------------------------
+# fucntions
+#----------------------------------------
 function print_parents() {
   pwd | sed -E '/[^\/]$/s@$@/@;:a;s@[^/]+/$@@;p;/^\/$/!ba;d'
 }
@@ -54,33 +77,78 @@ function up() {
   if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
     type print_parents &> /dev/null || return 1
     local -r parent_path=$(print_parents \
-      | fzf --preview='tree -C {}' --preview-window='right' --bind='ctrl-v:toggle-preview')
+      | fzf --preview='tree -C {}' --preview-window='right' \
+        --bind='ctrl-v:toggle-preview')
   elif [[ $1 =~ ^[0-9]+$ ]]; then
     local -r parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
-  else
-    local -r parent_path=$1
   fi
 
   builtin cd ${parent_path:-.}
 }
-
 function _up() {
   COMPREPLY=( $(compgen -W "$(print_parents)" -- ${COMP_WORDS[COMP_CWORD]}) )
 }
 complete -F _up up
 
-# alias
-alias ll='command ls -FAlht --color=auto'
+function trash_function() {
+  function mv_files_to_trash_can() {
+    local -r dest="${trash_can}/$(date +%F)"
+    [[ -d ${dest} ]] || mkdir ${dest}
+
+    # mv -bv --suffix=_$(date +%T) $@ -t ${dest}
+    local file
+    for file in $@; do
+      mv -iv ${file} \
+        "${dest}/$(sed "s/\(^[^.]*\)\.\(.*\)/\1_$(date +%T).\2/" <<< ${file})"
+    done
+  }
+
+  function rm_files_in_trash_can() {
+    [[ $(pwd) =~ ${trash_can} ]] \
+      && : | xargs -p rm -r $@ \
+      || { echo 'It can not be executed in that directory'; return 1; }
+  }
+
+  local -r trash_can="${HOME}/trash_can"
+  [[ -d ${trash_can} ]] || mkdir ${trash_can}
+
+  case $1 in
+    'mv' )
+      [[ $# -eq 1 ]] && { echo 'missing file operand'; return 1; }
+      shift
+      mv_files_to_trash_can $@
+    ;;
+    'rm' )
+      [[ $# -eq 1 ]] && { echo 'missing file operand'; return 1; }
+      shift
+      rm_files_in_trash_can $@
+    ;;
+    'size' )
+      du -hs ${trash_can} | awk '{print $1}'
+    ;;
+    * )
+      ls --color=auto ${trash_can}
+    ;;
+  esac
+}
+alias tmv='trash_function mv'
+alias trm='trash_function rm'
+alias tsize='trash_function size'
+#----------------------------------------
+# aliases
+#----------------------------------------
+alias rm=':'
+alias ls='ls --color=auto'
+alias ll='ls -FAlht --color=auto'
 alias grep='grep -i --color=auto'
+alias mv='mv -iv'
+alias cp='cp -iv'
+alias ln='ln -iv'
 alias cd='pushd &> /dev/null'
-alias mv='mv -i'
-alias cp='cp -i'
-alias ln='ln -i'
-alias rm='rm -i'
+alias dirs='dirs -v'
 alias mkdir='mkdir -vp'
 alias free='free -wh'
 alias du='du -h'
 alias df='df -hT'
-alias dirs='dirs -v'
 alias ip='ip -c'
 alias nano='nano -$ -l -i -O -m -c' # オブションは個々に指定する

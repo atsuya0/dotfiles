@@ -16,12 +16,9 @@ export LESS_TERMCAP_se="$(echo -n '\e[37m')"
 export LESS_TERMCAP_so="$(echo -n '\e[31;40;1m')"
 export LESS_TERMCAP_ue="$(echo -n '\e[32;1m')"
 export LESS_TERMCAP_us="$(echo -n '\e[32;1m')"
-export MANPAGER='less' # man
+export MANPAGER='less'
 export EDITOR='nvim'
 export VISUAL='nvim'
 export SUDO_EDITOR='nvim -Zu NORC' # sudoedit file_name
 
 export GOPATH="${HOME}/workspace/go"
-
-# .zshrcの先頭でtmuxを起動するため、このファイルに記述している。
-export DOTFILES="${HOME}/dotfiles"

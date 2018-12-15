@@ -80,6 +80,8 @@ set autoindent "nvim-default
 "==================================================
 " Functions and Commands
 "==================================================
+command! -nargs=0 OnlyCurrentBuf 1,.-bdelete | .+,$bdelete
+
 function! s:removeTrailingBlanks()
   let line = line('.')
   let col = col('.')
@@ -87,8 +89,6 @@ function! s:removeTrailingBlanks()
   call cursor(line, col)
 endfunction
 command! -nargs=0 RemoveTrailingBlanks call s:removeTrailingBlanks()
-
-command! -nargs=0 OnlyCurrentBuf 1,.-bdelete | .+,$bdelete
 
 function! s:changeFocus()
   for buf in getbufinfo()
@@ -103,17 +103,19 @@ endfunction
 "==================================================
 " Keybinding
 "==================================================
-let mapleader = "\<space>"
+" <C-g>:tmux prefix key, <C-s>, <C-q>
+let mapleader = "\<bslash>"
+let maplocalleader = "\<space>"
 " Disable
 noremap <F1> <Nop>
 noremap! <F1> <Nop>
 noremap ZQ <Nop>
 " Insert blank line.
-nnoremap <silent> <C-s>j o<esc>
-nnoremap <silent> <C-s>k :call append(line('.')-1, '')<CR>
+nnoremap <silent> <Leader>j o<esc>
+nnoremap <silent> <Leader>k :call append(line('.')-1, '')<CR>
 " Insert space.
-nnoremap <silent> <C-s>h i<space><esc>
-nnoremap <silent> <C-s>l a<space><esc>
+nnoremap <silent> <Leader>h i<space><esc>
+nnoremap <silent> <Leader>l a<space><esc>
 "ウィンドウの大きさを変える比率を上げる
 nnoremap <C-w>< 0<C-w><
 nnoremap <C-w>> 0<C-w>>
@@ -128,8 +130,8 @@ noremap! <C-x>s <C-x><C-s>
 "入力された文字に一致するコマンドを履歴から補完する
 cnoremap <M-p> <Up>
 cnoremap <M-n> <Down>
-" Emacs key bindings
-" <C-h>, <C-w>, <C-u>
+" Emacs key bindings.
+" Already defined.  <C-h>, <C-w>, <C-u>
 noremap! <C-f> <right>
 noremap! <C-b> <left>
 noremap! <C-a> <C-o>^
@@ -205,7 +207,8 @@ let s:cache = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
 let s:dein_dir = s:cache . '/dein'
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 if &runtimepath !~# '/dein.vim'
-  if !isdirectory(s:dein_repo_dir) " Download dein.vim
+  if !isdirectory(s:dein_repo_dir)
+    " Download dein.vim
     call system('git clone https://github.com/Shougo/dein.vim ' . s:dein_repo_dir)
   endif
   execute 'set runtimepath+=' . s:dein_repo_dir
@@ -220,7 +223,6 @@ endif
 if dein#check_install()
   call dein#install()
 endif
-
 "==================================================
 " Spell
 "==================================================

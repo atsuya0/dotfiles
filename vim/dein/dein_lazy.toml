@@ -24,7 +24,7 @@ repo = 'Shougo/denite.nvim'
 on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
 if = 'has("nvim")'
 hook_add = '''
-  nmap <Leader>d [denite]
+  nmap <LocalLeader>d [denite]
   nnoremap <silent> [denite]f :Denite -auto_preview file_rec<CR>
   nnoremap <silent> [denite]b :Denite -auto_preview buffer<CR>
   nnoremap <silent> [denite]l :Denite -auto_preview line<CR>

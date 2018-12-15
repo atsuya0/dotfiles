@@ -26,8 +26,8 @@ repo = 'Shougo/neosnippet-snippets'
 [[plugins]] # browse files.
 repo = 'Shougo/defx.nvim'
 hook_add = '''
-" nnoremap <silent> <Leader>f :Defx -split=vertical -winwidth=30<CR>
-nnoremap <silent> <Leader>f :Defx<CR>
+" nnoremap <silent> <LocalLeader>f :Defx -split=vertical -winwidth=30<CR>
+nnoremap <silent> <LocalLeader>f :Defx<CR>
 augroup Defx
   autocmd!
   autocmd FileType defx call s:defx_my_settings()
@@ -78,7 +78,7 @@ hook_add = '''
 [[plugins]]
 repo = '~/workspace/neovim/surround.nvim'
 hook_add = '''
-  nmap <Leader>s [surround]
+  nmap <LocalLeader>s [surround]
   nnoremap <silent> [surround]l :SurroundLine<space>
   nnoremap <silent> [surround]w :SurroundWord<space>
   nnoremap <silent> [surround]c :ChSurround<space>

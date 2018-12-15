@@ -7,7 +7,6 @@ tmux list-session &> /dev/null || () {
 () { # tmux
   [[ -z ${WINDOWID} ]] && return 1
   [[ "$(ps hco cmd ${PPID})" =~ 'mlterm|alacritty' ]] || return 1
-  [[ -f ${DOTFILES}/script/tmux_management.sh ]] \
-    && ${DOTFILES}/script/tmux_management.sh \
-    && exit
+  type tmux_management.sh &> /dev/null \
+    && tmux_management.sh && exit
 }

@@ -37,11 +37,15 @@ function gmv() { # git mv
   done
 }
 
+
 alias gb='git branch'
 alias gs='git status'
+alias gd='git diff'
 alias gl='git log'
 alias ga='git add'
 alias gcm='git commit -m'
 alias gco='git checkout'
 alias gph='git push origin'
 alias gpl='git pull origin'
+
+alias -g gls='$(git status --short | cut -c 4- | fzf)'
