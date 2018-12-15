@@ -36,3 +36,6 @@ alias -g ..3='../../..'
 alias -s txt='less'
 alias -s {html,md,pdf,mp3,mp4}='chromium'
 alias -s {png,jpg,jpeg}='feh'
+
+# docker error creating new backup file
+alias no_metacopy='echo N | sudo tee /sys/module/overlay/parameters/metacopy'

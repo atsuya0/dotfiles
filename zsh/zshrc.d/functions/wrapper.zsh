@@ -27,6 +27,7 @@ function vim() { # Choose files to open by fzf.
       target # rust
       gems # ruby
       db/data # docker
+      tmp/cache # rails
     )
     local dir
     for dir in ${ignore_dirs}; do

@@ -111,18 +111,3 @@ hook_source = '''
   let g:racer_cmd = "~/.cargo/bin/racer"
   let g:racer_experimental_completer = 1
 '''
-
-# [[plugins]] # completion for javascript
-# repo = 'othree/yajs.vim'
-# on_ft = 'javascript'
-# on_i = 1
-
-# [[plugins]]
-# repo = 'billyvg/tigris.nvim'
-# if = 'has("nvim")'
-# on_ft = ['javascript', 'javascript.jsx']
-# hook_add = '''
-#   let g:tigris#enabled = 1
-#   let g:tigris#on_the_fly_enabled = 1
-#   let g:tigris#delay = 300
-# '''

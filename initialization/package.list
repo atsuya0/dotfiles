@@ -42,6 +42,7 @@ w3m # cui
 # programming languages
 python
 python-pip # package manager
+# ruby
 go
 rustup
 

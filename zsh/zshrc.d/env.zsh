@@ -1,10 +1,11 @@
+# ruby製のtool
+type ruby &> /dev/null \
+  && local gem_path="$(ruby -e 'print Gem.user_dir')/bin"
+
 typeset -gr path=(
   $([[ -d ${DOTFILES}/script ]] && echo ${DOTFILES}/script)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
-  $(type ruby &> /dev/null \
-    && ruby -e 'print Gem.user_dir' \
-    | xargs -I{} echo {}/bin
-  )
+  ${gem_path}
   /usr/bin
 )
 

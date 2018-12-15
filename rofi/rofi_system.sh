@@ -8,25 +8,30 @@ declare -A list=(
   ['Reboot']='systemctl reboot'
 )
 
-function print_key() {
+function print_keys() {
   echo "${!list[@]}" | sed 's/ /\n/g'
 }
 
 function main() {
-  local y='(yes)' n='(no)'
+  local yes='(yes)' no='(no)'
 
-  if [[ $2 == $y ]]; then
-    eval "${list[$1]}"
-  elif [[ $2 == $n ]]; then
-    print_key
-  elif [[ -n $1 ]]; then
-    echo $1 $n
-    echo $1 $y
-  else
-    print_key
-  fi
+  [[ $# -eq 0 ]] \
+    && { print_keys; return 0; }
+
+  case ${2} in
+    ${yes} )
+      eval "${list[$1]}"
+    ;;
+    ${no} )
+      print_keys
+    ;;
+    * )
+      echo $1 ${no}
+      echo $1 ${yes}
+    ;;
+  esac
 }
 
 main $@
 
-#[[ -n $1 ]] && eval "${list[$1]}" || echo "${!list[@]}" | sed 's/ /\n/g'
+#[[ $# -ne 0 ]] && eval "${list[$1]}" || echo "${!list[@]}" | sed 's/ /\n/g'

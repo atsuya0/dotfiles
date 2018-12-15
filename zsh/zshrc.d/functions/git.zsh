@@ -3,7 +3,7 @@ function is_managed() {
   git status > /dev/null 2>&1 || return 1
 }
 
-function ga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
+function gaf() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
   is_managed || return 1
 
   local file
@@ -18,24 +18,12 @@ function ga() { # git add をfilterで選択して行う。<C-v>でgit diffを�
   [[ -n ${selected_files} ]] && git add $(echo ${selected_files} | sed ':l;N;$!b l;s/\n/ /g')
 }
 
-function gcm() { # commit message 記しやすい
-  is_managed || return 1
-  [[ $# -ne 0 ]] || return 1
-
-  git commit -m $1
-}
-
-function gco() { # git checkout の引数をfilterで選択する
+function gcof() { # git checkout の引数をfilterで選択する
   is_managed || return 1
   type fzf > /dev/null 2>&1 || return 1
 
   typeset -r branch=$(git branch | tr -d ' ' | sed /^\*/d | fzf)
   [[ -n ${branch} ]] && git checkout "${branch}"
-}
-
-function gp() { # git push
-  is_managed || return 1
-  git push origin "${1:-master}"
 }
 
 function gmv() { # git mv
@@ -48,3 +36,12 @@ function gmv() { # git mv
     git mv "${argv[$i]}" "${target}"
   done
 }
+
+alias gb='git branch'
+alias gs='git status'
+alias gl='git log'
+alias ga='git add'
+alias gcm='git commit -m'
+alias gco='git checkout'
+alias gph='git push origin'
+alias gpl='git pull origin'

@@ -56,7 +56,7 @@ set showcmd "nvim-default
 set showmatch "対応する括弧を表示(1秒)
 set matchtime=1
 set ambiwidth=double "記号が重なるのを阻止
-set guicursor=a:block1,a:blinkoff1 "カーソルの形状
+set guicursor=a:block,a:blinkoff1 "カーソルの形状
 set cursorline cursorcolumn "カーソル行の強調
 set foldmethod=marker foldmarker=>->,<-< "折り畳みの設定
 "折り畳み時のマーカーをコメントする際に使う記号の設定

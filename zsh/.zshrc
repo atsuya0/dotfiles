@@ -36,11 +36,13 @@ typeset -r ignore_absolute_paths=(
   ${HOME}/.local/lib
   ${HOME}/.rustup
   ${HOME}/.cargo
+  ${HOME}/.gem
   ${HOME}/.vscode/extensions
   ${HOME}/.npm/_cacache
   ${HOME}/.nvm/versions
   ${HOME}/.java
   ${HOME}/workspace/docker
+  ${HOME}/Downloads
   ${HOME}/.Trash
   ${GOPATH}/pkg
   ${GOPATH}/src

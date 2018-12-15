@@ -1,0 +1,14 @@
+version: '3'
+services:
+  rails:
+    build: .
+    container_name: 'rails'
+    command: rails server
+    environment:
+      RAILS_ENV: development
+    user:
+      '{{2}}:{{2}}'
+    volumes:
+      - '.:/{{1}}'
+    ports:
+      - '3000:3000'

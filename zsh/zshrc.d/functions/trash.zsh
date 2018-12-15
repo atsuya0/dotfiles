@@ -1,11 +1,12 @@
 function _trash() {
-  [[ -n ${TRASH_PATH} ]] && typeset -r trash=${TRASH_PATH} || typeset -r trash="${HOME}/.Trash"
+  [[ -n ${TRASH_PATH} ]] \
+    && typeset -r trash=${TRASH_PATH} \
+    || typeset -r trash="${HOME}/.Trash"
+
   local ret=1
 
   function sub_commands() {
-    local -a _c
-
-    _c=(
+    local -a _c=(
       'move' \
       'restore' \
       'list' \
