@@ -4,8 +4,9 @@
 
     <!-- The root menu. -->
     <RootMenu onroot="12">
-        <Program label="terminal">lxterminal</Program>
-        <Program label="chromium">chromium</Program>
+        <Program label="lxterminal">lxterminal</Program>
+        <Program label="epiphany">epiphany-browser</Program>
+        <Program label="google-chrome">google-chrome --no-sandbox</Program>
         <Separator/>
         <Program icon="lock.png" label="Lock">
             xlock -mode blank
@@ -69,14 +70,14 @@
         </Active>
     </WindowStyle>
     <TrayStyle group="true" list="all">
-        <Font>IPAGothic-9</Font>
+        <Font>IPAGothic-9:bold</Font>
         <Background>#333333</Background>
         <Foreground>#FFFFFF</Foreground>
         <Outline>#000000</Outline>
         <Opacity>0.75</Opacity>
     </TrayStyle>
     <TaskListStyle>
-      <Font>IPAGothic-9</Font>
+      <Font>IPAGothic-9:bold</Font>
       <Active>
         <Foreground>#FFFFFF</Foreground>
         <Background>#555555</Background>
@@ -95,7 +96,7 @@
         </Active>
     </PagerStyle>
     <MenuStyle>
-        <Font>IPAGothic-9</Font>
+        <Font>IPAGothic-9:bold</Font>
         <Foreground>#FFFFFF</Foreground>
         <Background>#333333</Background>
         <Outline>#000000</Outline>
@@ -106,7 +107,7 @@
         <Opacity>0.85</Opacity>
     </MenuStyle>
     <PopupStyle>
-        <Font>IPAGothic-9</Font>
+        <Font>IPAGothic-9:bold</Font>
         <Foreground>#000000</Foreground>
         <Background>#999999</Background>
     </PopupStyle>
@@ -217,5 +218,7 @@
 
     <StartupCommand>
       fcitx-autostart
+      fcitx-imlist -e fcitx-keyboard-jp
+      fcitx-imlist -s fcitx-keyboard-jp,mozc,fcitx-keyboard-us
     </StartupCommand>
 </JWM>

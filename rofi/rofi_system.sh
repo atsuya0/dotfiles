@@ -2,14 +2,14 @@
 
 set -euCo pipefail
 
-declare -A list=(
+declare -rA menu=(
   ['Logout']='i3-msg exit'
   ['Poweroff']='systemctl poweroff'
   ['Reboot']='systemctl reboot'
 )
 
 function print_keys() {
-  echo "${!list[@]}" | sed 's/ /\n/g'
+  echo "${!menu[@]}" | sed 's/ /\n/g'
 }
 
 function main() {
@@ -20,7 +20,7 @@ function main() {
 
   case ${2} in
     ${yes} )
-      eval "${list[$1]}"
+      eval "${menu[$1]}"
     ;;
     ${no} )
       print_keys
@@ -34,4 +34,4 @@ function main() {
 
 main $@
 
-#[[ $# -ne 0 ]] && eval "${list[$1]}" || echo "${!list[@]}" | sed 's/ /\n/g'
+#[[ $# -ne 0 ]] && eval "${menu[$1]}" || echo "${!menu[@]}" | sed 's/ /\n/g'

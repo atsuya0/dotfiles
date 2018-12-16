@@ -2,36 +2,49 @@
 
 set -euCo pipefail
 
-# 区切り文字
-function sep() {
+function separator() {
   [[ $# -lt 1 ]] && return 1
-  format $1 ''
+  output --color-name $1 --string ''
 }
 
-function value() {
-  [[ $# -lt 2 ]] && return 1
-  format $1 " $2 "
-}
-
-function format() {
-  local -r black='#[fg=black,bg=blue]'
-  local -r blue='#[fg=blue,bg=black]'
-  local -r def='#[default]'
-
+function output() {
   [[ $# -lt 2 ]] && return 1
 
-  [[ $1 == 'black' ]] \
-    && echo "${black}$2${def}" && return 0
-  [[ $1 == 'blue' ]] \
-    && echo "${blue}$2${def}" && return 0
-  echo "$1$2${def}"
+  local -rA colors=(
+    ['black']='#[fg=black,bg=blue]'
+    ['blue']='#[fg=blue,bg=black]'
+    ['default']='#[default]'
+  )
+
+  for option in $@; do
+    case ${option} in
+      '-n'|'--color-name' )
+        [[ -z $2 || $2 =~ ^-+ ]] && return 1
+        local color=${colors[$2]}
+        shift 2
+      ;;
+      '-c'|'--color-code' )
+        [[ -z $2 || $2 =~ ^-+ ]] && return 1
+        local color=$2
+        shift 2
+      ;;
+      '-s'|'--string' )
+        # -30dBm
+        [[ -z $2 ]] && return 1
+        local string=$2
+        shift 2
+      ;;
+    esac
+  done
+
+  echo "${color} ${string}${colors['default']}"
 }
 
 # メモリ使用量
 function memory() {
   local src
   src=$(free -h | sed '/^Mem:/!d;s/  */ /g' | cut -d' ' -f3)
-  echo "$(sep 'blue')$(value 'black' ${src})"
+  echo "$(separator 'blue')$(output -n 'black' -s ${src})"
 }
 
 # ロードアベレージ
@@ -39,7 +52,7 @@ function load_average() {
   local src cpus
   src=$(uptime | sed -E 's/.*load average: ([0-9]\.[0-9][0-9]).*/\1/g')
   cpus=$(grep 'processor' /proc/cpuinfo | wc -l)
-  echo "$(sep 'black')$(value 'blue' ${src}/${cpus})"
+  echo "$(separator 'black')$(output -n 'blue' -s ${src}/${cpus})"
 }
 
 # ネットワーク
@@ -48,7 +61,7 @@ function wlan() {
   type iw &> /dev/null \
     && [[ $(iw dev wlp4s0 link) != 'Not connected.' ]] \
     && signal="-$(iw dev wlp4s0 link | grep signal | grep -o '[0-9]*')dBm"
-  echo "$(sep 'blue')$(value 'black' ${signal:----})"
+  echo "$(separator 'blue')$(output -n 'black' -s ${signal:----})"
 }
 
 # 音量
@@ -80,35 +93,45 @@ function sound() {
   type pactl &> /dev/null \
     || { echo "$(sep 'black')$(value 'blue' '×') "; return 1; }
 
-  declare -A colors=( ['yes']='#[fg=colour237,bg=black]' ['no']='blue' )
-  echo \
-    "$(sep 'black')$(value ${colors[$(get_muted)]} $(to_meters $(get_volume)))" \
-    | sed 's/_/ /g'
+  local -rA colors=(
+    ['yes']='#[fg=colour237,bg=black]'
+    ['no']='blue'
+  )
+  local -rA options=(
+    ['yes']='--color-code'
+    ['no']='--color-name'
+  )
+  local muted
+  muted=$(get_muted)
+
+  echo "$(separator 'black')$(output \
+      ${options[${muted}]} ${colors[${muted}]} \
+      -s $(to_meters $(get_volume)))" \
+      | sed 's/_/ /g'
 }
 
 # 時刻
 function hours_minutes() {
-  echo "$(sep 'blue')$(value 'black' $(date +%H:%M))"
+  echo "$(separator 'blue')$(output -n 'black' -s $(date +%H:%M))"
 }
 
 # バッテリー残量
 function battery() {
   function online() {
-    if [[ $(cat /sys/class/power_supply/ADP1/online) == '1' ]];then
-      local -ar icons=('' '' '' '' '')
-      local i
-      i=$(expr $(date +%S) % ${#chars[@]})
-      value 'blue' ${chars[${i}]}
-    else
-      echo ''
-    fi
+    [[ $(cat /sys/class/power_supply/ADP1/online) != '1' ]] \
+      && return
+    local -ar icons=('' '' '' '' '')
+    local index
+    index=$(expr $(date +%S) % ${#icons[@]})
+    output -n 'blue' -s ${icons[${index}]}
   }
 
   [[ -e '/sys/class/power_supply/BAT1' ]] \
-    || { echo "$(sep 'black')$(online)"; return; }
+    || { echo "$(separator 'black')$(online)"; return; }
 
   local charge
   charge=$(< /sys/class/power_supply/BAT1/capacity)
+
   if [[ ${charge} -gt 79 ]];then
     local -r color='#[fg=#08d137,bg=black]'
   elif [[ ${charge} -gt 20 ]];then
@@ -116,11 +139,17 @@ function battery() {
   else
     local -r color='#[fg=#f73525,bg=black]'
   fi
-  echo "$(sep 'black')$(online)$(value ${color} ${charge}%)"
+
+  echo "$(separator 'black')$(online) $(output -c ${color} -s ${charge}%)"
 }
 
-if [[ ${1:-long} == 'short' ]];then
-  echo "$(memory)$(load_average) "
-else
-  echo "$(memory)$(load_average)$(wlan)$(sound)$(hours_minutes)$(battery) "
-fi
+function main() {
+  if [[ $1 == 'short' ]];then
+    echo -n "$(memory)$(load_average)"
+  else
+    echo -n "$(memory)$(load_average)$(wlan)$(sound)$(hours_minutes)$(battery)"
+  fi
+  echo '  '
+}
+
+main ${1:-long}
