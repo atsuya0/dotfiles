@@ -17,7 +17,9 @@ function setup_packages() {
     && pip install --user pynvim
   type lightdm &> /dev/null \
     && sudo systemctl enable lightdm.service \
-    && sed -i 's/^\(ENV=\)\(lightdm-gtk-greeter\)/\1env GTK_THEME=Adwaita:dark \2/' /usr/share/xgreeters/lightdm-gtk-greeter.desktop
+    && sed -i \
+        's/^\(ENV=\)\(lightdm-gtk-greeter\)/\1env GTK_THEME=Adwaita:dark \2/' \
+        /usr/share/xgreeters/lightdm-gtk-greeter.desktop
 /usr/share/xgreeters/lightdm-gtk-greeter.desktop
   type tlp &> /dev/null \
     && sudo systemctl enable tlp.service tlp-sleep.service \
@@ -62,7 +64,7 @@ function set_locale() {
 
 function set_touchpad() {
   sudo mkdir -p /etc/X11/xorg.conf.d
-cat << "EOF" | sudo tee /etc/X11/xorg.conf.d/40-libinput.conf
+  cat << "EOF" | sudo tee /etc/X11/xorg.conf.d/40-libinput.conf
 Section "InputClass"
   Identifier "libinput touchpad catchall"
   MatchIsTouchpad "on"
@@ -87,7 +89,8 @@ function download_packages_from_aur() {
   local -r build='build'
   for package in ${packages[@]}; do
     mkdir ${build}
-    curl -fsSL "https://aur.archlinux.org/cgit/aur.git/snapshot/{${package}}" -o ${build}/#1 \
+    curl -fsSL "https://aur.archlinux.org/cgit/aur.git/snapshot/{${package}}" \
+      -o ${build}/#1 \
       && tar -xzf "${build}/${package}" \
       && rm -r ${build}
   done
@@ -95,7 +98,8 @@ function download_packages_from_aur() {
 
 function main() {
   [[ $(id -u) -eq 0 ]] && return 1
-  [[ $# -eq 0 ]] && echo 'A hostname is required as an argument.' && return 1
+  [[ $# -eq 0 ]] \
+    && { echo 'A hostname is required as an argument.'; return 1; }
 
   sudo sed -i 's/^#\(Color\)$/\1/' /etc/pacman.conf
   sudo pacman -Syu --noconfirm

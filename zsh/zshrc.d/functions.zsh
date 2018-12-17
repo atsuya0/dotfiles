@@ -13,32 +13,78 @@ function cmd_exists() { # The which command that does not find alias or function
   return 1
 }
 
-function __sources_to_dir__() {
-  [[ $# -ne 1 ]] && return 1
+function __src_to_dest__() {
   type fzf &> /dev/null || return 1
-  typeset -r cmd=$1
 
-  typeset -r fzf_options="--select-1 \
+  typeset -r fzf_options=" \
     --preview='less {}' \
     --preview-window='right' \
     --bind='ctrl-v:toggle-preview'"
 
-  typeset -r src=($(eval find -mindepth 1 $(ignore_absolute_paths) -print 2> /dev/null \
-    | cut -c3- | eval fzf ${fzf_options}))
-  [[ ${#src[@]} -eq 0 ]] && return
+  local dest
+  local -a src=()
+  while (( $# > 0 )); do
+    case $1 in
+      '-c'|'--command' )
+        [[ -z $2 || $2 =~ ^-+ ]] && return 1
+        local cmd=$2
+        shift 2
+      ;;
+      '-o'|'--option' )
+        [[ -z $2 || $2 =~ ^-+ ]] && return 1
+        local opt=$2
+        shift 2
+      ;;
+      '-d'|'--dest' )
+        [[ -z $2 || $2 =~ ^-+ ]] && return 1
+        dest=$2
+        shift 2
+      ;;
+      * )
+        [[ -z $1 || $1 =~ ^-+ ]] && return 1
+        src=($1 ${src[@]})
+        shift 1
+      ;;
+    esac
+  done
 
-  typeset -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
-    | cut -c3- | eval fzf --header="'${src[@]}'" ${fzf_options})
+  [[ -z ${cmd} ]] && return 1
 
-  [[ -n ${dir} ]] && eval ${cmd} ${src[@]} -t ${dir}
+  if [[ ${#src[@]} -eq 0 ]]; then
+    src=($(eval find -mindepth 1 $(ignore_absolute_paths) -print 2> /dev/null \
+      | cut -c3- | eval fzf ${fzf_options}))
+    [[ ${#src[@]} -eq 0 ]] && return 1
+  fi
+
+  [[ -z ${dest} ]] \
+    && dest=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
+        | cut -c3- | eval fzf --header="'${src[@]}'" ${fzf_options})
+
+  [[ -n ${dest} ]] && eval ${cmd} "-${opt}" ${src[@]} -t ${dest}
 }
 
 function fcp() {
-  __sources_to_dir__ 'cp -riv'
+  local cmd='cp' opt='riv'
+  case $1 in
+    '-t'|'--target' )
+      __src_to_dest__ -c ${cmd} -o ${opt} -d $2
+    ;;
+    * )
+      __src_to_dest__ -c ${cmd} -o ${opt} $@
+    ;;
+  esac
 }
 
 function fmv() {
-  __sources_to_dir__ 'mv -iv'
+  local -r cmd='mv' opt='iv'
+  case $1 in
+    '-t'|'--target' )
+      __src_to_dest__ -c ${cmd} -o ${opt} -d $2
+    ;;
+    * )
+      __src_to_dest__ -c ${cmd} -o ${opt} $@
+    ;;
+  esac
 }
 
 function wifi() {

@@ -1,7 +1,11 @@
 version: '3'
 services:
   rails:
-    build: .
+    build:
+      context: .
+      args:
+        - DOCKER_UID={{2}}
+        - APP={{1}}
     container_name: 'rails'
     command: rails server
     environment:

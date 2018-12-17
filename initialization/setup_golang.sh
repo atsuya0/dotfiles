@@ -25,9 +25,6 @@ function main() {
     'golang.org/x/tools/cmd/goimports'
     'github.com/jstemmer/gotags'
     'github.com/golang/dep/cmd/dep'
-    'github.com/spf13/cobra/cobra'
-    'github.com/julienschmidt/httprouter'
-    'github.com/go-sql-driver/mysql'
   )
   go get -u ${libraries}
 

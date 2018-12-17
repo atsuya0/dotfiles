@@ -12,7 +12,6 @@ function create_Gemfile() {
 
 function rails_new() {
   cp "$(get_conf_path)/Dockerfile" ./
-  sed -i "s/{{1}}/$1/" ./Dockerfile
   docker build -t $USER/rails . || return 1
   docker run --rm -it -v "$(pwd):/$1" $USER/rails rails new "/$1" -B || return 1
 }

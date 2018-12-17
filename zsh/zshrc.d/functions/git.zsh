@@ -3,22 +3,21 @@ function is_managed() {
   git status > /dev/null 2>&1 || return 1
 }
 
-function gaf() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
+function fga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
   is_managed || return 1
 
-  local file
+  local file unadded_files
   for file in "${(f)$(git status --short)}"; do
     local header=$(echo ${file} | cut -c1-2)
     [[ ${header} == '??' || ${header} =~ '( |M|A|R|U)(M|U)' ]] \
-      && local unadded_files="${unadded_files}\n$(echo ${file} | rev | cut -d' ' -f1 | rev)" \
-      || local unadded_files
+      && local unadded_files="${unadded_files}\n$(echo ${file} | rev | cut -d' ' -f1 | rev)"
   done
   local selected_files=$(echo ${unadded_files} | sed /^$/d \
     | fzf --preview='git diff --color=always {}' --preview-window='right:95%:hidden' --bind='ctrl-v:toggle-preview')
   [[ -n ${selected_files} ]] && git add $(echo ${selected_files} | sed ':l;N;$!b l;s/\n/ /g')
 }
 
-function gcof() { # git checkout の引数をfilterで選択する
+function fgco() { # git checkout の引数をfilterで選択する
   is_managed || return 1
   type fzf > /dev/null 2>&1 || return 1
 

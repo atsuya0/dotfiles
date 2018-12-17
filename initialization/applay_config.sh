@@ -24,7 +24,7 @@ function place_config_files() {
 
 # shell
 function init_zsh() {
-cat << "EOF" > ${HOME}/.zshenv
+  cat << "EOF" > ${HOME}/.zshenv
 export DOTFILES=${HOME}/dotfiles
 export ZDOTDIR=${DOTFILES}/zsh
 source ${ZDOTDIR}/.zshenv

@@ -3,7 +3,9 @@ function rails() {
   docker info &> /dev/null || return 1
   [[ $# -eq 0 ]] && return 1
 
-  docker-compose run --rm rails rails $@
+  [[ $1 != "bundle" ]] \
+    && docker-compose run --rm rails rails $@ \
+    || docker-compose run --rm rails $@
 }
 
 function _rails() {
@@ -13,6 +15,7 @@ function _rails() {
     local -a _c=(
       'bundle'
       'generate'
+      'test'
       'db\:setup'
       'db\:reset'
       'db\:seed'
@@ -41,6 +44,7 @@ function _rails() {
         (bundle)
           _values 'menu' \
           'update' \
+          'exec' \
           'init'
         ;;
       esac
