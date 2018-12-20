@@ -10,17 +10,16 @@ function vim() { # Choose files to open by fzf.
   }
 
   function ignore_filetypes() {
-    typeset -r ignore_filetypes=(
+    typeset -ar ignore_filetypes=(
       pdf png jpg jpeg mp3 mp4 tar.gz zip
     )
-    local filetype
-    for filetype in ${ignore_filetypes}; do
-      echo '-name' "\*${filetype}" '-prune -o'
-    done
+    echo ${ignore_filetypes[@]} \
+      | tr ' ' '\n' \
+      | sed 's/.*/-name \\*& -prune -o/'
   }
 
   function ignore_dirs() {
-    typeset -r ignore_dirs=(
+    typeset -ar ignore_dirs=(
       .git
       node_modules # node.js
       vendor # golang
@@ -29,10 +28,9 @@ function vim() { # Choose files to open by fzf.
       db/data # docker
       tmp/cache # rails
     )
-    local dir
-    for dir in ${ignore_dirs}; do
-      echo '-path' "\*${dir}\*" '-prune -o'
-    done
+    echo ${ignore_dirs[@]} \
+      | tr ' ' '\n' \
+      | sed 's/.*/-path \\*&\\* -prune -o/'
   }
 
   function choice() {
@@ -47,7 +45,7 @@ function vim() { # Choose files to open by fzf.
     [[ -d $1 ]] \
       && typeset -r files=$(choice $1) \
       || { eval $(editor $@); return 0; }
-    [[ -n ${files} ]] && eval $(editor ${files}) ; return 0
+    [[ -n ${files} ]] && { eval $(editor ${files}); return 0; }
     return 1
   fi
 

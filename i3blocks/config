@@ -49,4 +49,5 @@ interval=1
 
 [battery]
 command=~/.config/i3blocks/battery.sh
-interval=30
+format=json
+interval=persist

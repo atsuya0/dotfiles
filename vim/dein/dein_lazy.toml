@@ -1,3 +1,21 @@
+[[plugins]] # completion framework
+repo = 'Shougo/deoplete.nvim'
+if = 'has("nvim")'
+on_i = 1
+hook_add = 'let g:deoplete#enable_at_startup = 1'
+
+[[plugins]] # LSP
+repo = 'autozimu/LanguageClient-neovim'
+rev = 'next'
+build = 'bash install.sh'
+on_i = 1
+hook_add = '''
+  let g:LanguageClient_autoStart = 1
+  let g:LanguageClient_serverCommands = {
+    \ 'ruby': ['solargraph', 'stdio'],
+  \ }
+'''
+
 [[plugins]] # color scheme
 repo = 'tyrannicaltoucan/vim-quantum'
 on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
@@ -12,8 +30,7 @@ hook_source = 'colorscheme quantum'
 [[plugins]] # visually displaying indent levels
 repo = 'Yggdroot/indentLine'
 on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
-hook_add = '''
-  let g:indentLine_char = "¦"
+hook_add = 'let g:indentLine_char = "¦"'
 '''
 hook_source = '''
   autocmd Filetype json let g:indentLine_conceallevel = 0

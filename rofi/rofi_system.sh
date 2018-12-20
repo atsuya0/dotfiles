@@ -2,7 +2,7 @@
 
 set -euCo pipefail
 
-declare -rA menu=(
+declare -Ar menu=(
   ['Logout']='i3-msg exit'
   ['Poweroff']='systemctl poweroff'
   ['Reboot']='systemctl reboot'

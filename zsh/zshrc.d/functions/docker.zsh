@@ -16,12 +16,17 @@ function jwm() { # dockerでjwmを動かす。
   is_docker_running || return 1
 
   [[ -e /tmp/.X11-unix/X1 ]] \
-    && typeset -r exists='true' \
-    || Xephyr -wr -resizeable :1 &> /dev/null &
+    && typeset -r existed=1 \
+    || {
+        typeset -r existed=0;
+        Xephyr -wr -resizeable :1 &> /dev/null &;
+       }
 
   function share() {
     [[ $1 != 's' ]] && return 1
-    typeset -r root="${HOME}/workspace/docker/ubuntu-jwm/share" docker='/home/docker'
+    typeset -r \
+      root="${HOME}/workspace/docker/ubuntu-jwm/share" \
+      docker='/home/docker'
     [[ -d ${root} ]] || return 1
 
     echo "-v ${root}/data:${docker}/data" \
@@ -35,14 +40,16 @@ function jwm() { # dockerでjwmを動かす。
     -v "${HOME}/.config/pulse/cookie:/tmp/pulse/cookie" \
     -it --rm "${USER}/ubuntu-jwm" &> /dev/null
 
-  [[ -z ${exists} ]] && pkill Xephyr
+  [[ ${existed} -eq 0 ]] && pkill Xephyr
 }
 
 function drm() { # dockerのコンテナを選択して破棄
   is_docker_running || return 1
   type fzf &> /dev/null || return 1
 
-  typeset -r container=$(docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)")
+  typeset -r container=$(
+    docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)"
+  )
   [[ -n ${container} ]] \
     && echo "${container}" | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
 }
@@ -51,7 +58,9 @@ function drmi() { # dockerのimageを選択して破棄
   is_docker_running || return 1
   type fzf &> /dev/null || return 1
 
-  typeset -r image=$(docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)")
+  typeset -r image=$(
+    docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)"
+  )
   [[ -n ${image} ]] \
     && echo "${image}" | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
 }

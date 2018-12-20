@@ -1,28 +1,18 @@
 function _trash() {
-  [[ -n ${TRASH_PATH} ]] \
-    && typeset -r trash=${TRASH_PATH} \
-    || typeset -r trash="${HOME}/.Trash"
-
-  local ret=1
-
   function sub_commands() {
-    local -a _c=(
+    _values 'Commands' \
       'move' \
       'restore' \
       'list' \
       'size' \
       'delete' \
       'auto-delete'
-    )
-
-    _describe -t commands Commands _c
   }
 
   _arguments -C \
     '(-h --help)'{-h,--help}'[show help]' \
     '1: :sub_commands' \
-    '*:: :->args' \
-    && ret=0
+    '*:: :->args'
 
   case ${state} in
     (args)
@@ -47,8 +37,6 @@ function _trash() {
       esac
     ;;
   esac
-
-  return ret
 }
 compdef _trash trash
 

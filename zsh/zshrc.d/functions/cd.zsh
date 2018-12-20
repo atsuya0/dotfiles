@@ -1,5 +1,5 @@
 function print_parents() {
-  pwd | sed -E '/[^\/]$/s@$@/@;:a;s@[^/]+/$@@;p;/^\/$/!ba;d'
+  pwd | sed '/[^\/]$/s@$@/@;:a;s@[^/]\+/$@@;p;/^\/$/!ba;d'
 }
 
 # 親階層に移動する
@@ -30,9 +30,8 @@ function down() {
   local -A opthash
   zparseopts -D -A opthash -- d: e
 
-  if [[ -n "${opthash[(i)-e]}" ]]; then
-    typeset -r hidden='-name .\* -prune -o'
-  fi
+  [[ -n "${opthash[(i)-e]}" ]] \
+    && typeset -r hidden='-name .\* -prune -o'
 
   [[ "${opthash[-d]}" =~ ^[0-9]+$ ]] \
     && local depth="-maxdepth ${opthash[-d]}" \
@@ -76,7 +75,9 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
       local opt
       [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
       cat "${_CD_FILE}" \
-        | fzf --header='delete directory in the record' --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview' \
+        | fzf --header='delete directory in the record' \
+            --preview='tree -C {}' --preview-window='right:hidden' \
+            --bind='ctrl-v:toggle-preview' \
         | xargs -I{} sed -i "${opt}" 's@^{}$@@;/^$/d' "${_CD_FILE}"
     ;;
     * ) # 記録しているディレクトリを表示 使用頻度順

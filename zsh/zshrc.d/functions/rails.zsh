@@ -3,34 +3,28 @@ function rails() {
   docker info &> /dev/null || return 1
   [[ $# -eq 0 ]] && return 1
 
-  [[ $1 != "bundle" ]] \
-    && docker-compose run --rm rails rails $@ \
+  [[ $1 != 'bin/bundle' ]] \
+    && docker-compose run --rm rails bin/rails $@ \
     || docker-compose run --rm rails $@
 }
 
 function _rails() {
-  local ret=1
-
   function sub_commands() {
-    local -a _c=(
-      'bundle'
-      'generate'
-      'test'
-      'db\:setup'
-      'db\:reset'
-      'db\:seed'
-      'db\:migrate'
-      'db\:migrate\:reset'
+    _values 'Commands' \
+      'bin/bundle' \
+      'generate' \
+      'test' \
+      'console' \
+      'db\:setup' \
+      'db\:seed' \
+      'db\:migrate' \
+      'db\:migrate\:reset' \
       'db\:rollback'
-    )
-
-    _describe -t commands Commands _c
   }
 
   _arguments -C \
     '1: :sub_commands' \
-    '*:: :->args' \
-    && ret=0
+    '*:: :->args'
 
   case ${state} in
     (args)
@@ -39,19 +33,21 @@ function _rails() {
           _values 'menu' \
           'controller' \
           'view' \
-          'model'
+          'model' \
+          'integration_test'
         ;;
-        (bundle)
+        (bin/bundle)
           _values 'menu' \
-          'update' \
           'exec' \
           'init'
+        ;;
+        (console)
+          _values 'menu' \
+          '--sandbox'
         ;;
       esac
     ;;
   esac
-
-  return ret
 }
 
 compdef _rails rails

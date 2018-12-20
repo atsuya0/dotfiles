@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euCo pipefail
+
 function get_conf_path() {
   readlink -f ${0%.*}
 }

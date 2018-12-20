@@ -1,17 +1,17 @@
 # for display manager
 
-if [ -d /etc/X11/xinit/xinitrc.d ] ; then
-    for f in /etc/X11/xinit/xinitrc.d/?* ; do
+if [[ -d /etc/X11/xinit/xinitrc.d ]] ; then
+    for f in /etc/X11/xinit/xinitrc.d/?*; do
         [ -x "$f" ] && . "$f"
     done
     unset f
 fi
 
 # 日本語入力
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export XMODIFIERS=@im=fcitx
-export DefalutIMModule=fcitx
+export GTK_IM_MODULE='fcitx'
+export QT_IM_MODULE='fcitx'
+export XMODIFIERS='@im=fcitx'
+export DefalutIMModule='fcitx'
 type fcitx-autostart &> /dev/null && fcitx-autostart &
 
 # 壁紙を設定

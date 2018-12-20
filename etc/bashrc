@@ -30,7 +30,7 @@ HISTCONTROL=ignoreboth
 HISTSIZE=10000
 HISTFILESIZE=10000
 # history ignore
-HISTIGNORE=history:exit:cd*:ls*:ll*:rm*:pushd*:dirs:popd*:poweroff:reboot:lsblk:umount*:mkdir*:rmdir*:date*:tree*:touch*:ranger:feh*:export*:which*:startx:
+HISTIGNORE=:cd*:ls*:ll*:rm*:pushd*:dirs:popd*:poweroff:reboot:mount*:umount*:mkdir*:rmdir*:date*:tree*:touch*:feh*:export*:which*:
 # history time format
 HISTTIMEFORMAT='%m/%d/%T | '
 #----------------------------------------
@@ -55,9 +55,10 @@ shopt -s nullglob
 set -o noclobber
 [[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
 function share_history() {
-    history -a #キャッシュを~/.bash_historyに書き込む
-    history -c #キャッシュを削除
-    history -r #キャッシュに~/.bash_histroyを書き込む
+   # キャッシュをファイルに書き込む
+   # キャッシュを削除
+   # キャッシュにファイルを書き込む
+  history -a && history -c && history -r
 }
 # The value is executed as a command prior to issuing each primary prompt.
 PROMPT_COMMAND='share_history'
@@ -70,7 +71,7 @@ bind C-B:menu-complete-backword
 # fucntions
 #----------------------------------------
 function print_parents() {
-  pwd | sed -E '/[^\/]$/s@$@/@;:a;s@[^/]+/$@@;p;/^\/$/!ba;d'
+  pwd | sed '/[^\/]$/s@$@/@;:a;s@[^/]\+/$@@;p;/^\/$/!ba;d'
 }
 
 function up() {
@@ -81,6 +82,8 @@ function up() {
         --bind='ctrl-v:toggle-preview')
   elif [[ $1 =~ ^[0-9]+$ ]]; then
     local -r parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
+  else
+    local parent_path=$1
   fi
 
   builtin cd ${parent_path:-.}
@@ -125,9 +128,6 @@ function trash_function() {
     ;;
     'size' )
       du -hs ${trash_can} | awk '{print $1}'
-    ;;
-    * )
-      ls --color=auto ${trash_can}
     ;;
   esac
 }

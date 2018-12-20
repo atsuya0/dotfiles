@@ -87,12 +87,14 @@ function download_packages_from_aur() {
   )
 
   local -r build='build'
+  mkdir ${build}
+
+  local package
   for package in ${packages[@]}; do
-    mkdir ${build}
     curl -fsSL "https://aur.archlinux.org/cgit/aur.git/snapshot/{${package}}" \
       -o ${build}/#1 \
       && tar -xzf "${build}/${package}" \
-      && rm -r ${build}
+      && rm "${build}/${package}"
   done
 }
 

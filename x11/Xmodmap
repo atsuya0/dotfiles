@@ -8,17 +8,19 @@ clear Mod4
 
 keycode 100 = Super_R
 keycode 102 = Super_L
-keycode 133 = Super_L
+! keycode 133 = Super_L
 
 keycode  64 = Alt_L
-keycode  66 = Alt_L
 keycode 101 = Alt_R
 
-keycode  37 = Control_L
+! keycode  37 = Control_L
+keycode  66 = Control_L
 keycode 105 = Control_R
 keycode 108 = Control_R
-keycode 134 = Control_R
+! keycode 134 = Control_R
 keycode 135 = Control_R
+
+keycode  37 = Escape
 
 keycode  78 = plus
 keycode 127 = plus

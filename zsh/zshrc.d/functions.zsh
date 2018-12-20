@@ -142,14 +142,21 @@ function bak() { # Backup files with .bak after filename extension.
 }
 
 function new_sh() {
-  typeset -r name='tempalte.sh'
+  typeset -r name='x.sh'
   [[ -f ./${name} ]] && return 1
-  echo '#!/usr/bin/env bash\n' > ./${name}
+cat << "EOF" > ./${name}
+#!/usr/bin/env bash
+
+function main() {
+}
+
+main $@
+EOF
   chmod +x ./${name}
 }
 
 function new_py() {
-  typeset -r name='tempalte.py'
+  typeset -r name='x.py'
   [[ -f ./${name} ]] && return 1
 cat << "EOF" > ./${name}
 #!/usr/bin/env python3
@@ -260,7 +267,7 @@ function rs() { # Remove spaces from file names.
   done
 }
 
-function rn() { # Rename files using regular expression. Like Perl's rename command.
+function rn() { # Rename files using regular expression. Like perl's rename command.
   for i in {2..$#}; do
     local new=$(sed $1 <<< ${argv[${i}]})
     [[ -e ${argv[${i}]} && ${argv[${i}]} != ${new} ]] && mv "${argv[${i}]}" "${new}"

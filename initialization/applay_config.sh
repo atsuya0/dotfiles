@@ -12,6 +12,7 @@ function is_not_empty() {
 function place_config_files() {
   [[ $# -lt 2 ]] && return 1
   mkdir -p $2
+
   if [[ -f $1 && -s $1 ]]; then
     ln $1 "$2/"
   elif [[ -d $1 ]] && is_not_empty "$1/"; then
