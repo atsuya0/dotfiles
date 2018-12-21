@@ -2,7 +2,7 @@
 
 function __init_nvm__() { # nvm(Node.jsのversion管理)の初期設定を読み込む
   unset -f $@
-  typeset -r nvm_path='/usr/share/nvm'
+  local -r nvm_path='/usr/share/nvm'
   [[ -e "${nvm_path}/nvm.sh" ]] && source "${nvm_path}/nvm.sh"
 }
 

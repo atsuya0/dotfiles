@@ -8,9 +8,9 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
 # FZF_ALT_C_COMMAND FZF_ALT_C_OPTS
 
 () { # fzfの拡張を読み込む
-  typeset -r fzf_dir='/usr/share/fzf'
-  readonly local  keybind="${fzf_dir}/key-bindings.zsh"
-  typeset -r completion="${fzf_dir}/completion.zsh"
+  local -r fzf_dir='/usr/share/fzf'
+  local -r keybind="${fzf_dir}/key-bindings.zsh"
+  local -r completion="${fzf_dir}/completion.zsh"
   [[ -f ${keybind} ]] && source ${keybind}
   [[ -f ${completion} ]] && source ${completion}
 }
@@ -19,7 +19,7 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
 #   # ALT_Cにbindされてるfzfが用意しているwidgetを上書きしている。
 #   # 現階層以下のディレクトリからfzfを使って選び移動する。
 #
-#   typeset -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
+#   local -r dir=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
 #     | cut -c3- | fzf --select-1 --preview='tree -C {} | head -200' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
 #   eval builtin cd ${dir:-.}
 #

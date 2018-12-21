@@ -35,13 +35,13 @@ function __record_cmd__() {
 add-zsh-hook zshaddhistory __record_cmd__
 
 function __save_cmd__() {
-  typeset -r exit_status=$?
+  local -r exit_status=$?
   _cmd=$(tr -s ' ' <<< ${_cmd}) # 連続する空白を1つにす
   [[ ! ${_cmd} =~ ' ' ]] && return # 引数やオプションを指定していない場合は記録しない
   [[ ${_cmd} =~ '^ ' ]] && return
 
   # 履歴に記録しないコマンドを記述
-  typeset -r ignore_cmds=(
+  local -ar ignore_cmds=(
     ls cd mv cp rm mkdir rmdir touch man less history source '\.'
     vi export type which file stat command builtin grep ln cat wall
     test '\[' '\[\[' sudoedit mount umount kill pkill pgrep echo

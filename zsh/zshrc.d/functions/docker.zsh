@@ -16,15 +16,15 @@ function jwm() { # dockerでjwmを動かす。
   is_docker_running || return 1
 
   [[ -e /tmp/.X11-unix/X1 ]] \
-    && typeset -r existed=1 \
+    && local -r existed=1 \
     || {
-        typeset -r existed=0;
+        local -r existed=0;
         Xephyr -wr -resizeable :1 &> /dev/null &;
        }
 
   function share() {
     [[ $1 != 's' ]] && return 1
-    typeset -r \
+    local -r \
       root="${HOME}/workspace/docker/ubuntu-jwm/share" \
       docker='/home/docker'
     [[ -d ${root} ]] || return 1
@@ -47,7 +47,7 @@ function drm() { # dockerのコンテナを選択して破棄
   is_docker_running || return 1
   type fzf &> /dev/null || return 1
 
-  typeset -r container=$(
+  local -r container=$(
     docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)"
   )
   [[ -n ${container} ]] \
@@ -58,7 +58,7 @@ function drmi() { # dockerのimageを選択して破棄
   is_docker_running || return 1
   type fzf &> /dev/null || return 1
 
-  typeset -r image=$(
+  local -r image=$(
     docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)"
   )
   [[ -n ${image} ]] \

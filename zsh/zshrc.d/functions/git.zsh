@@ -21,7 +21,7 @@ function fgco() { # git checkout の引数をfilterで選択する
   is_managed || return 1
   type fzf > /dev/null 2>&1 || return 1
 
-  typeset -r branch=$(git branch | tr -d ' ' | sed /^\*/d | fzf)
+  local -r branch=$(git branch | tr -d ' ' | sed /^\*/d | fzf)
   [[ -n ${branch} ]] && git checkout "${branch}"
 }
 
@@ -30,7 +30,7 @@ function gmv() { # git mv
   [[ $# -ne 0 ]] || return 1
   [[ ${argv[$(expr $# - 1)]} == '-t' ]] || return 1
 
-  typeset -r target=${argv[$#]}
+  local -r target=${argv[$#]}
   for i in {1..$(expr $# - 2)}; do
     git mv "${argv[$i]}" "${target}"
   done

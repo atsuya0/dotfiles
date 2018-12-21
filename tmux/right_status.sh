@@ -55,12 +55,11 @@ function load_average() {
   echo "$(separator 'black')$(output -n 'blue' -s ${src}/${cpus})"
 }
 
-# ネットワーク
-function wlan() {
-  local signal
-  type iw &> /dev/null \
-    && [[ $(iw dev wlp4s0 link) != 'Not connected.' ]] \
-    && signal="-$(iw dev wlp4s0 link | grep signal | grep -o '[0-9]*')dBm"
+# 電波強度
+function network_level() {
+  ip link | grep 'UP' > /dev/null || return 1
+  local -r signal=$(cat /proc/net/wireless \
+    | tail -1 | tr -s ' ' | cut -d' ' -f4 | sed 's/\./dBm/')
   echo "$(separator 'blue')$(output -n 'black' -s ${signal:----})"
 }
 
@@ -147,7 +146,7 @@ function main() {
   if [[ $1 == 'short' ]];then
     echo -n "$(memory)$(load_average)"
   else
-    echo -n "$(memory)$(load_average)$(wlan)$(sound)$(hours_minutes)$(battery)"
+    echo -n "$(memory)$(load_average)$(network_level)$(sound)$(hours_minutes)$(battery)"
   fi
   echo '  '
 }

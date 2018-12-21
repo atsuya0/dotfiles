@@ -6,7 +6,7 @@ function dtr() {
 }
 
 function cc() { # Character Counter
-  [[ -s $1 ]] && cat $1 | sed ':l;N;$!bl;s/\n//g' | wc -m
+  [[ -s $1 ]] && cat $1 | sed ':a;N;$!ba;s/\n//g' | wc -m
 }
 
 function colors(){

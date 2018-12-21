@@ -16,10 +16,12 @@ setopt correct
 setopt ignore_eof
 # Allows `>' redirection to truncate existing files.  Otherwise `>!' or `>|' must be used to truncate a file.
 unsetopt clobber
+# Causes field splitting to be performed on unquoted parameter expansions.
+# setopt sh_word_split
 
 source '/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' 2> /dev/null
 
-typeset -r ignore_absolute_paths=(
+typeset -ar ignore_absolute_paths=(
   ${HOME}/.cache/dein/repos
   ${HOME}/.cache/dein/.cache
   ${HOME}/.cache/pip
@@ -31,7 +33,8 @@ typeset -r ignore_absolute_paths=(
   ${HOME}/.cache/chromium
   ${HOME}/.config/chromium
   ${HOME}/.config/fcitx
-  ${HOME}/.config/Code
+  "${HOME}/.config/Code\\\ -\\\ OSS"
+  ${HOME}/.vscode-oss
   ${HOME}/.config/nvim/undo
   ${HOME}/.local/lib
   ${HOME}/.rustup
@@ -42,13 +45,15 @@ typeset -r ignore_absolute_paths=(
   ${HOME}/.nvm/versions
   ${HOME}/.java
   ${HOME}/workspace/docker
-  ${HOME}/Downloads
+  ${HOME}/samples
   ${HOME}/.Trash
   ${GOPATH}/pkg
   ${GOPATH}/src
 )
 function ignore_absolute_paths() {
-  sed 's/ /\n/g' <<< ${ignore_absolute_paths} \
+  local IFS=$'\n'
+
+  print -C 1 ${ignore_absolute_paths[@]} \
     | grep "^$(pwd)" \
     | sed "s@$(pwd)@.@;s/.*/-path & -prune -o/g"
 }

@@ -1,5 +1,5 @@
 () {
-  typeset -r dir="${ZDOTDIR}/zshrc.d/functions"
+  local -r dir="${ZDOTDIR}/zshrc.d/functions"
   local file
   [[ -d ${dir} && -z $(find ${dir} -maxdepth 0 -type d -empty) ]] || return 1
   for file in ${dir}/*.zsh; do
@@ -7,7 +7,8 @@
   done
 }
 
-function cmd_exists() { # The which command that does not find alias or function.
+# The which command that does not find alias or function.
+function cmd_exists() {
   [[ -n $(echo ${PATH//:/\\n} | xargs -I{} find {} -type f -name $1) ]] \
     && return 0
   return 1
@@ -16,7 +17,7 @@ function cmd_exists() { # The which command that does not find alias or function
 function __src_to_dest__() {
   type fzf &> /dev/null || return 1
 
-  typeset -r fzf_options=" \
+  local -r fzf_options=" \
     --preview='less {}' \
     --preview-window='right' \
     --bind='ctrl-v:toggle-preview'"
@@ -56,9 +57,10 @@ function __src_to_dest__() {
     [[ ${#src[@]} -eq 0 ]] && return 1
   fi
 
-  [[ -z ${dest} ]] \
-    && dest=$(eval find -mindepth 1 $(ignore_absolute_paths) -type d -print 2> /dev/null \
-        | cut -c3- | eval fzf --header="'${src[@]}'" ${fzf_options})
+  [[ -z ${dest} ]] && dest=$( \
+    eval find -mindepth 1 $(ignore_absolute_paths) -type d \
+      -print 2> /dev/null \
+    | cut -c3- | eval fzf --header="'${src[@]}'" ${fzf_options})
 
   [[ -n ${dest} ]] && eval ${cmd} "-${opt}" ${src[@]} -t ${dest}
 }
@@ -92,13 +94,13 @@ function wifi() {
   zparseopts -D -A options -- r s
 
   if [[ -n "${options[(i)-r]}" ]]; then
-    typeset -r ssid=$(netctl list | sed '/^\*/!d;s/[\* ]*//')
+    local -r ssid=$(netctl list | sed '/^\*/!d;s/[\* ]*//')
     [[ -z ${ssid} ]] && echo 'Not connected' && return 1
     sudo netctl restart ${ssid}
   elif [[ -n "${options[(i)-s]}" ]]; then
     sudo netctl stop-all
   else
-    typeset -r ssid=$(netctl list | fzf --select-1)
+    local -r ssid=$(netctl list | fzf --select-1)
     [[ -n ${ssid} ]] && sudo netctl start ${ssid// /}
   fi
 }
@@ -118,7 +120,7 @@ function interactive() {
 }
 
 function bat() { # Battery
-  typeset -r bat='/sys/class/power_supply/BAT1'
+  local -r bat='/sys/class/power_supply/BAT1'
   [[ -e ${bat} ]] \
     && cat "${bat}/capacity" | sed 's/$/%/' \
     || echo 'No Battery'
@@ -142,7 +144,7 @@ function bak() { # Backup files with .bak after filename extension.
 }
 
 function new_sh() {
-  typeset -r name='x.sh'
+  local -r name='x.sh'
   [[ -f ./${name} ]] && return 1
 cat << "EOF" > ./${name}
 #!/usr/bin/env bash
@@ -156,7 +158,7 @@ EOF
 }
 
 function new_py() {
-  typeset -r name='x.py'
+  local -r name='x.py'
   [[ -f ./${name} ]] && return 1
 cat << "EOF" > ./${name}
 #!/usr/bin/env python3
@@ -170,9 +172,10 @@ EOF
 }
 
 # Bluetooth tethering
-# Do not use the anaconda's dbus-send.  The AC_CF_85_B7_9D_9A is MAC address of the smartphone。
+# Do not use the anaconda's dbus-send.
+# The AC_CF_85_B7_9D_9A is MAC address of the smartphone。
 function bt() {
-  typeset -r ADDR='AC:CF:85:B7:9D:9A'
+  local -r ADDR='AC:CF:85:B7:9D:9A'
 
   systemctl is-active bluetooth &> /dev/null \
     || sudo systemctl start bluetooth.service
@@ -228,8 +231,8 @@ compdef _crypt crypt
 
 function md() { # multi displays
   type xrandr &> /dev/null || return 1
-  typeset -r primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)
-  typeset -r second=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
+  local -r primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)
+  local -r second=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
 
   case $1 in
   'school' )
@@ -248,7 +251,7 @@ function md() { # multi displays
   esac
 
   type fzf &> /dev/null || return 1
-  typeset -r mode=$(xrandr | sed -n "/^${second}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
+  local -r mode=$(xrandr | sed -n "/^${second}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
   [[ -n ${mode} ]] \
     && xrandr --output ${second} --left-of ${primary} --mode ${mode}
 }
@@ -270,7 +273,8 @@ function rs() { # Remove spaces from file names.
 function rn() { # Rename files using regular expression. Like perl's rename command.
   for i in {2..$#}; do
     local new=$(sed $1 <<< ${argv[${i}]})
-    [[ -e ${argv[${i}]} && ${argv[${i}]} != ${new} ]] && mv "${argv[${i}]}" "${new}"
+    [[ -e ${argv[${i}]} && ${argv[${i}]} != ${new} ]] \
+      && mv "${argv[${i}]}" "${new}"
   done
 }
 
@@ -300,11 +304,12 @@ function ct() {
   [[ -n "${options[(i)-X]}" ]] && method="${options[-X]}"
   [[ -n "${options[(i)-d]}" ]] && data="-d ${options[-d]}"
 
-  typeset -r methods=('GET' 'POST' 'PUT' 'DELETE')
+  local -ar methods=('GET' 'POST' 'PUT' 'DELETE')
   [[ -z ${method} ]] \
     && type fzf &> /dev/null \
     && method=$(echo ${methods} | sed 's/ /\n/g' | fzf)
-  curl ${options[(i)-I]} -X ${method:-GET} ${data} -H "'Content-Type: application/json'" "http://localhost:9000$1"
+  curl ${options[(i)-I]} -X ${method:-GET} ${data} \
+    -H "'Content-Type: application/json'" "http://localhost:9000$1"
 }
 
 function _ct() {
@@ -324,7 +329,7 @@ compdef _ct ct
 function mnt() {
   [[ $# -eq 0 ]] && return 1
 
-  typeset -r mount_path="${HOME}/mnt"
+  local -r mount_path="${HOME}/mnt"
   if [[ -d ${2:=${mount_path}} ]]; then
     [[ -z $(find $2 -maxdepth 0 -type d -empty) ]] \
       && return 1
@@ -336,7 +341,48 @@ function mnt() {
 }
 
 function umnt() {
-  typeset -r mount_path="${HOME}/mnt"
+  local -r mount_path="${HOME}/mnt"
   sudo umount -R ${1:=${mount_path}}
   rmdir $1
+}
+
+function vscode_extensions() {
+  type code &> /dev/null || return 1
+
+  local -r store="${DOTFILES:-${HOME}}/vscode/extensions.txt"
+  local -r error_msg="extension is not saved\nplease execute: $0 save"
+
+  case $1 in
+    'save' )
+      local -r extensions=$(code --list-extensions)
+      [[ -e ${store} ]] \
+        && diff -s ${store} <(echo ${extensions[@]}) > /dev/null \
+        && return
+      echo ${extensions} >! ${store}
+    ;;
+    'install' )
+      [[ -e ${store} ]] || { echo ${error_msg}; return 1; }
+      cat ${store} | while read -r extension; do
+        code --install-extension ${extension}
+      done
+    ;;
+    * )
+      [[ -e ${store} ]] || { echo ${error_msg}; return 1; }
+      cat ${store}
+    ;;
+  esac
+}
+function _vscode_extensions() {
+  _values 'cmd' \
+    'save' \
+    'install'
+}
+compdef _vscode_extensions vscode_extensions
+
+function ssid() {
+  type wpa_cli &> /dev/null || return 1
+
+  local -r interface=$(command ip -o link show up | grep -v 'lo:' | tr -d ' ' | cut -d: -f2)
+  { echo 'status'; echo 'quit'; } \
+    | wpa_cli -i ${interface} | grep '^ssid=' | cut -d= -f2
 }

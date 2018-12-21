@@ -10,7 +10,7 @@ function vim() { # Choose files to open by fzf.
   }
 
   function ignore_filetypes() {
-    typeset -ar ignore_filetypes=(
+    local -ar ignore_filetypes=(
       pdf png jpg jpeg mp3 mp4 tar.gz zip
     )
     echo ${ignore_filetypes[@]} \
@@ -19,7 +19,7 @@ function vim() { # Choose files to open by fzf.
   }
 
   function ignore_dirs() {
-    typeset -ar ignore_dirs=(
+    local -ar ignore_dirs=(
       .git
       node_modules # node.js
       vendor # golang
@@ -43,14 +43,14 @@ function vim() { # Choose files to open by fzf.
 
   if [[ $# -ne 0 ]]; then
     [[ -d $1 ]] \
-      && typeset -r files=$(choice $1) \
+      && local -r files=$(choice $1) \
       || { eval $(editor $@); return 0; }
     [[ -n ${files} ]] && { eval $(editor ${files}); return 0; }
     return 1
   fi
 
   type fzf &> /dev/null || return 1
-  typeset -r files=$(choice)
+  local -r files=$(choice)
   [[ -n ${files} ]] && eval $(editor ${files})
 }
 
@@ -65,7 +65,7 @@ function ranger() { # rangerのサブシェルでネストしないようにす�
 }
 
 function w3m(){
-  # 引数に検索したい単語を渡せばgoogle検索を行う
+  # google search
   # w3m search windows bsd linux
 
   [[ $1 == 'search' && $# -ge 2 ]] && { \
@@ -79,9 +79,10 @@ function w3m(){
   } || command w3m $@
 }
 
-function scrot() { # スクリーンショット
-  [[ $# -eq 0 ]] \
-    && command scrot -u -q 100 '%Y-%m-%d_%H:%M:%S.png' \
-      -e '[[ -d ~/Content/pictures/screenshot/ ]] && mv $f ~/Content/pictures/screenshot/' \
-    || command scrot $@
+function scrot() { # screenshot
+  local -r dir="${HOME}/contents/pictures/screenshot/"
+  [[ -d ${dir} ]] || mkdir -p ${dir}
+
+  command scrot $1 -q 100 '%Y-%m-%d_%H:%M:%S.png' \
+    -e "mv \$f ${dir}"
 }

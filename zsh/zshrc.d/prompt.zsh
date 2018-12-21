@@ -1,5 +1,5 @@
 function __path_prompt__() { # カレントディレクトリのpathを画面の横幅に応じて短縮する。
-  typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
+  local -r pwd=$(pwd | sed "s@${HOME}@~@")
   local num
   # 表示するディレクトリ名の文字数を決める
   let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c 'test 1 -gt {} && echo 1 || echo {}')/$(echo ${pwd} | grep -o '[~/]' | wc -l)
@@ -17,8 +17,8 @@ function __git_prompt__() {
   RPROMPT=''
   type git &> /dev/null || return 1
   git status &> /dev/null || return 1
-  typeset -r git_info=("${(f)$(git status --porcelain --branch)}")
-  typeset -r icon=''
+  local -ar git_info=("${(f)$(git status --porcelain --branch)}")
+  local -r icon=''
   local branch="${icon} $(sed 's/## \([^\.]*\).*/\1/' <<< ${git_info[1]})"
 
   if [[ $(echo ${git_info[1]} | grep -o '\[.*\]') =~ '[ahead .*]' ]]; then

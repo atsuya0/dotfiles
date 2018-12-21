@@ -55,7 +55,6 @@ function main() {
 
   local -ar packages=(
     'nvm'
-    'visual-studio-code-bin'
   )
 
   local -r dir="build_$(date +%T)"

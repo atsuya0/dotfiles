@@ -2,18 +2,26 @@ function print_parents() {
   pwd | sed '/[^\/]$/s@$@/@;:a;s@[^/]\+/$@@;p;/^\/$/!ba;d'
 }
 
+function shorten_path() {
+  while read -r line; do
+    sed 's@\(.\)/$@\1@;s@\([^/]\{1\}\)[^/]*/@\1/@g' <<< ${line}
+  done
+}
+
 # 親階層に移動する
 # up 2    -> cd ../..
 # up      -> use filter
 function up() {
-  if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
-    type print_parents &> /dev/null || return 1
-    local parent_path=$(print_parents \
-      | fzf --preview='tree -C {}' --preview-window='right' --bind='ctrl-v:toggle-preview')
+  if [[ $# -eq 0 ]] \
+    && type fzf &> /dev/null && type print_parents &> /dev/null
+  then
+    local -r parent_path=$(print_parents \
+      | fzf --delimiter=/ --nth=-2 --bind='ctrl-v:toggle-preview' \
+          --preview='tree -C {}' --preview-window='right')
   elif [[ $1 =~ ^[0-9]+$ ]]; then
-    local parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
+    local -r parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
   else
-    local parent_path=$1
+    local -r parent_path=$1
   fi
 
   builtin cd ${parent_path:-.}
@@ -31,7 +39,7 @@ function down() {
   zparseopts -D -A opthash -- d: e
 
   [[ -n "${opthash[(i)-e]}" ]] \
-    && typeset -r hidden='-name .\* -prune -o'
+    && local -r hidden='-name .\* -prune -o'
 
   [[ "${opthash[-d]}" =~ ^[0-9]+$ ]] \
     && local depth="-maxdepth ${opthash[-d]}" \
@@ -60,7 +68,7 @@ compdef _down down
 alias dw='down'
 
 function __save_pwd__() { # 移動履歴をファイルに記録する。~, / は記録しない。
-  typeset -r pwd=$(pwd | sed "s@${HOME}@~@")
+  local -r pwd=$(pwd | sed "s@${HOME}@~@")
   [[ ${#pwd} -gt 2 ]] && echo "${pwd}" >> "${_CD_FILE}"
 }
 add-zsh-hook chpwd __save_pwd__

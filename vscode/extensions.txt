@@ -1,0 +1,9 @@
+dbaeumer.vscode-eslint
+eg2.tslint
+esbenp.prettier-vscode
+msjsdiag.debugger-for-chrome
+octref.vetur
+robertohuertasm.vscode-icons
+vscodevim.vim
+xabikos.JavaScriptSnippets
+zhuangtongfa.Material-theme

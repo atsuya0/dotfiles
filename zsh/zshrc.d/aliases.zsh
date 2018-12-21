@@ -12,6 +12,7 @@ alias du='du -h'
 alias df='df -hT'
 alias ip='ip -c'
 alias pgrep='pgrep -a'
+alias diff='diff --color'
 alias nano='nano -$ -l -i -O -m -c' # オブションは個々に指定してないと効かない
 
 alias tree='tree -C'
@@ -24,6 +25,7 @@ alias poweroff='interactive systemctl poweroff'
 alias reboot='interactive systemctl reboot'
 alias logout='interactive i3-msg exit'
 alias lock='light-locker-command -l'
+alias set_wallpaper='feh --no-fehbg --bg-scale /home/tayusa/contents/pictures/wallpaper/arch/Ju5PuBC.jpg'
 
 alias -g @g='| grep'
 alias -g @l='| less'

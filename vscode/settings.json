@@ -1,0 +1,19 @@
+{
+    "workbench.startupEditor": "newUntitledFile",
+    "workbench.iconTheme": "vscode-icons",
+    "files.autoSave": "onFocusChange",
+    "editor.fontFamily": "Hack, 'Fira code', 'Droid Sans Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+    "editor.tabSize": 2,
+    "editor.cursorBlinking": "expand",
+    "editor.fontSize": 13,
+    "vim.enableNeovim": true,
+    "vim.autoSwitchInputMethod.obtainIMCmd": "",
+    "vim.autoSwitchInputMethod.switchIMCmd": "",
+    "vim.useSystemClipboard": true,
+    "vim.hlsearch": true,
+    "vim.easymotion": true,
+    "vim.visualstar": true,
+    "editor.minimap.enabled": false,
+    "workbench.colorTheme": "One Dark Pro",
+    "window.titleBarStyle": "custom"
+}

@@ -75,15 +75,16 @@ function print_parents() {
 }
 
 function up() {
-  if [[ $# -eq 0 ]] && type fzf &> /dev/null; then
-    type print_parents &> /dev/null || return 1
+  if [[ $# -eq 0 ]] \
+    && type fzf &> /dev/null && type print_parents &> /dev/null
+  then
     local -r parent_path=$(print_parents \
-      | fzf --preview='tree -C {}' --preview-window='right' \
-        --bind='ctrl-v:toggle-preview')
+      | fzf --delimiter=/ --nth=-2 --bind='ctrl-v:toggle-preview' \
+          --preview='tree -C {}' --preview-window='right')
   elif [[ $1 =~ ^[0-9]+$ ]]; then
     local -r parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
   else
-    local parent_path=$1
+    local -r parent_path=$1
   fi
 
   builtin cd ${parent_path:-.}

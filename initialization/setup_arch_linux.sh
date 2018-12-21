@@ -83,7 +83,6 @@ EOF
 function download_packages_from_aur() {
   local -ar packages=(
     'nvm.tar.gz'
-    'visual-studio-code-bin.tar.gz'
   )
 
   local -r build='build'
