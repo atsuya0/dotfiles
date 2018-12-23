@@ -72,12 +72,15 @@ hook_source = '''
   call denite#custom#var(
     \ 'grep', 'default_opts', ['-nH'])
 
-  call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
-    \ ['.git/', 'vendor/', 'node_modules/', 'images/', 'img/', 'db/data/'])
-  call denite#custom#source(
-    \ 'file_rec', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
-  call denite#custom#source(
-    \ 'grep', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
+  call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+  call denite#custom#var('file/rec/git', 'command',
+        \ ['git', 'ls-files', '-co', '--exclude-standard'])
+  " call denite#custom#source(
+  "   \ 'file_rec', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
+  " call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
+  "   \ ['.git/', 'vendor/', 'node_modules/', 'images/', 'img/', 'db/data/'])
+  " call denite#custom#source(
+  "   \ 'grep', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
 
   call denite#custom#map(
     \ 'insert', '<C-j>', '<denite:move_to_next_line>', 'noremap')

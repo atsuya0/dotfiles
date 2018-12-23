@@ -307,7 +307,7 @@ function ct() {
   local -ar methods=('GET' 'POST' 'PUT' 'DELETE')
   [[ -z ${method} ]] \
     && type fzf &> /dev/null \
-    && method=$(echo ${methods} | sed 's/ /\n/g' | fzf)
+    && method=$(print -C 1 ${methods[@]} | fzf)
   curl ${options[(i)-I]} -X ${method:-GET} ${data} \
     -H "'Content-Type: application/json'" "http://localhost:9000$1"
 }

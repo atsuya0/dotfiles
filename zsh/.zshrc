@@ -52,15 +52,14 @@ typeset -ar ignore_absolute_paths=(
 )
 function ignore_absolute_paths() {
   local IFS=$'\n'
-
-  print -C 1 ${ignore_absolute_paths[@]} \
+  echo "${ignore_absolute_paths[*]}" \
     | grep "^$(pwd)" \
     | sed "s@$(pwd)@.@;s/.*/-path & -prune -o/g"
 }
 
 autoload -Uz colors && colors
 source "${ZDOTDIR}/zshrc.d/prompt.zsh"
-source "${ZDOTDIR}/zshrc.d/tmux.zsh"
+source "${ZDOTDIR}/zshrc.d/tmux_status.zsh"
 source "${ZDOTDIR}/zshrc.d/completion.zsh"
 source "${ZDOTDIR}/zshrc.d/history.zsh"
 source "${ZDOTDIR}/zshrc.d/keybind.zsh"

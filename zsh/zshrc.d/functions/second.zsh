@@ -51,26 +51,40 @@ compdef _second second
 
 alias sc='second'
 
-function second_with_tmux() {
+function print_available_session_names() {
+  diff --new-line-format='' --old-line-format='%L' --unchanged-line-format='' \
+    <(second list --name) <(tmux ls -F '#{session_name}')
+}
+
+function second_with_tmux_session() {
   type tmux &> /dev/null \
     || { echo 'tmux is required.'; return 1; }
   type second &> /dev/null \
     || { echo 'second is required.';  return 1; }
 
-  [[ $# -eq 0 ]] \
-    && { second list --name; return 1; }
-  second list --name | grep -q "^$1$" || { echo 'invalid argument'; return 1; }
-  tmux ls -F '#{session_name}' | grep -q "^$1$" && { echo 'already exists'; return 1; }
+  if [[ $# -eq 0 ]]; then
+    type fzf &> /dev/null || { print_available_session_names; return 1; }
+    local -r session_name=$(print_available_session_names | fzf)
+    [[ -z ${session_name} ]] && return 1
+  else
+    local -r session_name=$1
+    second list --name \
+      | grep -q "^${session_name}$" \
+      || { echo 'invalid argument'; return 1; }
+    tmux ls -F '#{session_name}' \
+      | grep -q "^${session_name}$" \
+      && { echo 'already exists'; return 1; }
+  fi
 
-  tmux new-session -s $1 -d -c $(command second change $1)
-  tmux switch-client -t $1
+  tmux new-session -s ${session_name} -d -c $(command second change ${session_name})
+  tmux switch-client -t ${session_name}
 }
 
-function _second_with_tmux() {
+function _second_with_tmux_session() {
   _values \
-    'Second names' \
-    $(second list --name)
+    'Session names' \
+    $(print_available_session_names)
 }
-compdef _second_with_tmux second_with_tmux
+compdef _second_with_tmux_session second_with_tmux_session
 
-alias sct='second_with_tmux'
+alias tsc='second_with_tmux_session'

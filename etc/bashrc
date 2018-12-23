@@ -7,13 +7,13 @@ export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_CACHE_HOME="${HOME}/.cache"
 export GREP_COLOR='1;33'
 export LESS='-iMRgW -j10 -x2 --no-init --quit-if-one-screen +5'
-export LESS_TERMCAP_mb="$(echo -n '\e[34;1m')"
-export LESS_TERMCAP_md="$(echo -n '\e[34;1m')"
-export LESS_TERMCAP_me="$(echo -n '\e[37m')"
-export LESS_TERMCAP_se="$(echo -n '\e[37m')"
-export LESS_TERMCAP_so="$(echo -n '\e[31;40;1m')"
-export LESS_TERMCAP_ue="$(echo -n '\e[32;1m')"
-export LESS_TERMCAP_us="$(echo -n '\e[32;1m')"
+# export LESS_TERMCAP_mb="$(echo -n '\e[34;1m')"
+# export LESS_TERMCAP_md="$(echo -n '\e[34;1m')"
+# export LESS_TERMCAP_me="$(echo -n '\e[37m')"
+# export LESS_TERMCAP_se="$(echo -n '\e[37m')"
+# export LESS_TERMCAP_so="$(echo -n '\e[31;40;1m')"
+# export LESS_TERMCAP_ue="$(echo -n '\e[32;1m')"
+# export LESS_TERMCAP_us="$(echo -n '\e[32;1m')"
 export MANPAGER='less'
 export EDITOR='nano'
 export VISUAL='nano'
@@ -138,10 +138,10 @@ alias tsize='trash_function size'
 #----------------------------------------
 # aliases
 #----------------------------------------
-alias rm=':'
+alias rm="echo 'Don't use the rm command'"
 alias ls='ls --color=auto'
 alias ll='ls -FAlht --color=auto'
-alias grep='grep -i --color=auto'
+alias grep='grep --color=auto'
 alias mv='mv -iv'
 alias cp='cp -iv'
 alias ln='ln -iv'

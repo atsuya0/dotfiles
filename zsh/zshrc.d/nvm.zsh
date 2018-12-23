@@ -6,7 +6,7 @@ function __init_nvm__() { # nvm(Node.jsのversion管理)の初期設定を読み
   [[ -e "${nvm_path}/nvm.sh" ]] && source "${nvm_path}/nvm.sh"
 }
 
-typeset -gar __node_cmds__=(
+typeset -ar __node_cmds__=(
   'nvm'
   'node'
   'npm'

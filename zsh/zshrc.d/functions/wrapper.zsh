@@ -13,8 +13,7 @@ function vim() { # Choose files to open by fzf.
     local -ar ignore_filetypes=(
       pdf png jpg jpeg mp3 mp4 tar.gz zip
     )
-    echo ${ignore_filetypes[@]} \
-      | tr ' ' '\n' \
+    print -C 1 ${ignore_filetypes[@]} \
       | sed 's/.*/-name \\*& -prune -o/'
   }
 
@@ -28,8 +27,7 @@ function vim() { # Choose files to open by fzf.
       db/data # docker
       tmp/cache # rails
     )
-    echo ${ignore_dirs[@]} \
-      | tr ' ' '\n' \
+    print -C 1 ${ignore_dirs[@]} \
       | sed 's/.*/-path \\*&\\* -prune -o/'
   }
 

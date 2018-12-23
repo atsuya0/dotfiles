@@ -3,7 +3,7 @@
 set -euCo pipefail
 
 function get_conf_path() {
-  readlink -f ${0%.*}
+  realpath ${0%.*}
 }
 
 function create_Gemfile() {

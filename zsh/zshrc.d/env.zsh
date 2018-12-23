@@ -8,7 +8,7 @@ export SECOND_LIST_PATH="${HOME}/.second_list.json"
 type ruby &> /dev/null \
   && local gem_path="$(ruby -e 'print Gem.user_dir')/bin"
 
-typeset -gr path=(
+typeset -r path=(
   $([[ -d ${DOTFILES}/script ]] && echo ${DOTFILES}/script)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
   ${gem_path}

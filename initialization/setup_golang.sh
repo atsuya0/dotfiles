@@ -11,7 +11,7 @@ function install_my_tool() {
   cd "${GOPATH}/src/${root}/$1"
   [[ -f 'Gopkg.toml' ]] && dep ensure
   go install
-  cd "$(dirname $(readlink -f $0))"
+  cd "$(dirname $(realpath $0))"
 }
 
 function main() {
@@ -44,4 +44,4 @@ function main() {
 }
 
 main
-trap "cd $(dirname $(readlink -f $0))" EXIT
+trap "cd $(dirname $(realpath $0))" EXIT

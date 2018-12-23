@@ -4,7 +4,7 @@ alias grep='grep --color=auto'
 alias mv='mv -iv'
 alias cp='cp -iv'
 alias ln='ln -iv'
-alias rm="echo \"$(basename $SHELL): command not found: rm\""
+alias rm="echo 'zsh: command not found: rm'"
 alias mkdir='mkdir -pv'
 alias hist='history -i 1'
 alias free='free -hw'

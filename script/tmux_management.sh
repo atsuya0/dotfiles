@@ -9,37 +9,40 @@ function list_other_session_name() {
     | cut -d: -f2
 }
 
-function choice() {
-  local -r separate="seq -s '-' $(expr $(tput cols) / 2) | tr -d '[:digit:]' | sed 's/.*/\n&\n/'"
-  local -r list_window_title="echo -e \"\033[1;34mlist-windows\033[0;49m\""
-  local -r list_windows='tmux list-windows -t {} | cut -d' ' -f2 | nl'
-  local -r capture_pane_title="echo -e \"\033[1;34mcapture_pane\033[0;49m\""
+function choose() {
+  function title() {
+    echo "\n[ \033[1;34m$1\033[0;49m ]\n"
+  }
+  local -r list_windows="tmux list-windows -t {} | cut -d' ' -f1-2"
   local -r capture_pane='tmux capture-pane -e -J -t {} -p'
 
-  fzf --reverse --exit-0 --select-1 \
-    --preview="${separate};${list_window_title};${list_windows}; \
-      ${separate};${capture_pane_title};${capture_pane}" \
+  fzf --reverse --exit-0 \
+    --preview="echo -e '$(title 'list_windows')' && ${list_windows} \
+                && echo -e '$(title 'capture_pane')' && ${capture_pane}" \
     --preview-window='right:80%'
+
+  return 0
 }
 
 function new_session() {
-  local prefix
-  [[ -f "${DOTFILES}/tmux/tmux.conf" ]] && prefix="${DOTFILES}/tmux/"
+  [[ -f "${DOTFILES}/tmux/tmux.conf" ]] \
+    && local prefix="${DOTFILES}/tmux/"
   tmux -f "${prefix:-${HOME}/.}tmux.conf" -2 new-session -s $1
 }
 
 function start_tmux() {
-  local -r new='<new-session>'
-  local session_name
-  session_name=$(
-    tmux ls -F '#{session_name}' | sed "$(echo '$a') ${new}" | choice
-  )
+  function not_choose() {
+    local input
+    read -sp 'new-session [y/n]' input
+    [[ ${input} == 'y' ]] \
+      && new_session "tmp_$(date +%s | cut -c6-)"
+  }
 
-  if [[ ${session_name} == ${new} ]]; then
-    new_session "tmp_$(date +%s | cut -c6-)"
-  elif [[ -n ${session_name} ]]; then
-    tmux attach-session -t ${session_name}
-  fi
+  local session_name
+  session_name=$(tmux ls -F '#{session_name}' | choose)
+  [[ -n ${session_name} ]] \
+    && tmux attach-session -t ${session_name} \
+    || not_choose
 }
 
 function main() {
@@ -52,7 +55,7 @@ function main() {
   # Attached session.
   [[ -n ${TMUX} ]] \
     && ( list_other_session_name \
-          | choice | xargs -I{} tmux switch-client -t {}; return 0 ) \
+          | choose | xargs -I{} tmux switch-client -t {}; return 0 ) \
     || start_tmux
 }
 

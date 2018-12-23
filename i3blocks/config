@@ -24,7 +24,7 @@ interval=1
 
 [network]
 label=
-command=ip link | grep 'UP' > /dev/null && type wpa_cli &> /dev/null && echo "$({ echo 'status'; echo 'quit'; } | wpa_cli -i $(ip -o link show up | grep -v 'lo:' | tr -d ' ' | cut -d: -f2 )| grep '^ssid=' | cut -d= -f2) : $(cat /proc/net/wireless | tail -1 | tr -s ' ' | cut -d' ' -f4 | sed 's/\./dBm/')"
+command=[[ -n $(ip link show up dev wlp4s0) ]] && type wpa_cli &> /dev/null && echo "$({ echo 'status'; echo 'quit'; } | wpa_cli -i wlp4s0 | grep '^ssid=' | cut -d= -f2) : $(cat /proc/net/wireless | tail -1 | tr -s ' ' | cut -d' ' -f4 | sed 's/\./dBm/')"
 color=#8fa1b3
 interval=1
 

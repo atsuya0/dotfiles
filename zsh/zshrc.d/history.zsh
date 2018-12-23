@@ -52,7 +52,7 @@ function __save_cmd__() {
     vim nvim code python go 'npm search' xsel tmux tree chromium
     rofi notify-send w3m scrot feh rg
 
-    up down dw gcm gp gmv second sc trash trs bak rs rn cc fonts
+    up down dw gcm gp gmv second sc tsc trash trs bak rs rn cc fonts
   )
 
   local ignore_cmd
