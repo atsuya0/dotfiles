@@ -91,7 +91,7 @@ function sound() {
     echo "[$(to_blocks $1)$(to_spaces $1)]"
   }
 
-  type pactl &> /dev/null \
+  which pactl &> /dev/null \
     || { echo "$(sep 'black')$(value 'blue' '×') "; return 1; }
 
   local -rA colors=(

@@ -5,7 +5,7 @@ export TRASH_PATH="${HOME}/.Trash"
 export SECOND_LIST_PATH="${HOME}/.second_list.json"
 
 # ruby製のtoolのpath
-type ruby &> /dev/null \
+[[ -n ${commands[ruby]} ]] \
   && local gem_path="$(ruby -e 'print Gem.user_dir')/bin"
 
 typeset -r path=(

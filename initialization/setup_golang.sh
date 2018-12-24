@@ -15,7 +15,7 @@ function install_my_tool() {
 }
 
 function main() {
-  type go &> /dev/null || return 1
+  which go &> /dev/null || return 1
   [[ -z ${GOPATH} ]] && return 1
 
   mkdir -p ${GOPATH}/{src,bin,pkg}
@@ -28,8 +28,8 @@ function main() {
   )
   go get -u ${libraries}
 
-  type dep &> /dev/null || return 1
-  type git &> /dev/null || return 1
+  which dep &> /dev/null || return 1
+  which git &> /dev/null || return 1
 
   local -ar tools=(
     'go-choice'

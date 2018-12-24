@@ -88,14 +88,14 @@ function init_dunst() {
 
 # file manager
 function init_ranger() {
-  type ranger &> /dev/null || return 1
+  which ranger &> /dev/null || return 1
   ranger --copy-config=all \
     && sed -i 's/.*preview_images[[:space:]].*/set preview_images true/' \
       "${XDG_CONFIG_HOME}/ranger/rc.conf"
 }
 
 function main() {
-  [[ $(id -u) -eq 0 ]] && return 1 # The root user exists.
+  [[ $(id -u) -eq 0 ]] && return 1 # The current user is the root user.
   [[ -z ${DOTFILES} ]] && export DOTFILES="${HOME}/dotfiles"
   [[ -z ${XDG_CONFIG_HOME} ]] && export XDG_CONFIG_HOME="${HOME}/.config"
 

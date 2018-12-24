@@ -11,17 +11,17 @@ function install_packages() {
 }
 
 function setup_packages() {
-  type zsh &> /dev/null \
+  which zsh &> /dev/null \
     && chsh -s $(which zsh)
-  type pip &> /dev/null \
+  which pip &> /dev/null \
     && pip install --user pynvim
-  type lightdm &> /dev/null \
+  which lightdm &> /dev/null \
     && sudo systemctl enable lightdm.service \
     && sed -i \
         's/^\(ENV=\)\(lightdm-gtk-greeter\)/\1env GTK_THEME=Adwaita:dark \2/' \
         /usr/share/xgreeters/lightdm-gtk-greeter.desktop
 /usr/share/xgreeters/lightdm-gtk-greeter.desktop
-  type tlp &> /dev/null \
+  which tlp &> /dev/null \
     && sudo systemctl enable tlp.service tlp-sleep.service \
     && sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
   add_docker_group

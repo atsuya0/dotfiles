@@ -19,7 +19,8 @@ function _rails() {
       'db\:seed' \
       'db\:migrate' \
       'db\:migrate\:reset' \
-      'db\:rollback'
+      'db\:rollback' \
+      'db\:seed'
   }
 
   _arguments -C \
@@ -34,7 +35,8 @@ function _rails() {
           'controller' \
           'view' \
           'model' \
-          'integration_test'
+          'integration_test' \
+          'mailer'
         ;;
         (bin/bundle)
           _values 'menu' \

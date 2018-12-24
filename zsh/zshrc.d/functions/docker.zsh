@@ -7,7 +7,7 @@ function is_docker_running() {
 }
 
 function docker-compose() {
-  cmd_exists 'docker-compose' || { echo 'Not installed'; return 1; }
+  [[ -z ${commands[docker-compose]} ]] && { echo 'Not installed'; return 1; }
   is_docker_running && command docker-compose $@
 }
 alias dc='docker-compose'
@@ -45,7 +45,7 @@ function jwm() { # dockerでjwmを動かす。
 
 function drm() { # dockerのコンテナを選択して破棄
   is_docker_running || return 1
-  type fzf &> /dev/null || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
 
   local -r container=$(
     docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)"
@@ -56,7 +56,7 @@ function drm() { # dockerのコンテナを選択して破棄
 
 function drmi() { # dockerのimageを選択して破棄
   is_docker_running || return 1
-  type fzf &> /dev/null || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
 
   local -r image=$(
     docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)"

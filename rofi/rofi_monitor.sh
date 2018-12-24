@@ -3,7 +3,7 @@
 set -euCo pipefail
 
 function main() {
-  type xrandr &> /dev/null || return
+  which xrandr &> /dev/null || return
 
   local primary secondary
   primary=$(xrandr --listactivemonitors | grep -o '*[[:alpha:]]\+[[:digit:]]' | tr -d '*')

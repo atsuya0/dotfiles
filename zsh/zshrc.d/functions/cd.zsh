@@ -13,10 +13,10 @@ function shorten_path() {
 # up      -> use filter
 function up() {
   if [[ $# -eq 0 ]] \
-    && type fzf &> /dev/null && type print_parents &> /dev/null
+    && [[ -n ${commands[fzf]} ]] && type print_parents &> /dev/null
   then
     local -r parent_path=$(print_parents \
-      | fzf --delimiter=/ --nth=-2 --bind='ctrl-v:toggle-preview' \
+      | fzf --delimiter='/' --nth='-2' --bind='ctrl-v:toggle-preview' \
           --preview='tree -C {}' --preview-window='right')
   elif [[ $1 =~ ^[0-9]+$ ]]; then
     local -r parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
@@ -33,7 +33,7 @@ function _up() {
 compdef _up up
 
 function down() {
-  type fzf &> /dev/null || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
 
   local -A opthash
   zparseopts -D -A opthash -- d: e
@@ -78,7 +78,7 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
     '-l' ) cat "${_CD_FILE}" | sort | uniq -c | sort -r | tr -s ' ' ;; # 記録一覧
     '--delete-all' ) : > "${_CD_FILE}" ;; # 記録の全消去
     '-d' ) # 記録の消去
-      type fzf &> /dev/null || return 1
+      [[ -z ${commands[fzf]} ]] && return 1
 
       local opt
       [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
@@ -90,7 +90,8 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
     ;;
     * ) # 記録しているディレクトリを表示 使用頻度順
       if [[ $# -eq 0 ]]; then
-        type fzf &> /dev/null || return 1
+        [[ -z ${commands[fzf]} ]] && return 1
+
         local dir=$(cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' | cut -d' ' -f3 \
           | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
         [[ -z ${dir} ]] && return 1

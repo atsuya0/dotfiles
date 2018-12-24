@@ -25,7 +25,7 @@ function sync_muted() {
 }
 
 function main() {
-  type pactl &> /dev/null || return 1
+  which pactl &> /dev/null || return 1
 
   case ${1:-show} in
     'up' )

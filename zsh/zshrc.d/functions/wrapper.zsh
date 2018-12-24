@@ -1,8 +1,8 @@
 function vim() { # Choose files to open by fzf.
   function editor() {
-    if cmd_exists 'nvim'; then
+    if [[ -n ${commands[nvim]} ]]; then
       echo "nvim $@"
-    elif cmd_exists 'vim'; then
+    elif [[ -n ${commands[vim]} ]]; then
       echo "vim $@"
     else
       echo "vi $@"
@@ -47,7 +47,7 @@ function vim() { # Choose files to open by fzf.
     return 1
   fi
 
-  type fzf &> /dev/null || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
   local -r files=$(choice)
   [[ -n ${files} ]] && eval $(editor ${files})
 }

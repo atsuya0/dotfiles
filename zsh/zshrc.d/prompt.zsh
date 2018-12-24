@@ -15,7 +15,7 @@ add-zsh-hook precmd __path_prompt__
 
 function __git_prompt__() {
   RPROMPT=''
-  type git &> /dev/null || return 1
+  [[ -z ${commands[git]} ]] && return 1
   git status &> /dev/null || return 1
   local -ar git_info=("${(f)$(git status --porcelain --branch)}")
   local -r icon=''

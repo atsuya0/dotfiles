@@ -15,7 +15,7 @@ function cmd_exists() {
 }
 
 function __src_to_dest__() {
-  type fzf &> /dev/null || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
 
   local -r fzf_options=" \
     --preview='less {}' \
@@ -149,6 +149,8 @@ function new_sh() {
 cat << "EOF" > ./${name}
 #!/usr/bin/env bash
 
+set -eCo pipefail
+
 function main() {
 }
 
@@ -197,7 +199,7 @@ function crypt() {
   # crypt test.txt
   # ファイルの暗号と復号を行う。暗号か復号はファイルの状態で自動で決める。
 
-  ! type openssl &> /dev/null && echo 'require openssl' && return 1
+  [[ -z ${commands[openssl]} ]] && { echo 'openssl is required'; return 1; }
 
   if [[ $(file $1 | cut -d' ' -f2-) == "openssl enc'd data with salted password" ]]; then
     local password
@@ -230,7 +232,8 @@ function _crypt() {
 compdef _crypt crypt
 
 function md() { # multi displays
-  type xrandr &> /dev/null || return 1
+  [[ -z ${commands[xrandr]} ]] && return 1
+
   local -r primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)
   local -r second=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
 
@@ -250,7 +253,7 @@ function md() { # multi displays
   ;;
   esac
 
-  type fzf &> /dev/null || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
   local -r mode=$(xrandr | sed -n "/^${second}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
   [[ -n ${mode} ]] \
     && xrandr --output ${second} --left-of ${primary} --mode ${mode}
@@ -279,8 +282,8 @@ function rn() { # Rename files using regular expression. Like perl's rename comm
 }
 
 function crawl() {
-  type crawl-img &> /dev/null || return 1
-  type notify-send &> /dev/null || return 1
+  [[ -z ${commands[crawl-img]} ]] && return 1
+  [[ -z ${commands[notify-send]} ]] && return 1
   [[ $# -eq 0 ]] && return 1
 
   crawl-img -f $1
@@ -306,7 +309,7 @@ function ct() {
 
   local -ar methods=('GET' 'POST' 'PUT' 'DELETE')
   [[ -z ${method} ]] \
-    && type fzf &> /dev/null \
+    && [[ -n ${commands[fzf]} ]] \
     && method=$(print -C 1 ${methods[@]} | fzf)
   curl ${options[(i)-I]} -X ${method:-GET} ${data} \
     -H "'Content-Type: application/json'" "http://localhost:9000$1"
@@ -347,7 +350,7 @@ function umnt() {
 }
 
 function vscode_extensions() {
-  type code &> /dev/null || return 1
+  [[ -n ${commands[code]} ]] && return 1
 
   local -r store="${DOTFILES:-${HOME}}/vscode/extensions.txt"
   local -r error_msg="extension is not saved\nplease execute: $0 save"
@@ -378,11 +381,3 @@ function _vscode_extensions() {
     'install'
 }
 compdef _vscode_extensions vscode_extensions
-
-function ssid() {
-  type wpa_cli &> /dev/null || return 1
-
-  local -r interface=$(command ip -o link show up | grep -v 'lo:' | tr -d ' ' | cut -d: -f2)
-  { echo 'status'; echo 'quit'; } \
-    | wpa_cli -i ${interface} | grep '^ssid=' | cut -d= -f2
-}

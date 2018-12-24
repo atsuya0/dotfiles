@@ -32,7 +32,7 @@ function echo_volume() {
 }
 
 function main() {
-  type pactl &> /dev/null || return 1
+  which pactl &> /dev/null || return 1
 
   echo_volume
 

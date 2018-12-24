@@ -65,8 +65,17 @@ PROMPT_COMMAND='share_history'
 #----------------------------------------
 # key bindings
 #----------------------------------------
-bind C-F:menu-complete
-bind C-B:menu-complete-backword
+bind -m emacs TAB:menu-complete
+bind -m emacs C-f:menu-complete
+bind -m emacs C-b:menu-complete-backward
+bind -m vi-insert C-l:clear-screen
+bind -m vi-insert C-f:forward-char
+bind -m vi-insert C-b:backward-char
+bind -m vi-insert C-a:beginning-of-line
+bind -m vi-insert C-e:end-of-line
+bind -m vi-insert M-f:forward-word
+bind -m vi-insert M-b:backward-word
+bind -m vi-insert C-d:delete-char
 #----------------------------------------
 # fucntions
 #----------------------------------------
@@ -76,11 +85,11 @@ function print_parents() {
 
 function up() {
   if [[ $# -eq 0 ]] \
-    && type fzf &> /dev/null && type print_parents &> /dev/null
+    && which fzf &> /dev/null && type print_parents &> /dev/null
   then
     local -r parent_path=$(print_parents \
-      | fzf --delimiter=/ --nth=-2 --bind='ctrl-v:toggle-preview' \
-          --preview='tree -C {}' --preview-window='right')
+      | fzf --delimiter='/' --nth='-2' --bind='ctrl-v:toggle-preview' \
+          --preview='tree -C {}' --preview-window='right' || return 0)
   elif [[ $1 =~ ^[0-9]+$ ]]; then
     local -r parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
   else
@@ -134,7 +143,7 @@ function trash_function() {
 }
 alias tmv='trash_function mv'
 alias trm='trash_function rm'
-alias tsize='trash_function size'
+alias tsz='trash_function size'
 #----------------------------------------
 # aliases
 #----------------------------------------

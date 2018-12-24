@@ -1,8 +1,10 @@
 # tmuxの左ステータスバー
 function __tmux_status__() {
   # tmuxのSession番号を表示。commandがzshのときにはmodeも表示。
-
+  #
+  [[ -z ${commands[tmux]} ]] && return 1
   [[ -z ${TMUX} ]] && return 1
+
   local -r separator=''
   [[ ${KEYMAP} == 'vicmd' ]] \
     && local -r \

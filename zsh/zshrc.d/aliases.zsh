@@ -1,5 +1,5 @@
 alias la='ls -A --color=auto'
-alias ll='ls -FAlht --color=auto'
+alias ll='ls -FAlhtr --color=auto --time-style="+%Y/%m/%d %H:%M:%S"'
 alias grep='grep --color=auto'
 alias mv='mv -iv'
 alias cp='cp -iv'

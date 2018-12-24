@@ -1,5 +1,5 @@
 function is_managed() {
-  type git &> /dev/null || return 1
+  [[ -z ${commands[git]} ]] && return 1
   git status > /dev/null 2>&1 || return 1
 }
 
@@ -19,7 +19,7 @@ function fga() { # git add をfilterで選択して行う。<C-v>でgit diffを�
 
 function fgco() { # git checkout の引数をfilterで選択する
   is_managed || return 1
-  type fzf > /dev/null 2>&1 || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
 
   local -r branch=$(git branch | tr -d ' ' | sed /^\*/d | fzf)
   [[ -n ${branch} ]] && git checkout "${branch}"

@@ -57,13 +57,13 @@ function print_available_session_names() {
 }
 
 function second_with_tmux_session() {
-  type tmux &> /dev/null \
-    || { echo 'tmux is required.'; return 1; }
-  type second &> /dev/null \
-    || { echo 'second is required.';  return 1; }
+  [[ -z ${commands[tmux]} ]] \
+    && { echo 'tmux is required.'; return 1; }
+  [[ -z ${commands[second]} ]] \
+    && { echo 'second is required.';  return 1; }
 
   if [[ $# -eq 0 ]]; then
-    type fzf &> /dev/null || { print_available_session_names; return 1; }
+    [[ -z ${commands[tmux]} ]] && { print_available_session_names; return 1; }
     local -r session_name=$(print_available_session_names | fzf)
     [[ -z ${session_name} ]] && return 1
   else

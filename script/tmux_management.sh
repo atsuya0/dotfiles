@@ -16,7 +16,7 @@ function choose() {
   local -r list_windows="tmux list-windows -t {} | cut -d' ' -f1-2"
   local -r capture_pane='tmux capture-pane -e -J -t {} -p'
 
-  fzf --reverse --exit-0 \
+  fzf --reverse --exit-0 $@ \
     --preview="echo -e '$(title 'list_windows')' && ${list_windows} \
                 && echo -e '$(title 'capture_pane')' && ${capture_pane}" \
     --preview-window='right:80%'
@@ -46,8 +46,8 @@ function start_tmux() {
 }
 
 function main() {
-  type tmux &> /dev/null || { echo 'Tmux is required.'; return 1; }
-  type fzf &> /dev/null || { echo 'Fzf is required.';  return 1; }
+  which tmux &> /dev/null || { echo 'Tmux is required.'; return 1; }
+  which fzf &> /dev/null || { echo 'Fzf is required.';  return 1; }
 
   # No tmux server.
   tmux list-session &> /dev/null || { new_session 'zz'; return; }
@@ -55,7 +55,7 @@ function main() {
   # Attached session.
   [[ -n ${TMUX} ]] \
     && ( list_other_session_name \
-          | choose | xargs -I{} tmux switch-client -t {}; return 0 ) \
+          | choose -1 | xargs -I{} tmux switch-client -t {}; return 0 ) \
     || start_tmux
 }
 
