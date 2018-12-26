@@ -9,28 +9,6 @@ function vim() { # Choose files to open by fzf.
     fi
   }
 
-  function ignore_filetypes() {
-    local -ar ignore_filetypes=(
-      pdf png jpg jpeg mp3 mp4 tar.gz zip
-    )
-    print -C 1 ${ignore_filetypes[@]} \
-      | sed 's/.*/-name \\*& -prune -o/'
-  }
-
-  function ignore_dirs() {
-    local -ar ignore_dirs=(
-      .git
-      node_modules # node.js
-      vendor # golang
-      target # rust
-      gems # ruby
-      db/data # docker
-      tmp/cache # rails
-    )
-    print -C 1 ${ignore_dirs[@]} \
-      | sed 's/.*/-path \\*&\\* -prune -o/'
-  }
-
   function choice() {
     eval find ${1:-.} \
       $(ignore_filetypes) $(ignore_dirs) $(ignore_absolute_paths) \

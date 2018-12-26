@@ -46,7 +46,7 @@ function down() {
     || local depth="-maxdepth 5"
 
   local dir=$(
-    eval find -mindepth 1 $(ignore_absolute_paths) ${hidden} ${depth} \
+    eval find -mindepth 1 $(ignore_dirs) $(ignore_absolute_paths) ${hidden} ${depth} \
       -type d -print 2> /dev/null \
     | cut -c3- \
     | fzf --select-1 --preview='tree -C {} | head -200' \
@@ -57,7 +57,7 @@ function down() {
 
 function _down() {
   function number() {
-    _values 'number' $(seq 4)
+    _values 'number(default: 5)' $(seq 4)
   }
   _arguments \
     '-d[depth]: :number' \

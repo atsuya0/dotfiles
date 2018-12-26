@@ -58,11 +58,13 @@ function load_average() {
 # 電波強度
 function network_level() {
   local -r interface='wlp4s0'
-  [[ -z $(ip link show up dev ${interface}) ]] && return 1
 
-  local -r signal=$(cat /proc/net/wireless \
-    | tail -1 | tr -s ' ' | cut -d' ' -f4 | sed 's/\./dBm/')
-  echo "$(separator 'blue')$(output -n 'black' -s ${signal:----})"
+  [[ -n $(ip link show up dev ${interface}) ]] \
+    && local -r signal=$(cat /proc/net/wireless \
+      | tail -1 | tr -s ' ' | cut -d' ' -f4 | sed 's/\./dBm/') \
+    || local -r signal='---'
+
+  echo "$(separator 'blue')$(output -n 'black' -s ${signal})"
 }
 
 # 音量

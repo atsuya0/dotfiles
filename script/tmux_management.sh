@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eCo pipefail
+set -euCo pipefail
 
 function list_other_session_name() {
   tmux list-session -F '#{session_id}:#{session_name}' \
@@ -24,18 +24,18 @@ function choose() {
   return 0
 }
 
-function new_session() {
+function create_session() {
   [[ -f "${DOTFILES}/tmux/tmux.conf" ]] \
     && local prefix="${DOTFILES}/tmux/"
   tmux -f "${prefix:-${HOME}/.}tmux.conf" -2 new-session -s $1
 }
 
-function start_tmux() {
+function attach_session() {
   function not_choose() {
     local input
     read -sp 'new-session [y/n]' input
     [[ ${input} == 'y' ]] \
-      && new_session "tmp_$(date +%s | cut -c6-)"
+      && create_session "tmp_$(date +%s | cut -c6-)"
   }
 
   local session_name
@@ -45,18 +45,42 @@ function start_tmux() {
     || not_choose
 }
 
-function main() {
-  which tmux &> /dev/null || { echo 'Tmux is required.'; return 1; }
-  which fzf &> /dev/null || { echo 'Fzf is required.';  return 1; }
-
+function new() {
   # No tmux server.
-  tmux list-session &> /dev/null || { new_session 'zz'; return; }
+  tmux list-session &> /dev/null || { create_session 'zz'; return; }
 
-  # Attached session.
-  [[ -n ${TMUX} ]] \
-    && ( list_other_session_name \
-          | choose -1 | xargs -I{} tmux switch-client -t {}; return 0 ) \
-    || start_tmux
+  if [[ -n ${TMUX:-} ]]; then # Attached session.
+    list_other_session_name \
+      | choose -1 \
+      | xargs -I{} tmux switch-client -t {}
+  else
+    attach_session
+  fi
 }
 
-main
+function kill() {
+  # No tmux server.
+  tmux list-session &> /dev/null || return 1
+
+  if [[ -n ${TMUX:-} ]]; then # Attached session.
+    list_other_session_name | choose | xargs -p tmux kill-session -t
+  else
+    tmux ls -F '#{session_name}' | choose | xargs -p tmux kill-session -t
+  fi
+}
+
+function main() {
+  which tmux &> /dev/null || { echo 'tmux is required.'; return 1; }
+  which fzf &> /dev/null || { echo 'fzf is required.';  return 1; }
+
+  case ${1:-new} in
+    'new' )
+      new
+    ;;
+    'kill' )
+      kill
+    ;;
+  esac
+}
+
+main $@

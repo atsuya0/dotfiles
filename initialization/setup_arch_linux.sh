@@ -10,6 +10,12 @@ function install_packages() {
   setup_packages
 }
 
+function add_docker_group() {
+  groups | grep docker \
+    && sudo groupadd docker \
+    && sudo gpasswd -a $(whoami) docker
+}
+
 function setup_packages() {
   which zsh &> /dev/null \
     && chsh -s $(which zsh)
@@ -20,17 +26,10 @@ function setup_packages() {
     && sed -i \
         's/^\(ENV=\)\(lightdm-gtk-greeter\)/\1env GTK_THEME=Adwaita:dark \2/' \
         /usr/share/xgreeters/lightdm-gtk-greeter.desktop
-/usr/share/xgreeters/lightdm-gtk-greeter.desktop
   which tlp &> /dev/null \
     && sudo systemctl enable tlp.service tlp-sleep.service \
     && sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
   add_docker_group
-}
-
-function add_docker_group() {
-  groups | grep docker \
-    && sudo groupadd docker \
-    && sudo gpasswd -a $(whoami) docker
 }
 
 function install_fonts() {

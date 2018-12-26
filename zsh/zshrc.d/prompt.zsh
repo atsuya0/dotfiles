@@ -10,7 +10,6 @@ function __path_prompt__() { # カレントディレクトリのpathを画面の
     && PROMPT="%n ${fg[blue]}$(sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g" <<< ${pwd})${reset_color} " \
     || PROMPT="%{${fg[blue]}${bg[black]}%}%n %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
 }
-autoload -Uz add-zsh-hook
 add-zsh-hook precmd __path_prompt__
 
 function __git_prompt__() {

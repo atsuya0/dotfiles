@@ -18,6 +18,6 @@ WORKDIR /${APP}
 
 COPY Gemfile  /${APP}
 COPY Gemfile.lock  /${APP}
-RUN bundle install
+RUN bundle install --path /${APP}/vendor/bundle --jobs=4
 
 COPY . /${APP}

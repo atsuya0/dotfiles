@@ -43,5 +43,5 @@ function main() {
   done
 }
 
-main
 trap "cd $(dirname $(realpath $0))" EXIT
+main

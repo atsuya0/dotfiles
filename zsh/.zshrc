@@ -1,3 +1,4 @@
+autoload -Uz add-zsh-hook
 source "${ZDOTDIR}/zshrc.d/env.zsh"
 source "${ZDOTDIR}/zshrc.d/init.zsh"
 
@@ -21,40 +22,63 @@ unsetopt clobber
 
 source '/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' 2> /dev/null
 
-typeset -ar ignore_absolute_paths=(
-  ${HOME}/.cache/dein/repos
-  ${HOME}/.cache/dein/.cache
-  ${HOME}/.cache/pip
-  ${HOME}/.cache/jedi
-  ${HOME}/.cache/go-build
-  ${HOME}/.cache/fontconfig
-  ${HOME}/.cache/neosnippet
-  ${HOME}/.cache/mesa_shader_cache
-  ${HOME}/.cache/chromium
-  ${HOME}/.config/chromium
-  ${HOME}/.config/fcitx
-  "${HOME}/.config/Code\\\ -\\\ OSS"
-  ${HOME}/.vscode-oss
-  ${HOME}/.config/nvim/undo
-  ${HOME}/.local/lib
-  ${HOME}/.rustup
-  ${HOME}/.cargo
-  ${HOME}/.gem
-  ${HOME}/.vscode/extensions
-  ${HOME}/.npm/_cacache
-  ${HOME}/.nvm/versions
-  ${HOME}/.java
-  ${HOME}/workspace/docker
-  ${HOME}/samples
-  ${HOME}/.Trash
-  ${GOPATH}/pkg
-  ${GOPATH}/src
-)
 function ignore_absolute_paths() {
+  local -ar paths=(
+    "${HOME}/.cache/dein/repos"
+    "${HOME}/.cache/dein/.cache"
+    "${HOME}/.cache/pip"
+    "${HOME}/.cache/jedi"
+    "${HOME}/.cache/go-build"
+    "${HOME}/.cache/fontconfig"
+    "${HOME}/.cache/neosnippet"
+    "${HOME}/.cache/mesa_shader_cache"
+    "${HOME}/.cache/chromium"
+    "${HOME}/.config/chromium"
+    "${HOME}/.config/fcitx"
+    "${HOME}/.config/Code\\\ -\\\ OSS"
+    "${HOME}/.vscode-oss"
+    "${HOME}/.config/nvim/undo"
+    "${HOME}/.local/lib"
+    "${HOME}/.rustup"
+    "${HOME}/.cargo"
+    "${HOME}/.gem"
+    "${HOME}/.vscode/extensions"
+    "${HOME}/.npm/_cacache"
+    "${HOME}/.nvm/versions"
+    "${HOME}/.java"
+    "${HOME}/workspace/docker"
+    "${HOME}/samples"
+    "${HOME}/.Trash"
+    "${GOPATH}/pkg"
+    "${GOPATH}/src"
+  )
   local IFS=$'\n'
-  echo "${ignore_absolute_paths[*]}" \
+
+  echo "${paths[*]}" \
     | grep "^$(pwd)" \
     | sed "s@$(pwd)@.@;s/.*/-path & -prune -o/g"
+}
+
+function ignore_dirs() {
+  local -ar ignore_dirs=(
+    '.git'
+    'node_modules' # node.js
+    'vendor' # golang
+    'target' # rust
+    'gems' # ruby
+    'db/data' # docker
+    'tmp/cache' # rails
+  )
+  print -C 1 ${ignore_dirs[@]} \
+    | sed 's/.*/-path \\*&\\* -prune -o/'
+}
+
+function ignore_filetypes() {
+  local -ar ignore_filetypes=(
+    'pdf' 'png' 'jpg' 'jpeg' 'mp3' 'mp4' 'tar.gz' 'zip'
+  )
+  print -C 1 ${ignore_filetypes[@]} \
+    | sed 's/.*/-name \\*& -prune -o/'
 }
 
 autoload -Uz colors && colors

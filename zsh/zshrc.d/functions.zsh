@@ -100,6 +100,7 @@ function wifi() {
   elif [[ -n "${options[(i)-s]}" ]]; then
     sudo netctl stop-all
   else
+    [[ -n $(ip link show up dev 'wlp4s0') ]] && return 1
     local -r ssid=$(netctl list | fzf --select-1)
     [[ -n ${ssid} ]] && sudo netctl start ${ssid// /}
   fi
@@ -149,7 +150,7 @@ function new_sh() {
 cat << "EOF" > ./${name}
 #!/usr/bin/env bash
 
-set -eCo pipefail
+set -euCo pipefail
 
 function main() {
 }

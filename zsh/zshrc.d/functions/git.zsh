@@ -1,10 +1,10 @@
-function is_managed() {
+function is_managed_by_git() {
   [[ -z ${commands[git]} ]] && return 1
-  git status > /dev/null 2>&1 || return 1
+  git status &> /dev/null || return 1
 }
 
 function fga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
-  is_managed || return 1
+  is_managed_by_git || return 1
 
   local file unadded_files
   for file in "${(f)$(git status --short)}"; do
@@ -18,7 +18,7 @@ function fga() { # git add をfilterで選択して行う。<C-v>でgit diffを�
 }
 
 function fgco() { # git checkout の引数をfilterで選択する
-  is_managed || return 1
+  is_managed_by_git || return 1
   [[ -z ${commands[fzf]} ]] && return 1
 
   local -r branch=$(git branch | tr -d ' ' | sed /^\*/d | fzf)
@@ -26,7 +26,7 @@ function fgco() { # git checkout の引数をfilterで選択する
 }
 
 function gmv() { # git mv
-  is_managed || return 1
+  is_managed_by_git || return 1
   [[ $# -ne 0 ]] || return 1
   [[ ${argv[$(expr $# - 1)]} == '-t' ]] || return 1
 
