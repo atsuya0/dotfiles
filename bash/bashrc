@@ -55,9 +55,9 @@ shopt -s nullglob
 set -o noclobber
 [[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
 function share_history() {
-   # キャッシュをファイルに書き込む
-   # キャッシュを削除
-   # キャッシュにファイルを書き込む
+  # -a : append history lines from this session to the history file
+  # -c : clear the history list by deleting all of the entries
+  # -r : read the history file and append the contents to the history list
   history -a && history -c && history -r
 }
 # The value is executed as a command prior to issuing each primary prompt.
@@ -149,16 +149,20 @@ alias tsz='trash_function size'
 #----------------------------------------
 alias rm="echo 'Don't use the rm command'"
 alias ls='ls --color=auto'
-alias ll='ls -FAlht --color=auto'
+alias la='ls -A --color=auto'
+alias ll='ls -FAlhtr --color=auto --time-style="+%Y/%m/%d %H:%M:%S"'
 alias grep='grep --color=auto'
 alias mv='mv -iv'
 alias cp='cp -iv'
 alias ln='ln -iv'
-alias cd='pushd &> /dev/null'
-alias dirs='dirs -v'
-alias mkdir='mkdir -vp'
+alias mkdir='mkdir -pv'
 alias free='free -wh'
 alias du='du -h'
-alias df='df -hT'
-alias ip='ip -c'
-alias nano='nano -$ -l -i -O -m -c' # オブションは個々に指定する
+alias df='df -Th'
+alias pgrep='pgrep --list-full'
+alias diff='diff --color'
+alias mk='make'
+alias nano='nano -$ -l -i -O -m -c' # '-$liOmc' does not work.
+alias cd='pushd &> /dev/null'
+alias dirs='dirs -v'
+alias ip='ip --color=auto'

@@ -1,3 +1,5 @@
+alias trs='trash'
+
 function _trash() {
   function sub_commands() {
     _values 'Commands' \
@@ -39,5 +41,3 @@ function _trash() {
   esac
 }
 compdef _trash trash
-
-alias trs='trash'

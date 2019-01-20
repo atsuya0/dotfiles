@@ -75,9 +75,9 @@ add-zsh-hook chpwd __save_pwd__
 
 function cdh() { # 移動履歴からfilterを使って選んでcd
   case $1 in
-    '-l' ) cat "${_CD_FILE}" | sort | uniq -c | sort -r | tr -s ' ' ;; # 記録一覧
-    '--delete-all' ) : > "${_CD_FILE}" ;; # 記録の全消去
-    '-d' ) # 記録の消去
+    '-l' ) cat "${_CD_FILE}" | sort | uniq -c | sort -r | tr -s ' ' ;;
+    '--delete-all' ) : > "${_CD_FILE}" ;;
+    '-d' )
       [[ -z ${commands[fzf]} ]] && return 1
 
       local opt
@@ -88,7 +88,7 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
             --bind='ctrl-v:toggle-preview' \
         | xargs -I{} sed -i "${opt}" 's@^{}$@@;/^$/d' "${_CD_FILE}"
     ;;
-    * ) # 記録しているディレクトリを表示 使用頻度順
+    * ) # 使用頻度順
       if [[ $# -eq 0 ]]; then
         [[ -z ${commands[fzf]} ]] && return 1
 

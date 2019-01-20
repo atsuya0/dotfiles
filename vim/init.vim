@@ -99,7 +99,6 @@ function! s:changeFocus()
   highlight Normal guibg=default
   highlight NormalNC guibg='#27292d'
 endfunction
-
 "==================================================
 " Keybinding
 "==================================================
@@ -133,19 +132,20 @@ noremap! <C-x>s <C-x><C-s>
 cnoremap <M-p> <Up>
 cnoremap <M-n> <Down>
 " Emacs key bindings.
-" Already defined.  <C-h>, <C-w>, <C-u>
 noremap! <C-f> <right>
 noremap! <C-b> <left>
-noremap! <C-a> <C-o>^
+inoremap <C-a> <C-o>^
+cnoremap <C-a> <home>
 noremap! <C-e> <end>
+noremap! <M-f> <S-right>
+noremap! <M-b> <S-left>
 noremap! <C-n> <down>
 noremap! <C-p> <up>
+" Already defined.  <C-h>, <C-w>, <C-u>
 noremap! <C-d> <del>
-noremap! <C-k> <C-o>d$
-noremap! <C-y> <C-o>p
-noremap! <M-f> <C-o>w
-noremap! <M-b> <C-o>b
-noremap! <M-d> <C-o>dw
+inoremap <C-k> <C-o>d$
+inoremap <M-d> <C-o>dw
+noremap! <C-y> <C-r>"
 " Move the cursor up or down.
 noremap j gj
 noremap k gk
@@ -174,6 +174,11 @@ augroup END
 augroup QuickFix
   autocmd!
   autocmd QuickFixCmdPost *grep* cwindow
+augroup END
+
+augroup Makefile
+  autocmd!
+  autocmd FileType make set noexpandtab
 augroup END
 
 augroup Go

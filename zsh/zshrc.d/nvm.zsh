@@ -7,13 +7,7 @@ function __init_nvm__() { # nvm(Node.jsのversion管理)の初期設定を読み
 }
 
 typeset -ar __node_cmds__=(
-  'nvm'
-  'node'
-  'npm'
-  'ng'
-  'vue'
-  'create-react-app'
-  'firebase'
+  'nvm' 'node' 'npm' 'ng' 'vue' 'create-react-app' 'firebase'
 )
 
 for __node_cmd__ in ${__node_cmds__[@]}; do

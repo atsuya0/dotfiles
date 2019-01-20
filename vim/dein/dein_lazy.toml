@@ -31,7 +31,6 @@ hook_source = 'colorscheme quantum'
 repo = 'Yggdroot/indentLine'
 on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
 hook_add = 'let g:indentLine_char = "¦"'
-'''
 hook_source = '''
   autocmd Filetype json let g:indentLine_conceallevel = 0
 '''

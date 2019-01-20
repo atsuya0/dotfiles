@@ -24,20 +24,20 @@ function to_meters() {
   echo "[$(to_blocks $1)$(to_spaces $1)]"
 }
 
-function echo_volume() {
+function print_volume() {
   local -r volume=$(get_volume)
   [[ ${volume} -gt 100 ]] \
-    && echo ${volume} \
-    || echo "$(to_meters ${volume})"
+    && echo -e "${volume}\n" \
+    || echo -e "$(to_meters ${volume})\n"
 }
 
 function main() {
   which pactl &> /dev/null || return 1
 
-  echo_volume
+  print_volume
 
-  declare -A colors=( ['yes']='#434447' ['no']='#8fa1b3' )
-  echo -e "\n${colors[$(get_muted)]}"
+  declare -Ar colors=( ['yes']='#434447' ['no']='#8fa1b3' )
+  echo "${colors[$(get_muted)]}"
 }
 
 main

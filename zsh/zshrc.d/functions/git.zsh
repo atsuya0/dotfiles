@@ -14,7 +14,7 @@ function fga() { # git add をfilterで選択して行う。<C-v>でgit diffを�
   done
   local selected_files=$(echo ${unadded_files} | sed /^$/d \
     | fzf --preview='git diff --color=always {}' --preview-window='right:95%:hidden' --bind='ctrl-v:toggle-preview')
-  [[ -n ${selected_files} ]] && git add $(echo ${selected_files} | sed ':l;N;$!b l;s/\n/ /g')
+  [[ -n ${selected_files} ]] && git add $@ $(echo ${selected_files} | tr '\n' ' ')
 }
 
 function fgco() { # git checkout の引数をfilterで選択する
@@ -36,6 +36,24 @@ function gmv() { # git mv
   done
 }
 
+function gu() {
+  is_managed_by_git || return 1
+  xdg-open $(git config --get remote.origin.url)
+}
+
+function __git_branch_list__() {
+  is_managed_by_git || return 1
+  git branch | grep -v "^*" | tr -d " " | fzf
+}
+
+function __git_working_tree_status__() {
+  is_managed_by_git || return 1
+  git status --short \
+    | cut -c 4- \
+    | fzf --preview='git diff --color=always {}' \
+      --preview-window='right:95%:hidden' \
+      --bind='ctrl-v:toggle-preview'
+}
 
 alias gb='git branch'
 alias gs='git status'
@@ -47,4 +65,5 @@ alias gco='git checkout'
 alias gph='git push origin'
 alias gpl='git pull origin'
 
-alias -g gls='$(git status --short | cut -c 4- | fzf)'
+alias -g @gb='$(__git_branch_list__)'
+alias -g @gw='$(__git_working_tree_status__)'

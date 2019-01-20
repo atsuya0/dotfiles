@@ -94,7 +94,7 @@ function wifi() {
   zparseopts -D -A options -- r s
 
   if [[ -n "${options[(i)-r]}" ]]; then
-    local -r ssid=$(netctl list | sed '/^\*/!d;s/[\* ]*//')
+    local -r ssid=$(netctl list | grep '*' | cut -d' ' -f2)
     [[ -z ${ssid} ]] && echo 'Not connected' && return 1
     sudo netctl restart ${ssid}
   elif [[ -n "${options[(i)-s]}" ]]; then
@@ -157,7 +157,7 @@ function main() {
 
 main $@
 EOF
-  chmod +x ./${name}
+  chmod +x "./${name}"
 }
 
 function new_py() {
@@ -171,7 +171,7 @@ def main():
 if __name__ == '__main__':
     main()
 EOF
-  chmod +x ./${name}
+  chmod +x "./${name}"
 }
 
 # Bluetooth tethering
@@ -191,7 +191,7 @@ function bt() {
   } ${ADDR} | bluetoothctl
 
   /usr/bin/dbus-send --system --type=method_call --dest=org.bluez \
-    /org/bluez/hci0/dev_${ADDR//:/_} org.bluez.Network1.Connect string:'nap' \
+    "/org/bluez/hci0/dev_${ADDR//:/_}" org.bluez.Network1.Connect string:'nap' \
     && sleep 1 \
     && sudo dhcpcd bnep0
 }
@@ -235,29 +235,31 @@ compdef _crypt crypt
 function md() { # multi displays
   [[ -z ${commands[xrandr]} ]] && return 1
 
-  local -r primary=$(xrandr --listactivemonitors | sed '1d;s/  */ /g' | cut -d' ' -f5 | head -1)
-  local -r second=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
+  local -r primary=$(xrandr --listactivemonitors | sed '1d;s/[[:space:]][[:space:]] */ /g' | cut -d' ' -f5 | head -1)
 
   case $1 in
   'school' )
-    xrandr --output ${second} --left-of ${primary} --mode 1600x900
+    local -r secondary=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
+    xrandr --output ${secondary} --left-of ${primary} --mode 1600x900
     return
   ;;
   'home' )
-    xrandr --output ${second} --left-of ${primary} --mode 1366x768
+    local -r secondary=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
+    xrandr --output ${secondary} --left-of ${primary} --mode 1366x768
     return
   ;;
   'off' )
+    local -r secondary=$(xrandr --listactivemonitors | sed 1d | grep -v '*' | head -1 | sed 's/[[:space:]][[:space:]]*/ /g' | cut -d' ' -f5)
     [[ $(xrandr --listactivemonitors | wc -l) -gt 2 ]] \
-      && xrandr --output ${second} --off
+      && xrandr --output ${secondary} --off
     return
   ;;
   esac
 
   [[ -z ${commands[fzf]} ]] && return 1
-  local -r mode=$(xrandr | sed -n "/^${second}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
+  local -r mode=$(xrandr | sed -n "/^${secondary}/,/^[^ ]/p" | sed '/^[^ ]/d;s/  */ /g' | cut -d' ' -f2 | fzf)
   [[ -n ${mode} ]] \
-    && xrandr --output ${second} --left-of ${primary} --mode ${mode}
+    && xrandr --output ${secondary} --left-of ${primary} --mode ${mode}
 }
 function _md() {
   _values \
@@ -287,7 +289,7 @@ function crawl() {
   [[ -z ${commands[notify-send]} ]] && return 1
   [[ $# -eq 0 ]] && return 1
 
-  crawl-img -f $1
+  crawl-img -f $1 || return 1
   notify-send 'Image downloading is complete.'
 }
 
@@ -328,33 +330,34 @@ function _ct() {
 }
 compdef _ct ct
 
-# mnt /dev/sdb1
-# mnt /dev/sdb1 ~/mnt
+# mnt /dev/sdb3
 function mnt() {
   [[ $# -eq 0 ]] && return 1
-
   local -r mount_path="${HOME}/mnt"
-  if [[ -d ${2:=${mount_path}} ]]; then
-    [[ -z $(find $2 -maxdepth 0 -type d -empty) ]] \
+
+  if [[ -d ${mount_path} ]]; then
+    [[ -z $(find ${mount_path} -maxdepth 0 -type d -empty) ]] \
       && return 1
   else
-    mkdir $2
+    mkdir ${mount_path}
   fi
 
-  sudo mount $1 $2
+  sudo mount $1 ${mount_path}
 }
 
 function umnt() {
   local -r mount_path="${HOME}/mnt"
-  sudo umount -R ${1:=${mount_path}}
-  rmdir $1
+
+  [[ -d ${mount_path} ]] || return 1
+  sudo umount -R ${mount_path}
+  rmdir ${mount_path}
 }
 
 function vscode_extensions() {
   [[ -n ${commands[code]} ]] && return 1
 
   local -r store="${DOTFILES:-${HOME}}/vscode/extensions.txt"
-  local -r error_msg="extension is not saved\nplease execute: $0 save"
+  local -r error_msg='extension is not saved\nplease execute: save'
 
   case $1 in
     'save' )
@@ -382,3 +385,14 @@ function _vscode_extensions() {
     'install'
 }
 compdef _vscode_extensions vscode_extensions
+
+function twi() {
+  [[ $# -eq 0 ]] && return 1
+
+  local word query="$1%20"
+  for word in ${argv[2,-1]}; do
+    query="${query}AND%20${word}%20"
+  done
+
+  xdg-open "https://twitter.com/search?q=${query}OR%20%401&src=typd"
+}

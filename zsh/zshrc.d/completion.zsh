@@ -32,7 +32,7 @@ zstyle ':completion:*' format '%B%F{green}%d%f%b'
 # 補完しないファイル
 zstyle ':completion:*:*files' ignored-patterns '*mp3' '.mp4'
 # グループ名を表示
-#zstyle ':completion:*' group-name ''
+zstyle ':completion:*' group-name ''
 # キャッシュ
 zstyle ':completion:*' use-cache yes
 # 詳細

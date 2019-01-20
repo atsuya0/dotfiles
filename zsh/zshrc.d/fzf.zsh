@@ -5,12 +5,11 @@ export FZF_DEFAULT_COMMAND='rg'
 export FZF_DEFAULT_OPTS="-m --height=80% --reverse --exit-0 --bind 'ctrl-y:execute-silent(echo {} | xsel -ib)+abort'"
 # <C-v>で見切れたコマンドを表示
 export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap --bind 'ctrl-v:toggle-preview'"
-# FZF_ALT_C_COMMAND FZF_ALT_C_OPTS
 
 () { # fzfの拡張を読み込む
-  local -r fzf_dir='/usr/share/fzf'
-  local -r keybind="${fzf_dir}/key-bindings.zsh"
-  local -r completion="${fzf_dir}/completion.zsh"
+  local -r fzf_directory='/usr/share/fzf'
+  local -r keybind="${fzf_directory}/key-bindings.zsh"
+  local -r completion="${fzf_directory}/completion.zsh"
   [[ -f ${keybind} ]] && source ${keybind}
   [[ -f ${completion} ]] && source ${completion}
 }

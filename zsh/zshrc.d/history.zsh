@@ -34,29 +34,30 @@ function __record_cmd__() {
 }
 add-zsh-hook zshaddhistory __record_cmd__
 
+# 履歴に記録しないコマンドを記述
+typeset -ar __ignore_cmds__=(
+  ls cd mv cp rm mkdir rmdir touch man less history source '\.'
+  vi export type which file stat command builtin grep ln cat wall
+  test '\[' '\[\[' sudoedit mount umount kill pkill pgrep echo
+  expr seq find pactl jobs fc-list chmod pwd ps date print printf
+  'sudo systemctl start' 'sudo systemctl stop' 'systemctl status'
+  'pacman -Si' 'pacman -Ss' 'pacman -Qi' 'pacman -Qs'
+
+  vim nvim code python go 'npm search' xsel tmux tree chromium
+  rofi notify-send w3m scrot feh rg
+
+  up down dw gcm gp gmv second sc tsc trash trs bak rs rn cc fonts
+  twi
+)
+
 function __save_cmd__() {
   local -r exit_status=$?
   _cmd=$(tr -s ' ' <<< ${_cmd}) # 連続する空白を1つにす
   [[ ! ${_cmd} =~ ' ' ]] && return # 引数やオプションを指定していない場合は記録しない
   [[ ${_cmd} =~ '^ ' ]] && return
 
-  # 履歴に記録しないコマンドを記述
-  local -ar ignore_cmds=(
-    ls cd mv cp rm mkdir rmdir touch man less history source '\.'
-    vi export type which file stat command builtin grep ln cat wall
-    test '\[' '\[\[' sudoedit mount umount kill pkill pgrep echo
-    expr seq find pactl jobs fc-list chmod pwd ps date print printf
-    'sudo systemctl start' 'sudo systemctl stop' 'systemctl status'
-    'pacman -Si' 'pacman -Ss' 'pacman -Qi' 'pacman -Qs'
-
-    vim nvim code python go 'npm search' xsel tmux tree chromium
-    rofi notify-send w3m scrot feh rg
-
-    up down dw gcm gp gmv second sc tsc trash trs bak rs rn cc fonts
-  )
-
   local ignore_cmd
-  for ignore_cmd in ${ignore_cmds}; do
+  for ignore_cmd in ${__ignore_cmds__[@]}; do
     [[ ${_cmd} =~ "^${ignore_cmd}" ]] && return
   done
   # コマンドが正常終了した場合はファイルに記録する
