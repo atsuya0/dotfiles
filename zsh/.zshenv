@@ -22,3 +22,4 @@ export VISUAL='nvim'
 export SUDO_EDITOR='nvim -Zu NORC' # sudoedit file_name
 
 export GOPATH="${HOME}/workspace/go"
+# export GO111MODULE=on

@@ -47,7 +47,7 @@ typeset -ar __ignore_cmds__=(
   rofi notify-send w3m scrot feh rg
 
   up down dw gcm gp gmv second sc tsc trash trs bak rs rn cc fonts
-  twi
+  twi crawl crawl-img
 )
 
 function __save_cmd__() {

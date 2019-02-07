@@ -17,7 +17,7 @@ function up() {
   then
     local -r parent_path=$(print_parents \
       | fzf --delimiter='/' --nth='-2' --bind='ctrl-v:toggle-preview' \
-          --preview='tree -C {}' --preview-window='right')
+          --preview='tree -C {}' --preview-window='right:50%:hidden')
   elif [[ $1 =~ ^[0-9]+$ ]]; then
     local -r parent_path=$(seq -s '' $1 | sed 's@.@\.\./@g')
   else

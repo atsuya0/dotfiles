@@ -97,14 +97,30 @@ function wifi() {
     local -r ssid=$(netctl list | grep '*' | cut -d' ' -f2)
     [[ -z ${ssid} ]] && echo 'Not connected' && return 1
     sudo netctl restart ${ssid}
+    return 0
   elif [[ -n "${options[(i)-s]}" ]]; then
     sudo netctl stop-all
-  else
-    [[ -n $(ip link show up dev 'wlp4s0') ]] && return 1
-    local -r ssid=$(netctl list | fzf --select-1)
-    [[ -n ${ssid} ]] && sudo netctl start ${ssid// /}
+    return 0
   fi
+
+  [[ -n $(ip link show up dev 'wlp4s0') ]] && return 1
+
+  [[ $# -ne 0 ]] && { sudo netctl start $1; return 0 }
+
+  local -r ssid=$(netctl list | fzf --select-1)
+  [[ -n ${ssid} ]] && sudo netctl start ${ssid// /}
 }
+function _wifi() {
+  function ssid() {
+    _values 'ssid' \
+      $(netctl list)
+  }
+  _arguments \
+    '-r[restart]' \
+    '-s[stop-all]' \
+    '1: :ssid'
+}
+compdef _wifi wifi
 
 # ex
 #   interactive date
@@ -196,36 +212,21 @@ function bt() {
     && sudo dhcpcd bnep0
 }
 
+# $ crypt test.txt
+# ファイルの暗号と復号を行う。暗号か復号はファイルの状態で自動で決める。
 function crypt() {
-  # crypt test.txt
-  # ファイルの暗号と復号を行う。暗号か復号はファイルの状態で自動で決める。
-
   [[ -z ${commands[openssl]} ]] && { echo 'openssl is required'; return 1; }
 
-  if [[ $(file $1 | cut -d' ' -f2-) == "openssl enc'd data with salted password" ]]; then
-    local password
-    while [[ -z ${password} ]]; do
-      printf '\rpassword:'
-      read password
-    done
-    openssl enc -d -aes-256-cbc -salt -k "${password}" -in $1 -out "${1%.enc}"
-    command rm $1
+  function encrypted() {
+    [[ $(file $1 | cut -d' ' -f2-) == "openssl enc'd data with salted password" ]] \
+      && return 0 || return 1
+  }
+
+  if encrypted $1; then
+    openssl enc -d -aes-256-cbc -pbkdf2 -salt -in $1 -out "${1%.enc}"
   else
-    local password_1
-    while [[ -z ${password_1} ]]; do
-      printf '\rpassword:'
-      read password_1
-    done
-    local password_2
-    while [[ -z ${password_2} ]]; do
-      printf '\rretype password:'
-      read password_2
-    done
-    [[ ${password_1} != ${password_2} ]] && tput dl1 && echo '\rfailed' && return 1
-    openssl enc -e -aes-256-cbc -salt -k "${password_1}" -in $1 -out "$1.enc"
-    command rm $1
+    openssl enc -e -aes-256-cbc -pbkdf2 -salt -in $1 -out "$1.enc"
   fi
-  # tput dl1
 }
 function _crypt() {
   _files
@@ -289,7 +290,7 @@ function crawl() {
   [[ -z ${commands[notify-send]} ]] && return 1
   [[ $# -eq 0 ]] && return 1
 
-  crawl-img -f $1 || return 1
+  crawl-img -u $1 || return 1
   notify-send 'Image downloading is complete.'
 }
 
@@ -386,7 +387,7 @@ function _vscode_extensions() {
 }
 compdef _vscode_extensions vscode_extensions
 
-function twi() {
+function twitter_search() {
   [[ $# -eq 0 ]] && return 1
 
   local word query="$1%20"

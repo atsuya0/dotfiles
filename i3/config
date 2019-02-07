@@ -126,8 +126,8 @@ bindsym F7 exec --no-startup-id \
 bindsym $mod+Shift+Control+l exec i3lock -c 6b91aa
 
 #スクリーンショット
-bindsym Print exec --no-startup-id scrot -q 100 -u '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/contents/pictures/screenshot/ ]] && mv $f ~/contents/pictures/screenshot/'
-bindsym Shift+Print exec --no-startup-id scrot -q 100 '%Y-%m-%d_%H:%M:%S.png' -e '[[ -d ~/contents/pictures/screenshot/ ]] && mv $f ~/contents/pictures/screenshot/'
+bindsym Print exec --no-startup-id scrot -u -q 100 '%Y-%m-%d_%H:%M:%S.png' -e 'mv $f ~/contents/pictures/screenshot/' && notify-send 'screenshot'
+bindsym Shift+Print exec --no-startup-id scrot -q 100 '%Y-%m-%d_%H:%M:%S.png' -e 'mv $f ~/contents/pictures/screenshot/' && notify-send 'screenshot'
 
 # resize window (you can also use the mouse for that)
 set $mode_resize 

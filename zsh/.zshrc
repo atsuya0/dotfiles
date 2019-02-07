@@ -47,6 +47,7 @@ function ignore_absolute_paths() {
     "${HOME}/.nvm/versions"
     "${HOME}/.java"
     "${HOME}/workspace/docker"
+    "${HOME}/workspace/dev/rails_tutorial"
     "${HOME}/samples"
     "${HOME}/.Trash"
     "${GOPATH}/pkg"

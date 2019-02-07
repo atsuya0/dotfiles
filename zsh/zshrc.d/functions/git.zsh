@@ -48,7 +48,7 @@ function __git_branch_list__() {
 
 function __git_working_tree_status__() {
   is_managed_by_git || return 1
-  git status --short \
+  git status --porcelain | grep '^.M' \
     | cut -c 4- \
     | fzf --preview='git diff --color=always {}' \
       --preview-window='right:95%:hidden' \
@@ -58,6 +58,7 @@ function __git_working_tree_status__() {
 alias gb='git branch'
 alias gs='git status'
 alias gd='git diff'
+alias gdc='git diff --cached'
 alias gl='git log'
 alias ga='git add'
 alias gcm='git commit -m'
