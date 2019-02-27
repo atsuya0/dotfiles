@@ -1,6 +1,7 @@
 # fzf (A command-line fuzzy finder) 用の設定
 
-export FZF_DEFAULT_COMMAND='rg'
+
+[[ -n ${commands[rg]} ]] && export FZF_DEFAULT_COMMAND='rg'
 # <C-y>で文字列をコピー
 export FZF_DEFAULT_OPTS="-m --height=80% --reverse --exit-0 --bind 'ctrl-y:execute-silent(echo {} | xsel -ib)+abort'"
 # <C-v>で見切れたコマンドを表示

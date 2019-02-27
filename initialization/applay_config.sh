@@ -34,10 +34,10 @@ EOF
 
 # editor
 function init_nvim() {
-  local -r dot="${DOTFILES}/vim"
-  place_config_files "${dot}/init.vim" "${XDG_CONFIG_HOME}/nvim" \
+  local -r dotfiles="${DOTFILES}/vim"
+  place_config_files "${dotfiles}/init.vim" "${XDG_CONFIG_HOME}/nvim" \
     || return 1
-  place_config_files "${dot}/dein" "${HOME}/.cache/dein/toml" \
+  place_config_files "${dotfiles}/dein" "${HOME}/.cache/dein/toml" \
     || return 1
 }
 

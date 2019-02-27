@@ -1,12 +1,18 @@
+function cc() { # Character Counter
+  [[ -s $1 ]] && cat $1 | sed ':a;N;$!ba;s/\n//g' | wc -m
+}
+
+function fonts() {
+  for i in {$(($1 * 1000))..$(($1 * 1000 + 2000))}; do
+    echo -n -e "$(printf '\\u%x' $i) "
+  done
+}
+
 # The amount of transferred data after turning on the power.
 function dtr() {
   cat /proc/net/dev | awk \
     '{if(match($0, /wlp4s0/)!=0) print "Wifi        : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"} \
     {if(match($0, /bnep0/)!=0) print "Bluetooth Tethering : Receive",$2/(1024*1024),"MB","|","Transmit",$10/(1024*1024),"MB"}'
-}
-
-function cc() { # Character Counter
-  [[ -s $1 ]] && cat $1 | sed ':a;N;$!ba;s/\n//g' | wc -m
 }
 
 function colors(){
@@ -20,11 +26,5 @@ function colors(){
       echo
     done
     echo
-  done
-}
-
-function fonts() {
-  for i in {$(($1 * 1000))..$(($1 * 1000 + 2000))}; do
-    echo -n -e "$(printf '\\u%x' $i) "
   done
 }

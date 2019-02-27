@@ -48,7 +48,7 @@ function __git_branch_list__() {
 
 function __git_working_tree_status__() {
   is_managed_by_git || return 1
-  git status --porcelain | grep '^.M' \
+  git status --porcelain | grep -e '^??' -e '^.M' -e '^.D' \
     | cut -c 4- \
     | fzf --preview='git diff --color=always {}' \
       --preview-window='right:95%:hidden' \

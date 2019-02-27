@@ -4,12 +4,6 @@
 
 set -euCo pipefail
 
-function install_packages() {
-  sudo pacman -S --needed --noconfirm \
-    $(cat $(dirname $0)/package.list | sed 's/#.*//;s/ //g;/^$/d')
-  setup_packages
-}
-
 function add_docker_group() {
   groups | grep docker \
     && sudo groupadd docker \
@@ -19,30 +13,43 @@ function add_docker_group() {
 function setup_packages() {
   which zsh &> /dev/null \
     && chsh -s $(which zsh)
+
   which pip &> /dev/null \
     && pip install --user pynvim
+
   which lightdm &> /dev/null \
     && sudo systemctl enable lightdm.service \
     && sed -i \
         's/^\(ENV=\)\(lightdm-gtk-greeter\)/\1env GTK_THEME=Adwaita:dark \2/' \
         /usr/share/xgreeters/lightdm-gtk-greeter.desktop
+
   which tlp &> /dev/null \
     && sudo systemctl enable tlp.service tlp-sleep.service \
     && sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
-  add_docker_group
+
+  which docker &> /dev/null \
+    && add_docker_group
+}
+
+# --noconfirm: Bypass any and all “Are you sure?” messages.
+# --needed: Do not reinstall the targets that are already up-to-date.
+function install_packages() {
+  sudo pacman -S --needed --noconfirm \
+    $(cat $(dirname $0)/package.list | sed 's/#.*//;s/ //g;/^$/d')
+  setup_packages
 }
 
 function install_fonts() {
-  local -r font="${HOME}/.local/share/fonts/"
-  mkdir -p ${font}
+  local -r font_dir="${HOME}/.local/share/fonts/"
+  mkdir -p ${font_dir}
 
-  local -r fira_code='https://github.com/tonsky/FiraCode/raw/master/distr/ttf'
-  local -r hack='https://github.com/source-foundry/Hack/raw/master/build/ttf'
   local -ar faces=('Regular' 'Bold' 'Italic')
+  local -ar fira_code=('FiraCode' 'https://github.com/tonsky/FiraCode/raw/master/distr/ttf')
+  local -ar hack=('Hack' 'https://github.com/source-foundry/Hack/raw/master/build/ttf')
 
   for face in ${faces[@]}; do
-    curl -fsSL ${fira_code}/{FiraCode-${face}.ttf} -o ${font}/#1
-    curl -fsSL ${hack}/{Hack-${face}.ttf} -o ${font}/#1
+    curl -fsSL ${fira_code[1]}/{${fira_code[0]}-${face}.ttf} -o ${font_dir}/#1
+    curl -fsSL ${hack[1]}/{${hack[0]}-${face}.ttf} -o ${font_dir}/#1
   done
 
   fc-cache
@@ -79,23 +86,6 @@ EndSection
 EOF
 }
 
-function download_packages_from_aur() {
-  local -ar packages=(
-    'nvm.tar.gz'
-  )
-
-  local -r build='build'
-  mkdir ${build}
-
-  local package
-  for package in ${packages[@]}; do
-    curl -fsSL "https://aur.archlinux.org/cgit/aur.git/snapshot/{${package}}" \
-      -o ${build}/#1 \
-      && tar -xzf "${build}/${package}" \
-      && rm "${build}/${package}"
-  done
-}
-
 function main() {
   [[ $(id -u) -eq 0 ]] && return 1
   [[ $# -eq 0 ]] \
@@ -109,7 +99,6 @@ function main() {
   set_locale
   set_touchpad
   install_fonts
-  download_packages_from_aur
 }
 
 main $@

@@ -60,7 +60,7 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = '~/workspace/neovim/surround.nvim'
+repo = '~/workspace/develop/neovim/surround.nvim'
 hook_add = '''
   nmap <LocalLeader>s [surround]
   nnoremap <silent> [surround]l :SurroundLine<space>

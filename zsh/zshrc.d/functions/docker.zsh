@@ -6,11 +6,49 @@ function is_docker_running() {
   return 1
 }
 
+function image_exists() {
+  [[ $# -eq 0 ]] && return 1
+  is_docker_running || return 1
+
+  docker images --format "{{.Repository}}" | grep -q "^${1}$" \
+    && return 0 \
+    || return 1
+}
+
+function _image_exists() {
+  _values \
+    $(docker images --format "{{.Repository}}")
+}
+compdef _image_exists image_exists
+
 function docker-compose() {
   [[ -z ${commands[docker-compose]} ]] && { echo 'Not installed'; return 1; }
-  is_docker_running && command docker-compose $@
+  type is_docker_running &> /dev/null \
+    && is_docker_running \
+    && command docker-compose $@
 }
-alias dc='docker-compose'
+
+function drm() { # dockerのcontainerを選択して破棄
+  is_docker_running || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
+
+  local -r container=$(
+    docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)"
+  )
+  [[ -n ${container} ]] \
+    && echo "${container}" | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
+}
+
+function drmi() { # dockerのimageを選択して破棄
+  is_docker_running || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
+
+  local -r image=$(
+    docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)"
+  )
+  [[ -n ${image} ]] \
+    && echo "${image}" | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
+}
 
 function jwm() { # dockerでjwmを動かす。
   is_docker_running || return 1
@@ -43,24 +81,16 @@ function jwm() { # dockerでjwmを動かす。
   [[ ${existed} -eq 0 ]] && pkill Xephyr
 }
 
-function drm() { # dockerのコンテナを選択して破棄
+function convert() {
+  [[ $# -eq 0 ]] && return 1
   is_docker_running || return 1
-  [[ -z ${commands[fzf]} ]] && return 1
 
-  local -r container=$(
-    docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)"
-  )
-  [[ -n ${container} ]] \
-    && echo "${container}" | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
-}
+  local -r image="${USER}/imagemagick-alpine"
+  image_exists ${image} || return 1
 
-function drmi() { # dockerのimageを選択して破棄
-  is_docker_running || return 1
-  [[ -z ${commands[fzf]} ]] && return 1
-
-  local -r image=$(
-    docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)"
-  )
-  [[ -n ${image} ]] \
-    && echo "${image}" | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
+  local dir
+  for dir in $@; do
+    docker run --rm -it -v ${PWD}:/images -w /images ${image} \
+      convert "${dir}/*" "${dir}.pdf"
+  done
 }

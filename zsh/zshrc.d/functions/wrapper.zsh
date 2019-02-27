@@ -30,20 +30,16 @@ function vim() { # Choose files to open by fzf.
   [[ -n ${files} ]] && eval $(editor ${files})
 }
 
-function ls() { # 何も表示されないならば隠しファイルの表示を試みる。
-  [[ $(command ls $@ 2> /dev/null) == '' ]] \
+# 何も表示されないならば隠しファイルの表示を試みる。
+function ls() {
+  [[ -z $(command ls $@ 2> /dev/null) ]] \
     && command ls -FA --color=auto $@ 2> /dev/null \
     || command ls -F --color=auto $@
 }
 
-function ranger() { # rangerのサブシェルでネストしないようにする。
-  [[ -z ${RANGER_LEVEL} ]] && command ranger $@ || exit
-}
-
+# google search
+# w3m search windows bsd linux
 function w3m(){
-  # google search
-  # w3m search windows bsd linux
-
   [[ $1 == 'search' && $# -ge 2 ]] && { \
     local i parameter="search?&q=$2"
     for i in {3..$#}; do
@@ -55,10 +51,7 @@ function w3m(){
   } || command w3m $@
 }
 
-function scrot() { # screenshot
-  local -r dir="${HOME}/contents/pictures/screenshot/"
-  [[ -d ${dir} ]] || mkdir -p ${dir}
-
-  command scrot $1 -q 100 '%Y-%m-%d_%H:%M:%S.png' \
-    -e "mv \$f ${dir}"
+# rangerのサブシェルでネストしないようにする。
+function ranger() {
+  [[ -z ${RANGER_LEVEL} ]] && command ranger $@ || exit
 }

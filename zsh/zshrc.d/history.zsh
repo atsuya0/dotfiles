@@ -1,23 +1,16 @@
-# 直前と同じコマンドを記録しない
-setopt hist_ignore_dups
-# コマンド履歴を重複させない
-setopt hist_ignore_all_dups
-# spaceで始まるコマンドを記録しない
-setopt hist_ignore_space
-# spaceを詰めて記録
-setopt hist_reduce_blanks
-# 他のターミナルとコマンド履歴を共有
-setopt share_history
-# コマンド履歴に時間を追加
-setopt extended_history
-# historyコマンドを履歴に登録しない
-setopt hist_no_store
-# 補完時に履歴を自動展開
-setopt hist_expand
-# 対話検索
-setopt inc_append_history
+setopt hist_ignore_dups # 直前と同じコマンドを記録しない
+setopt hist_ignore_all_dups # コマンド履歴を重複させない
+setopt hist_ignore_space # spaceで始まるコマンドを記録しない
+setopt hist_reduce_blanks # spaceを詰めて記録
+setopt share_history # 他のターミナルとコマンド履歴を共有
+setopt extended_history # コマンド履歴に時間を追加
+setopt hist_no_store # historyコマンドを履歴に登録しない
+setopt hist_expand # 補完時に履歴を自動展開
+setopt inc_append_history # 対話検索
 # 履歴の保存場所
-[[ -n ${ZDOTDIR} ]] && HISTFILE="${ZDOTDIR}/.zsh_history" || HISTFILE="${HOME}/.zsh_history"
+[[ -n ${ZDOTDIR} ]] \
+  && HISTFILE="${ZDOTDIR}/.zsh_history" \
+  || HISTFILE="${HOME}/.zsh_history"
 HISTSIZE=100000 # 履歴をメモリに保存する数
 SAVEHIST=100000 # 履歴をファイルに保存する数
 # 入力に対して履歴に一致したコマンドを表示
@@ -37,17 +30,16 @@ add-zsh-hook zshaddhistory __record_cmd__
 # 履歴に記録しないコマンドを記述
 typeset -ar __ignore_cmds__=(
   ls cd mv cp rm mkdir rmdir touch man less history source '\.'
-  vi export type which file stat command builtin grep ln cat wall
-  test '\[' '\[\[' sudoedit mount umount kill pkill pgrep echo
-  expr seq find pactl jobs fc-list chmod pwd ps date print printf
-  'sudo systemctl start' 'sudo systemctl stop' 'systemctl status'
+  vi export type which file stat command builtin grep ln cat
+  test '\[' '\[\[' sudoedit mount umount echo expr find pactl
+  chmod print printf make
   'pacman -Si' 'pacman -Ss' 'pacman -Qi' 'pacman -Qs'
 
-  vim nvim code python go 'npm search' xsel tmux tree chromium
-  rofi notify-send w3m scrot feh rg
+  vim nvim code python 'npm search' xsel tree chromium w3m feh rg
 
-  up down dw gcm gp gmv second sc tsc trash trs bak rs rn cc fonts
-  twi crawl crawl-img
+  up down dw second sc tsc
+  gs ga gd gcm gco gb gmv
+  trash trs bak rs rn crawl c convert mk 'dc exec' 'dc run'
 )
 
 function __save_cmd__() {

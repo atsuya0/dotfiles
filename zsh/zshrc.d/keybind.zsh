@@ -17,7 +17,8 @@ bindkey -M viins '^p'  up-line-or-history
 # bindkey -M viins '^r' history-incremental-search-backward
 # bindkey -M viins '^s' history-incremental-pattern-search-forward
 # bindkey -M viins '^r'  history-incremental-pattern-search-backward
-bindkey -M viins '\ef' forward-word # ALT: \e, ^[
+# ALT: \e, ^[
+bindkey -M viins '\ef' forward-word
 bindkey -M viins '\eb' backward-word
 bindkey -M viins '\ed' kill-word
 bindkey -M viins '\e.' insert-last-word

@@ -7,7 +7,7 @@ WORDCHARS='*?_-[]~&;!#$%^(){}<>' # /\=|.,
 # REPORTTIME=5
 # start/stop characters (usually assigned to ^S/^Q) is disabled
 unsetopt flow_control
-# no beep
+# Disabled beep
 unsetopt beep
 unsetopt list_beep
 unsetopt hist_beep
@@ -18,7 +18,7 @@ setopt ignore_eof
 # Allows `>' redirection to truncate existing files.  Otherwise `>!' or `>|' must be used to truncate a file.
 unsetopt clobber
 # Causes field splitting to be performed on unquoted parameter expansions.
-# setopt sh_word_split
+#setopt sh_word_split
 
 source '/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' 2> /dev/null
 

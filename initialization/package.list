@@ -4,6 +4,7 @@ xorg-xinit # startx
 xorg-xbacklight # backlight
 xorg-server-xephyr # nest
 xorg-xrandr # dual monitor
+xsel # clip board
 
 # shell
 zsh
@@ -15,6 +16,15 @@ otf-ipafont
 awesome-terminal-fonts
 ttf-font-awesome
 noto-fonts-emoji
+
+# window manager
+i3-wm
+i3blocks
+
+# display manager
+lightdm
+light-locker
+lightdm-gtk-greeter
 
 # input method framework
 fcitx-mozc
@@ -41,26 +51,18 @@ w3m # cui
 
 # programming languages
 python
-python-pip # package manager
-# ruby
+python-pip
 go
 rustup
-
-# window manager
-i3-wm
-i3blocks
-
-# display manager
-lightdm
-light-locker
-lightdm-gtk-greeter
 
 # file manager
 ranger # cui
 pcmanfm-gtk3 # gui
 
-# command
-xsel # clip board
+# Infrastructure
+terraform
+
+# CLI
 tree
 fzf # filter
 ripgrep # grep
@@ -79,8 +81,8 @@ dosfstools # fat32
 # virtual
 docker
 docker-compose
-virtualbox
-virtualbox-host-modules-arch
+#virtualbox
+#virtualbox-host-modules-arch
 
 # sound player
 cmus

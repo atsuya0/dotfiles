@@ -1,6 +1,5 @@
 export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理
 
-export DOTFILES="${HOME}/dotfiles"
 export TRASH_PATH="${HOME}/.Trash"
 export SECOND_LIST_PATH="${HOME}/.second_list.json"
 

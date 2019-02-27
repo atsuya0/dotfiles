@@ -12,6 +12,7 @@
     "vim.useSystemClipboard": true,
     "vim.hlsearch": true,
     "vim.easymotion": true,
+    "vim.leader": "space",
     "vim.visualstar": true,
     "editor.minimap.enabled": false,
     "workbench.colorTheme": "One Dark Pro",

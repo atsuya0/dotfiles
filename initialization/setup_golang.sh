@@ -2,19 +2,23 @@
 
 set -euCo pipefail
 
+function fetch_libraries() {
+  local -ar libraries=(
+    'github.com/nsf/gocode'
+    'golang.org/x/tools/cmd/goimports'
+    'github.com/jstemmer/gotags'
+  )
+
+  go get -u ${libraries}
+}
+
 function main() {
   which go &> /dev/null || return 1
   [[ -z ${GOPATH} ]] && return 1
 
   mkdir -p ${GOPATH}/{src,bin,pkg}
 
-  local -ar libraries=(
-    'github.com/nsf/gocode'
-    'golang.org/x/tools/cmd/goimports'
-    'github.com/jstemmer/gotags'
-    'github.com/golang/dep/cmd/dep'
-  )
-  go get -u ${libraries}
+  fetch_libraries
 }
 
 main

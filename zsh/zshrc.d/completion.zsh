@@ -5,7 +5,7 @@ setopt auto_param_keys
 # ディレクトリ名の補完で末尾の/を自動的に付加し次の補完に備える
 setopt auto_param_slash
 # ファイル名の展開でディレクトリに一致した場合末尾に/を付加する
-setopt mark_dirs
+#setopt mark_dirs
 # カーソル位置で補完する。
 setopt complete_in_word
 # globを展開しないで候補の一覧から補完する。
