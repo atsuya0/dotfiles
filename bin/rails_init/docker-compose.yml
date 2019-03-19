@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  rails:
+    build:
+      context: .
+      args:
+        - DOCKER_UID={{2}}
+        - APP={{1}}
+    container_name: 'rails'
+    command: bin/rails server
+    environment:
+      RAILS_ENV: development
+    user:
+      '{{2}}:{{2}}'
+    volumes:
+      - '.:/{{1}}'
+    ports:
+      - '3000:3000'
