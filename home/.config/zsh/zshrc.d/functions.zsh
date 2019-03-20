@@ -192,12 +192,7 @@ EOF
   chmod +x "./${name}"
 }
 
-# Bluetooth tethering
-# Do not use the anaconda's dbus-send.
-# The AC_CF_85_B7_9D_9A is MAC address of the smartphone。
-function bt() {
-  local -r ADDR='AC:CF:85:B7:9D:9A'
-
+function bluetooth_pairing() {
   systemctl is-active bluetooth &> /dev/null \
     || sudo systemctl start bluetooth.service
   () {
@@ -206,12 +201,24 @@ function bt() {
     echo "connect $1"
     sleep 3
     echo 'quit'
-  } ${ADDR} | bluetoothctl
+  } $1 | bluetoothctl
+}
 
+# Bluetooth tethering
+# Do not use the anaconda's dbus-send.
+# The AC_CF_85_B7_9D_9A is MAC address of the smartphone。
+function bt() {
+  local -r addr='AC:CF:85:B7:9D:9A'
+
+  bluetooth_pairing ${addr}
   /usr/bin/dbus-send --system --type=method_call --dest=org.bluez \
-    "/org/bluez/hci0/dev_${ADDR//:/_}" org.bluez.Network1.Connect string:'nap' \
+    "/org/bluez/hci0/dev_${addr//:/_}" org.bluez.Network1.Connect string:'nap' \
     && sleep 1 \
     && sudo dhcpcd bnep0
+}
+
+function 1more() {
+  bluetooth_pairing '0C:73:EB:38:76:E9'
 }
 
 # $ crypt test.txt
