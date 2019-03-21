@@ -34,8 +34,11 @@ function setup_packages() {
 # --noconfirm: Bypass any and all “Are you sure?” messages.
 # --needed: Do not reinstall the targets that are already up-to-date.
 function install_packages() {
+  local -r file="${DOTFILES}/doc/packages.txt"
+  [[ -s ${file} ]] || return 1
+
   sudo pacman -S --needed --noconfirm \
-    $(cat $(dirname $0)/package.list | sed 's/#.*//;s/ //g;/^$/d')
+    $(cat ${file} | sed 's/#.*//;s/ //g;/^$/d')
   setup_packages
 }
 
