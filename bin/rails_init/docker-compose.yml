@@ -2,17 +2,33 @@ version: '3.7'
 services:
   rails:
     build:
-      context: .
+      context: ./rails
       args:
-        - DOCKER_UID={{2}}
-        - APP={{1}}
+        APP: {{1}}
     container_name: 'rails'
-    command: bin/rails server
+    command: bundle exec rails server -b 0.0.0.0
     environment:
       RAILS_ENV: development
-    user:
-      '{{2}}:{{2}}'
+      MYSQL_USER: 'test'
+      MYSQL_PASSWORD: 'test'
+      MYSQL_HOST: 'db'
+      MYSQL_PORT: 3306
     volumes:
-      - '.:/{{1}}'
+      - ./rails:/{{1}}
     ports:
       - '3000:3000'
+  db:
+    image: mariadb:latest
+    container_name: 'db'
+    command: mysqld --character-set-server=utf8mb4
+    environment:
+      MYSQL_USER: 'test'
+      MYSQL_PASSWORD: 'test'
+      MYSQL_ROOT_PASSWORD: 'root'
+    volumes:
+      - db-data:/var/lib/mysql
+    expose:
+      - 3306
+
+volumes:
+  db-data:

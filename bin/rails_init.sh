@@ -2,43 +2,37 @@
 
 set -euCo pipefail
 
-function get_conf_path() {
-  realpath ${0%.*}
-}
-
-function create_Gemfile() {
-  docker run --rm -v "$(pwd):/app" -w "/app" ruby:latest bundle init || return 1
-  sed -i 's/# \(gem "rails"\)/\1/' Gemfile || return 1
-  touch Gemfile.lock
-}
-
-function rails_new() {
-  cp "$(get_conf_path)/Dockerfile" ./
-  docker build -t $USER/rails . || return 1
-  docker run --rm -it -v "$(pwd):/$1" $USER/rails rails new "/$1" -B || return 1
-}
-
-function create_dc_yaml() {
-  cp "$(get_conf_path)/docker-compose.yml" ./
-  sed -i "s/{{1}}/$1/;s/{{2}}/$(id -u)/g" ./docker-compose.yml
-}
-
 function main() {
-  [[ $# -eq 0 ]] && return
+  [[ $# -eq 0 ]] && return 1
 
-  local app=$1
+  local -r app=$1
+  local -r rails="$1/rails"
 
-  [[ -d ${app} ]] || mkdir ${app}
-  [[ $(dirname $(pwd)) == ${app} ]] || cd ${app}
+  [[ -d ${rails} ]] || mkdir -p ${rails}
 
-  create_Gemfile || return
-  rails_new ${app} || return
+  (
+    [[ $(dirname $(pwd)) == ${app} ]] || cd ${app}
 
-  echo "sudo chown -R $(whoami):$(whoami) ."
-  sudo chown -R $(whoami):$(whoami) .
+    cp "$(realpath ${0%.*})/docker-compose.yml" ./
+    sed -i "s/{{1}}/${app}/g" ./docker-compose.yml
 
-  echo '/config/master.key' > ./.dockerignore
-  create_dc_yaml ${app} || return
+    cp "$(realpath ${0%.*})/Makefile" ./
+  )
+
+  (
+    [[ $(dirname $(pwd)) == ${rails} ]] || cd ${rails}
+    docker run --rm -it \
+      -v "$(pwd):/${app}" -w "/${app}" $USER/rails \
+      bundle exec rails new . -d mysql
+    docker run --rm -it \
+      -v "$(pwd):/${app}" -w "/${app}" $USER/rails \
+      bundle install --path vendor/bundle --jobs=4
+    cp "$(realpath ${0%.*})/Dockerfile" ./
+    echo '/config/master.key' > ./.dockerignore
+  )
+
+  echo 'chown'
+  sudo chown -R $(whoami) ${rails}
 }
 
 main $@

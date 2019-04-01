@@ -391,3 +391,11 @@ function cb() {
     ;;
   esac
 }
+
+function update() {
+  [[ -z ${commands[notify-send]} ]] && return 1
+
+  echo 'sudo pacman -Syu'
+  sudo pacman -Syu
+  notify-send 'Updated'
+}

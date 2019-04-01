@@ -65,6 +65,7 @@ alias gcm='git commit -m'
 alias gco='git checkout'
 alias gph='git push origin'
 alias gpl='git pull origin'
+alias gc1='git clone -b master --depth 1'
 
 alias -g @gb='$(__git_branch_list__)'
 alias -g @gw='$(__git_working_tree_status__)'

@@ -16,14 +16,15 @@ alias diff='diff --color'
 alias ip='ip --color=auto'
 alias nano='nano -$ -l -i -O -m -c' # '-$liOmc' does not work.
 
-alias open='xdg-open'
 alias tree='tree -C'
 alias dc='docker-compose'
-alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
-alias xephyr='Xephyr -wr -resizeable :1' # white
+alias bc='bluetoothctl'
+alias open='xdg-open'
 alias poweroff='interactive systemctl poweroff'
 alias reboot='interactive systemctl reboot'
 alias logout='interactive i3-msg exit'
+alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
+alias xephyr='Xephyr -wr -resizeable :1' # white
 alias lock='light-locker-command -l'
 alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias wallpaper='feh --no-fehbg --bg-scale /home/tayusa/contents/pictures/wallpaper/arch/Ju5PuBC.jpg'

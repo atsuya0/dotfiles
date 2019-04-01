@@ -64,10 +64,8 @@ function ignore_dirs() {
   local -ar ignore_dirs=(
     '.git'
     'node_modules' # node.js
-    'vendor' # golang
     'target' # rust
-    'gems' # ruby
-    'db/data' # docker
+    'bundle' # rails
     'tmp/cache' # rails
   )
   print -C 1 ${ignore_dirs[@]} \
