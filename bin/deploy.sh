@@ -3,16 +3,20 @@
 set -euCo pipefail
 
 function main() {
-  local -r home="${DOTFILES}/home"
+  local -r config="${DOTFILES:-${HOME}/dotfiles}/config"
 
-  ls -A ${home} | while read -r file; do
-    local filepath="${home}/${file}"
+  ls -A "${config}/home" | while read -r file; do
+    ln -sf "${config}/home/${file}" ${HOME}/
+  done
 
-    [[ -d ${filepath} && ${file} == '.config' ]] \
-      && ln -sf ${filepath}/* "${XDG_CONFIG_HOME:-${HOME}/.config}/"
-    [[ -d ${filepath} && ${file} == '.cache' ]] \
-      && ln -sf ${filepath}/* "${XDG_CACHE_HOME:-${HOME}/.cache}/"
-    ln -sf ${filepath} ${HOME}/
+  ls "${config}/config" | while read -r file; do
+    rm -r "${XDG_CONFIG_HOME:-${HOME}/.config}/${file}"
+    ln -sf "${config}/config/${file}" "${XDG_CONFIG_HOME:-${HOME}/.config}/"
+  done
+
+  ls "${config}/cache" | while read -r file; do
+    rm -r "${XDG_CACHE_HOME:-${HOME}/.cache}/${file}"
+    ln -sf "${config}/cache/${file}" "${XDG_CACHE_HOME:-${HOME}/.cache}/"
   done
 }
 

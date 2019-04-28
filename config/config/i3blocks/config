@@ -43,7 +43,7 @@ signal=1
 
 [date]
 label=
-command=date +'%m/%d %H:%M'
+command=date +'%m/%d(%a) %H:%M'
 color=#8fa1b3
 interval=1
 

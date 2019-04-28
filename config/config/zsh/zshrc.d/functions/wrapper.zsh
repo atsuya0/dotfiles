@@ -32,9 +32,21 @@ function vim() { # Choose files to open by fzf.
 
 # 何も表示されないならば隠しファイルの表示を試みる。
 function ls() {
+  case ${OSTYPE} in
+    darwin* )
+      local -r ls='command ls -FG'
+    ;;
+    'linux-gnu' )
+      local -r ls='command ls -F --color=auto'
+    ;;
+    * )
+      local -r ls='command ls -F'
+    ;;
+  esac
+
   [[ -z $(command ls $@ 2> /dev/null) ]] \
-    && command ls -FA --color=auto $@ 2> /dev/null \
-    || command ls -F --color=auto $@
+    && eval ${ls} -A $@ 2> /dev/null \
+    || eval ${ls} $@
 }
 
 # google search

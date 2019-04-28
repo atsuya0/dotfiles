@@ -11,6 +11,7 @@ function fetch_dotfiles() {
 
 function main() {
   export DOTFILES="${HOME}/dotfiles"
+
   fetch_dotfiles
   ${DOTFILES}/bin/deploy.sh
 }

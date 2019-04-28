@@ -1,5 +1,13 @@
-alias la='ls -A --color=auto'
-alias ll='ls -FAlhtr --color=auto --time-style="+%Y/%m/%d %H:%M:%S"'
+case ${OSTYPE} in
+  darwin* )
+    alias la='ls -AG'
+    alias ll='ls -FAlhtrG'
+  ;;
+  'linux-gnu' )
+    alias la='ls -A --color=auto'
+    alias ll='ls -FAlhtr --color=auto --time-style="+%Y/%m/%d %H:%M:%S"'
+  ;;
+esac
 alias grep='grep --color=auto'
 alias mv='mv -iv'
 alias cp='cp -iv'

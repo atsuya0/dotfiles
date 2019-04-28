@@ -66,6 +66,7 @@ function main() {
 
   local -ar packages=(
     'nvm'
+    'chromium-widevine'
   )
 
   local -r dir="build_$(date +%T)"

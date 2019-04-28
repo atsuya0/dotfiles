@@ -6,7 +6,7 @@ tmux list-session &> /dev/null || () {
 
 () { # tmux
   [[ -z ${WINDOWID} ]] && return 1 # GUI
-  [[ "$(ps hco cmd ${PPID})" =~ 'mlterm|alacritty' ]] \
+  [[ "$(ps hco cmd ${PPID})" =~ 'termite|alacritty' ]] \
     || return 1
   [[ -n ${commands[tmux_management.sh]} ]] \
     && tmux_management.sh \

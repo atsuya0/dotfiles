@@ -161,18 +161,6 @@ mode "$mode_launcher" {
 }
 bindsym $mod+Return mode "$mode_launcher"
 
-set $mode_display xrandr
-mode "$mode_display" {
-    bindsym m exec --no-startup-id xrandr --output eDP1 --output HDMI1 --mode 1366x768, mode "default"
-    bindsym d exec --no-startup-id xrandr --output HDMI1 --left-of eDP1 --mode 1366x768, mode "default"
-    bindsym x exec --no-startup-id xrandr --output HDMI1 --off, mode "default"
-
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-    bindsym space mode "default"
-}
-bindsym $mod+x mode "$mode_display"
-
 set $background #2b303b
 set $foreground #c0c5ce
 set $secondary #3f4751

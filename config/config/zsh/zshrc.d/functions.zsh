@@ -378,7 +378,8 @@ function twitter_search() {
     query="${query}AND%20${word}%20"
   done
 
-  xdg-open "https://twitter.com/search?q=${query}OR%20%401&src=typd"
+  local -r user='%409999999'
+  xdg-open "https://twitter.com/search?q=${query}OR%20${user}&src=typd"
 }
 
 function cb() {
