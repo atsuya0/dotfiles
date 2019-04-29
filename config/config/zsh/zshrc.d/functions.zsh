@@ -378,7 +378,7 @@ function twitter_search() {
     query="${query}AND%20${word}%20"
   done
 
-  local -r user='%409999999'
+  local -r user='%40zzzzzzzzzzzzzz'
   xdg-open "https://twitter.com/search?q=${query}OR%20${user}&src=typd"
 }
 

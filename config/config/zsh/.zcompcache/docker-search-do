@@ -1,4 +1,0 @@
-result=( ${(Q)"${(z)$(<<\EO:result
-'mongo' 'alpine' 'jenkins' 'registry' 'microsoft/dotnet' 'docker' 'swarm' 'hello-world' 'fedora' 'plexinc/pms-docker' 'oraclelinux' 'rethinkdb' 'couchbase' 'nodered/node-red-docker' 'couchdb' 'arangodb' 'orientdb' 'datadog/docker-dd-agent' 'docker-dev' 'runmymind/docker-android-sdk' 'ibmjava' 'tomee' 'eggdrop' 'hello-seattle' 'hola-mundo'
-EO:result
-)}"} )

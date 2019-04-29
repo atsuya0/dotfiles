@@ -34,7 +34,6 @@ function ignore_absolute_paths() {
     "${HOME}/.cache/mesa_shader_cache"
     "${HOME}/.cache/chromium"
     "${HOME}/.config/chromium"
-    "${HOME}/.config/fcitx"
     "${HOME}/.config/Code\\\ -\\\ OSS"
     "${HOME}/.vscode-oss"
     "${HOME}/.config/nvim/undo"
@@ -52,6 +51,7 @@ function ignore_absolute_paths() {
     "${HOME}/.Trash"
     "${GOPATH}/pkg"
     "${GOPATH}/src"
+    "${DOTFILES}/config/cache/dein/repos"
   )
   local IFS=$'\n'
 

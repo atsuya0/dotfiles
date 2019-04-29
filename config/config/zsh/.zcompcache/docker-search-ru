@@ -1,4 +1,0 @@
-result=( ${(Q)"${(z)$(<<\EO:result
-'ruby' 'consul' 'redmine' 'gitlab/gitlab-runner' 'rust' 'diameter/rtorrent-rutorrent' 'linuxserver/rutorrent' 'jruby' 'runmymind/docker-android-sdk' 'circleci/ruby' 'scorpil/rust' 'rustlang/rust' 'starefossen/ruby-node' 'bitnami/ruby' 'rubinius/docker' 'iron/ruby' 'hoteltonight/ruby-jemalloc' 'centos/ruby-22-centos7' 'circleci/rust' 'appsvc/ruby' 'kapost/ruby' 'bedrockibm/ruby-runtime' 'onsdigital/eq-survey-runner' 'aptible/ruby' 'paasmule/paas-tools-ruby'
-EO:result
-)}"} )
