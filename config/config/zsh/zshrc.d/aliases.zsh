@@ -1,9 +1,11 @@
 case ${OSTYPE} in
   darwin* )
+    alias ls='ls -G'
     alias la='ls -AG'
     alias ll='ls -FAlhtrG'
   ;;
   'linux-gnu' )
+    alias ls='ls --color=auto'
     alias la='ls -A --color=auto'
     alias ll='ls -FAlhtr --color=auto --time-style="+%Y/%m/%d %H:%M:%S"'
   ;;

@@ -78,6 +78,14 @@ set softtabstop=0 "タブで挿入される文字数(0ならtabstopの値)
 set smarttab "nvim-default
 set autoindent "nvim-default
 "==================================================
+" DIRECTORY EXPLORATION
+"==================================================
+let g:netrw_liststyle=1
+let g:netrw_banner=0
+let g:netrw_sizestyle="H"
+let g:netrw_timefmt="%Y/%m/%d(%a) %H:%M:%S"
+let g:netrw_preview=1
+"==================================================
 " Functions and Commands
 "==================================================
 command! -nargs=0 OnlyCurrentBuf 1,.-bdelete | .+,$bdelete

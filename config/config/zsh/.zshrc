@@ -18,12 +18,31 @@ setopt ignore_eof
 # Allows `>' redirection to truncate existing files.  Otherwise `>!' or `>|' must be used to truncate a file.
 unsetopt clobber
 # Causes field splitting to be performed on unquoted parameter expansions.
-#setopt sh_word_split
+# setopt sh_word_split
 
-source '/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' 2> /dev/null
+setopt notify
+setopt print_eight_bit
+setopt correct_all
+# setopt bsd_echo
+
+() {
+  case ${OSTYPE} in
+    darwin* )
+      local -r zsh='/usr/local/share'
+    ;;
+    'linux-gnu' )
+      local -r zsh='/usr/share/zsh/plugins'
+    ;;
+  esac
+  source "${zsh}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2> /dev/null
+  source "${zsh}/zsh-autosuggestions/zsh-autosuggestions.zsh" 2> /dev/null
+}
 
 function ignore_absolute_paths() {
   local -ar paths=(
+    "${HOME}/Pictures"
+    "${HOME}/Library"
+    "${HOME}/.rbenv"
     "${HOME}/.cache/dein/repos"
     "${HOME}/.cache/dein/.cache"
     "${HOME}/.cache/pip"
@@ -46,12 +65,12 @@ function ignore_absolute_paths() {
     "${HOME}/.nvm/versions"
     "${HOME}/.java"
     "${HOME}/workspace/docker"
-    "${HOME}/workspace/dev/rails_tutorial"
-    "${HOME}/samples"
+    "${HOME}/workspace/develop"
     "${HOME}/.Trash"
     "${GOPATH}/pkg"
     "${GOPATH}/src"
     "${DOTFILES}/config/cache/dein/repos"
+    "${DOTFILES}/config/cache/dein/.cache"
   )
   local IFS=$'\n'
 

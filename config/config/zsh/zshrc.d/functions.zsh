@@ -221,6 +221,14 @@ function 1more() {
   bluetooth_pairing '0C:73:EB:38:76:E9'
 }
 
+function disconnect() {
+  () {
+    echo 'disconnect'
+    sleep 1
+    echo 'quit'
+  } $1 | bluetoothctl
+}
+
 # $ crypt test.txt
 # ファイルの暗号と復号を行う。暗号か復号はファイルの状態で自動で決める。
 function crypt() {

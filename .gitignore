@@ -2,6 +2,9 @@
 /config/config/zsh/.zcompdump
 /config/config/zsh/.zsh_history
 /config/config/nvim/undo
+/config/config/nvim/.netrwhist
+
 /config/cache/dein/repos
 /config/cache/dein/cache_nvim
 /config/cache/dein/state_nvim.vim
+/config/cache/dein/.cache

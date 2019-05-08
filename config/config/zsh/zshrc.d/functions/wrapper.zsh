@@ -10,6 +10,7 @@ function vim() { # Choose files to open by fzf.
   }
 
   function choice() {
+    [[ -z ${commands[fzf]} ]] && return 1
     eval find ${1:-.} \
       $(ignore_filetypes) $(ignore_dirs) $(ignore_absolute_paths) \
       -type f -print \
@@ -17,16 +18,9 @@ function vim() { # Choose files to open by fzf.
         --preview-window='right:hidden' --bind='ctrl-v:toggle-preview'
   }
 
-  if [[ $# -ne 0 ]]; then
-    [[ -d $1 ]] \
-      && local -r files=$(choice $1) \
-      || { eval $(editor $@); return 0; }
-    [[ -n ${files} ]] && { eval $(editor ${files}); return 0; }
-    return 1
-  fi
+  [[ $# -ne 0 && ! -d $1 ]] && { eval $(editor $@); return 0; }
 
-  [[ -z ${commands[fzf]} ]] && return 1
-  local -r files=$(choice)
+  local -r files=$(choice $1)
   [[ -n ${files} ]] && eval $(editor ${files})
 }
 

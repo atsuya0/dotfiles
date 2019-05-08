@@ -2,7 +2,14 @@
 
 function __init_nvm__() { # nvm(Node.jsのversion管理)の初期設定を読み込む
   unset -f $@
-  local -r nvm_path='/usr/share/nvm'
+  case ${OSTYPE} in
+    darwin* )
+      local -r nvm_path='/usr/local/opt/nvm'
+    ;;
+    'linux-gnu' )
+      local -r nvm_path='/usr/share/nvm'
+    ;;
+  esac
   [[ -e "${nvm_path}/nvm.sh" ]] && source "${nvm_path}/nvm.sh"
 }
 

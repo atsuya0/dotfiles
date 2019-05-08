@@ -147,8 +147,8 @@ bindsym $mod+r mode "$mode_resize"
 
 set $mode_launcher 
 mode "$mode_launcher" {
-    bindsym t exec --no-startup-id WINIT_HIDPI_FACTOR=1.0 alacritty, mode "default"
-    bindsym Shift+t exec --no-startup-id termite, mode "default"
+    bindsym Shift+t exec --no-startup-id WINIT_HIDPI_FACTOR=1.0 alacritty, mode "default"
+    bindsym t exec --no-startup-id termite, mode "default"
     bindsym b exec --no-startup-id chromium, mode "default"
     bindsym Shift+b exec --no-startup-id chromium --new-window --incognito, mode "default"
     bindsym f exec --no-startup-id pcmanfm, mode "default"

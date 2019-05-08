@@ -2,7 +2,7 @@
 
 set -euCo pipefail
 
-function main() {
+function link_config_file() {
   local -r config="${DOTFILES:-${HOME}/dotfiles}/config"
 
   ls -A "${config}/home" | while read -r file; do
@@ -18,6 +18,20 @@ function main() {
     rm -r "${XDG_CACHE_HOME:-${HOME}/.cache}/${file}"
     ln -sf "${config}/cache/${file}" "${XDG_CACHE_HOME:-${HOME}/.cache}/"
   done
+}
+
+function fetch_surround-nvim() {
+  local -r nvim_dir="${HOME}/workspace/develop/neovim"
+  mkdir -p ${nvim_dir}
+  (
+    cd ${nvim_dir}
+    git clone https://github.com/tayusa/surround.nvim
+  )
+}
+
+function main() {
+  link_config_file
+  fetch_surround-nvim
 }
 
 main $@

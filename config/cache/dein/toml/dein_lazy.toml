@@ -11,10 +11,13 @@ build = 'bash install.sh'
 on_i = 1
 hook_add = '''
   let g:LanguageClient_autoStart = 1
+  nnoremap <silent> K :call LanguageClien
   let g:LanguageClient_serverCommands = {
+    \ 'go': ['gopls'],
     \ 'ruby': ['solargraph', 'stdio'],
   \ }
 '''
+# let g:LanguageClient_loadSettings = 1
 
 [[plugins]] # color scheme
 repo = 'tyrannicaltoucan/vim-quantum'
@@ -101,16 +104,21 @@ hook_source = '''
   let g:deoplete#sources#jedi#python_path = g:python3_host_prog
 '''
 
-[[plugins]] # completion for go
-repo = 'zchee/deoplete-go'
-if = 'has("nvim")'
-on_ft = 'go'
-on_i = 1
+# [[plugins]] # completion for go
+# repo = 'zchee/deoplete-go'
+# if = 'has("nvim")'
+# on_ft = 'go'
+# on_i = 1
 
 [[plugins]] # various features for go
 repo = 'fatih/vim-go'
 on_ft = 'go'
 hook_add = '''
+  let g:go_fmt_command = "goimports"
+
+  let g:go_def_mapping_enabled = 0
+  let g:go_doc_keywordprg_enabled = 0
+
   nnoremap <silent> [denite]d :Denite -auto_preview decls<CR>
   nnoremap <silent> [denite]D :DeniteCursorWord -auto_preview decls<CR>
 '''

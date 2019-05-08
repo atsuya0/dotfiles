@@ -3,12 +3,26 @@
 
 [[ -n ${commands[rg]} ]] && export FZF_DEFAULT_COMMAND='rg'
 # <C-y>で文字列をコピー
-export FZF_DEFAULT_OPTS="-m --height=80% --reverse --exit-0 --bind 'ctrl-y:execute-silent(echo {} | xsel -ib)+abort'"
+case ${OSTYPE} in
+  darwin* )
+    export FZF_DEFAULT_OPTS="-m --height=80% --reverse --exit-0 --bind 'ctrl-y:execute-silent(echo {} | execute-silent)+abort'"
+  ;;
+  'linux-gnu' )
+    export FZF_DEFAULT_OPTS="-m --height=80% --reverse --exit-0 --bind 'ctrl-y:execute-silent(echo {} | xsel -ib)+abort'"
+  ;;
+esac
 # <C-v>で見切れたコマンドを表示
 export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap --bind 'ctrl-v:toggle-preview'"
 
 () { # fzfの拡張を読み込む
-  local -r fzf_directory='/usr/share/fzf'
+  case ${OSTYPE} in
+    darwin* )
+      local -r fzf_directory='/usr/local/Cellar/fzf/0.18.0/shell'
+    ;;
+    'linux-gnu' )
+      local -r fzf_directory='/usr/share/fzf'
+    ;;
+  esac
   local -r keybind="${fzf_directory}/key-bindings.zsh"
   local -r completion="${fzf_directory}/completion.zsh"
   [[ -f ${keybind} ]] && source ${keybind}
