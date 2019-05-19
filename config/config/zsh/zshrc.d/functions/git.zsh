@@ -36,9 +36,56 @@ function gmv() { # git mv
   done
 }
 
+function gss() {
+  is_managed_by_git || return 1
+
+  function filter() {
+    git stash list \
+      | fzf \
+      --header="${1:-none}" \
+      --preview='echo {} \
+        | cut -d: -f1 \
+        | xargs git stash show --color=always' \
+      --preview-window='right:95%:hidden' \
+      --bind='ctrl-v:toggle-preview' \
+      | cut -d: -f1
+
+  }
+
+  case $1 in
+    '-a'|'--apply' )
+      local -r stash=$(filter 'apply')
+      [[ -z ${stash} ]] && return 1
+      git stash apply ${stash}
+    ;;
+    '-s'|'--show' )
+      local -r stash=$(filter 'show')
+      [[ -z ${stash} ]] && return 1
+      git stash show -p ${stash}
+    ;;
+    '-d'|'--drop' )
+      local -r stash=$(filter 'drop')
+      [[ -z ${stash} ]] && return 1
+      confirm git stash drop ${stash}
+    ;;
+    '-l'|'--list' ) # -p
+      git stash list
+    ;;
+    * )
+      [[ -z $1 ]] && return 1
+      git stash save -u $1
+    ;;
+  esac
+}
+
 function gu() {
   is_managed_by_git || return 1
   xdg-open $(git config --get remote.origin.url)
+}
+
+function gph() {
+  is_managed_by_git || return 1
+  git push origin $(git branch | grep '^*' | cut -d' ' -f2)
 }
 
 function __git_branch_list__() {
@@ -55,16 +102,15 @@ function __git_working_tree_status__() {
       --bind='ctrl-v:toggle-preview'
 }
 
-alias gb='git branch'
 alias gs='git status'
-alias gd='git diff'
-alias gdc='git diff --cached'
-alias gl='git log'
 alias ga='git add'
 alias gcm='git commit -m'
+alias gl='git log'
+alias gb='git branch'
 alias gco='git checkout'
-alias gph='git push origin'
 alias gpl='git pull origin'
+alias gd='git diff'
+alias gdc='git diff --cached'
 alias gc1='git clone -b master --depth 1'
 
 alias -g @gb='$(__git_branch_list__)'

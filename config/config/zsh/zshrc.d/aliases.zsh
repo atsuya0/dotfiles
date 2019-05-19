@@ -1,15 +1,6 @@
-case ${OSTYPE} in
-  darwin* )
-    alias ls='ls -G'
-    alias la='ls -AG'
-    alias ll='ls -FAlhtrG'
-  ;;
-  'linux-gnu' )
-    alias ls='ls --color=auto'
-    alias la='ls -A --color=auto'
-    alias ll='ls -FAlhtr --color=auto --time-style="+%Y/%m/%d %H:%M:%S"'
-  ;;
-esac
+alias ls='ls --color=auto'
+alias la='ls -A --color=auto'
+alias ll='ls -FAlhtr --color=auto --time-style="+%Y/%m/%d %H:%M:%S"'
 alias grep='grep --color=auto'
 alias mv='mv -iv'
 alias cp='cp -iv'
@@ -30,9 +21,9 @@ alias tree='tree -C'
 alias dc='docker-compose'
 alias bc='bluetoothctl'
 alias open='xdg-open'
-alias poweroff='interactive systemctl poweroff'
-alias reboot='interactive systemctl reboot'
-alias logout='interactive i3-msg exit'
+alias poweroff='confirm systemctl poweroff'
+alias reboot='confirm systemctl reboot'
+alias logout='confirm i3-msg exit'
 alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
 alias xephyr='Xephyr -wr -resizeable :1' # white
 alias lock='light-locker-command -l'

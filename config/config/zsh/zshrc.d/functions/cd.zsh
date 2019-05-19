@@ -80,13 +80,11 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
     '-d' )
       [[ -z ${commands[fzf]} ]] && return 1
 
-      local opt
-      [[ ${OSTYPE} == darwin* ]] && opt='' # BSDのsedの場合は-iに引数(バックアップファイル名)を取る
       cat "${_CD_FILE}" \
         | fzf --header='delete directory in the record' \
             --preview='tree -C {}' --preview-window='right:hidden' \
             --bind='ctrl-v:toggle-preview' \
-        | xargs -I{} sed -i "${opt}" 's@^{}$@@;/^$/d' "${_CD_FILE}"
+        | xargs -I{} sed -i 's@^{}$@@;/^$/d' "${_CD_FILE}"
     ;;
     * ) # 使用頻度順
       if [[ $# -eq 0 ]]; then

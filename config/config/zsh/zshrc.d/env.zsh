@@ -12,6 +12,9 @@ case ${OSTYPE} in
   darwin* )
     typeset -ar path=(
       ${path}
+      /usr/local/opt/coreutils/libexec/gnubin
+      /usr/local/opt/findutils/libexec/gnubin
+      /usr/local/opt/gnu-sed/libexec/gnubin
       /usr/local/bin
       /usr/bin
       /bin

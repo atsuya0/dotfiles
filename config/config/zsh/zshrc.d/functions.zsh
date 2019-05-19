@@ -123,9 +123,9 @@ function _wifi() {
 compdef _wifi wifi
 
 # ex
-#   interactive date
-#   interactive systemctl poweroff
-function interactive() {
+#   confirm date
+#   confirm systemctl poweroff
+function confirm() {
   local input
   while [[ ${input} != 'yes' && ${input} != 'no' ]]; do
     # printf '\ryes / no'

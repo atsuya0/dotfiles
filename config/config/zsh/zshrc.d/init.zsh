@@ -1,13 +1,8 @@
-case ${OSTYPE} in
-  darwin* )
-    [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp)
-  ;;
-  'linux-gnu' )
-    [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp -p /tmp cdh_XXXXXX.tmp)
-  ;;
-esac
+[[ ${OSTYPE} =~ 'darwin' ]] \
+  && [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp) \
+  || [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp -p /tmp cdh_XXXXXX.tmp)
 
-tmux list-session &> /dev/null || () {
+{ [[ -n ${commands[tmux]} ]] && tmux list-session &> /dev/null ;} || () {
   [[ -n ${commands[trash]} ]] && trash auto-delete
 }
 

@@ -26,8 +26,7 @@ zstyle ':completion:*' list-separator '->'
 # 上記を有効
 zstyle ':completion:*:manuals' separate-sections true
 # 補完候補に色を付ける
-[[ ${OSTYPE} == 'linux-gnu' ]] \
-  && zstyle ':completion:*' list-colors eval $(dircolors -b)
+zstyle ':completion:*' list-colors eval $(dircolors -b)
 # 説明を緑の太字で表示
 zstyle ':completion:*' format '%B%F{green}%d%f%b'
 # 補完しないファイル
