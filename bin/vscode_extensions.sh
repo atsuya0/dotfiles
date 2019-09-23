@@ -5,7 +5,7 @@ set -euCo pipefail
 function main() {
   which code &> /dev/null || return 1
 
-  local -r store="${DOTFIELS:-${HOME}/dotfiles}/doc/extensions.txt"
+  local -r store="${DOTFIELS:-${HOME}/dotfiles}/doc/vscode_extensions.txt"
   local -r error_msg='extension is not saved\nplease execute: save'
 
   case $1 in

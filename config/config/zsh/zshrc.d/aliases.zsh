@@ -26,7 +26,8 @@ alias reboot='confirm systemctl reboot'
 alias logout='confirm i3-msg exit'
 alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
 alias xephyr='Xephyr -wr -resizeable :1' # white
-alias lock='light-locker-command -l'
+# alias lock='light-locker-command -l'
+alias lock='i3lock'
 alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias wallpaper='feh --no-fehbg --bg-scale /home/tayusa/contents/pictures/wallpaper/arch/Ju5PuBC.jpg'
 

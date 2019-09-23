@@ -35,4 +35,4 @@ which pactl &> /dev/null \
 which xset &> /dev/null \
   && xset r rate 350 50
 
-which light-locker &> /dev/null && light-locker &
+# which light-locker &> /dev/null && light-locker &

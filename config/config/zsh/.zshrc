@@ -35,7 +35,7 @@ setopt correct_all
     ;;
   esac
   source "${zsh}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2> /dev/null
-  source "${zsh}/zsh-autosuggestions/zsh-autosuggestions.zsh" 2> /dev/null
+  # source "${zsh}/zsh-autosuggestions/zsh-autosuggestions.zsh" 2> /dev/null
 }
 
 function ignore_absolute_paths() {

@@ -130,7 +130,7 @@ function confirm() {
   while [[ ${input} != 'yes' && ${input} != 'no' ]]; do
     # printf '\ryes / no'
     echo 'yes / no'
-    read -s input
+    read input
   done
 
   [[ ${input} == 'yes' ]] && eval $@
@@ -311,43 +311,6 @@ function crawl() {
   notify-send 'Image downloading is complete.'
 }
 
-function ct() {
-  local -A options
-  zparseopts -D -A options -- I X: d: -help
-
-  if [[ -n "${options[(i)--help]}" ]]; then
-    echo '-I'
-    echo '-X [method]'
-    echo '-d {"id": 1, "name": "taro"}'
-    echo '$1 is path'
-
-    return
-  fi
-
-  local data method
-  [[ -n "${options[(i)-X]}" ]] && method="${options[-X]}"
-  [[ -n "${options[(i)-d]}" ]] && data="-d ${options[-d]}"
-
-  local -ar methods=('GET' 'POST' 'PUT' 'DELETE')
-  [[ -z ${method} ]] \
-    && [[ -n ${commands[fzf]} ]] \
-    && method=$(print -C 1 ${methods[@]} | fzf)
-  curl ${options[(i)-I]} -X ${method:-GET} ${data} \
-    -H "'Content-Type: application/json'" "http://localhost:9000$1"
-}
-
-function _ct() {
-  function methods() {
-    _values 'methods' \
-      'GET' 'POST' 'PUT' 'DELETE'
-  }
-  _arguments \
-    '-I[head]' \
-    '-X[method]: :methods' \
-    '--help[help]'
-}
-compdef _ct ct
-
 # mnt /dev/sdb3
 function mnt() {
   [[ $# -eq 0 ]] && return 1
@@ -404,7 +367,7 @@ function cb() {
 function update() {
   [[ -z ${commands[notify-send]} ]] && return 1
 
-  echo 'sudo pacman -Syu'
+  echo '\e[31;1msudo pacman -Syu'
   sudo pacman -Syu
   notify-send 'Updated'
 }
