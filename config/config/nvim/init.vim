@@ -49,14 +49,16 @@ endif
 set background=dark
 set number
 set relativenumber
-set termguicolors
+if (has("termguicolors"))
+  set termguicolors
+endif
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 set showcmd "nvim-default
 set showmatch "対応する括弧を表示(1秒)
 set matchtime=1
 set ambiwidth=double "記号が重なるのを阻止
-set guicursor=a:block,a:blinkoff1 "カーソルの形状
+set guicursor=a:block,a:blinkon0 "カーソルの形状
 set cursorline cursorcolumn "カーソル行の強調
 set foldmethod=marker foldmarker=>->,<-< "折り畳みの設定
 "折り畳み時のマーカーをコメントする際に使う記号の設定

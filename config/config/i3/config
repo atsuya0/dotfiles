@@ -153,7 +153,6 @@ mode "$mode_launcher" {
     bindsym Shift+b exec --no-startup-id chromium --new-window --incognito, mode "default"
     bindsym f exec --no-startup-id pcmanfm, mode "default"
     bindsym c exec --no-startup-id code, mode "default"
-    bindsym v exec --no-startup-id virtualbox, mode "default"
 
     bindsym Return mode "default"
     bindsym Escape mode "default"

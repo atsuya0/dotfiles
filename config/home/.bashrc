@@ -5,6 +5,7 @@
 #----------------------------------------
 export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_CACHE_HOME="${HOME}/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
 export GREP_COLOR='1;33'
 export LESS='-iMRgW -j10 -x2 --no-init --quit-if-one-screen +5'
 # export LESS_TERMCAP_mb="$(echo -n '\e[34;1m')"

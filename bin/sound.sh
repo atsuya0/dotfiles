@@ -28,6 +28,11 @@ function sync_muted() {
   get_other_sinks | xargs -I{} pactl set-sink-mute {} ${state[$(get_muted)]}
 }
 
+function sync_status_bar() {
+  pkill -SIGRTMIN+1 i3blocks
+  tmux refresh -S
+}
+
 function main() {
   which pactl &> /dev/null || return 1
 
@@ -52,8 +57,7 @@ function main() {
     ;;
   esac
 
-  pkill -SIGRTMIN+1 i3blocks
-  tmux refresh -S
+  sync_status_bar
 }
 
 main $@
