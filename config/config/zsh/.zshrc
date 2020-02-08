@@ -12,7 +12,7 @@ unsetopt beep
 unsetopt list_beep
 unsetopt hist_beep
 # Try to correct the spelling of commands.
-setopt correct
+setopt nocorrect
 # Do not exit on end-of-file (assigned to ^D).  Require the use of exit or logout instead.
 setopt ignore_eof
 # Allows `>' redirection to truncate existing files.  Otherwise `>!' or `>|' must be used to truncate a file.
@@ -22,7 +22,6 @@ unsetopt clobber
 
 setopt notify
 setopt print_eight_bit
-setopt correct_all
 # setopt bsd_echo
 
 () {
@@ -42,7 +41,6 @@ function ignore_absolute_paths() {
   local -ar paths=(
     "${HOME}/Pictures"
     "${HOME}/Library"
-    "${HOME}/.rbenv"
     "${HOME}/.cache/dein/repos"
     "${HOME}/.cache/dein/.cache"
     "${HOME}/.cache/pip"

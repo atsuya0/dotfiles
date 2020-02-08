@@ -34,8 +34,8 @@ alias wallpaper='feh --no-fehbg --bg-scale /home/tayusa/contents/pictures/wallpa
 alias -g @g='| grep'
 alias -g @l='| less'
 alias -g @j='| jq'
-alias -g lf='$(ls | fzf)'
-alias -g ff='$(find -type f | fzf)'
+alias -g LF='$(ls | fzf)'
+alias -g FF='$(find -type f | fzf)'
 alias -g ..2='../..'
 alias -g ..3='../../..'
 

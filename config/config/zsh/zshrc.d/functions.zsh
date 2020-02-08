@@ -274,7 +274,7 @@ function crawl() {
   notify-send 'Image downloading is complete.'
 }
 
-# mnt /dev/sdb3
+# $ mnt /dev/sdb3
 function mnt() {
   [[ $# -eq 0 ]] && return 1
   local -r mount_path="${HOME}/mnt"
@@ -312,7 +312,7 @@ function twitter_search() {
     query="${query}AND%20${word}%20"
   done
 
-  local -r user='%40zzzzzzzzzzzzzz'
+  local -r user='%40fjdslkajfdlsajflds'
   xdg-open "https://twitter.com/search?q=${query}OR%20${user}&src=typd"
 }
 
@@ -328,9 +328,6 @@ function cb() {
 }
 
 function update() {
-  [[ -z ${commands[notify-send]} ]] && return 1
-
   echo '\e[31;1msudo pacman -Syu'
-  sudo pacman -Syu \
-    && notify-send 'Updated'
+  sudo pacman -Syu
 }
