@@ -10,7 +10,6 @@ xsel # clip board
 zsh
 zsh-completions
 zsh-syntax-highlighting
-zsh-autosuggestions
 
 # font
 otf-ipafont
@@ -23,9 +22,9 @@ i3-wm
 i3blocks
 
 # display manager
-lightdm
-light-locker
-lightdm-gtk-greeter
+#lightdm
+#light-locker
+#lightdm-gtk-greeter
 
 # input method framework
 fcitx-mozc
@@ -50,13 +49,11 @@ python-neovim
 
 # browser
 chromium # gui
-w3m # cui
+#w3m # cui
 
 # programming languages
 python
 python-pip
-ruby
-ruby-irb
 go
 rustup
 
@@ -64,15 +61,12 @@ rustup
 ranger # cui
 pcmanfm-gtk3 # gui
 
-# Infrastructure
-terraform
-
 # CLI
 tree
-fzf # filter
-ripgrep # grep
-iw # network
-jq # json
+fzf
+ripgrep
+iw
+jq
 
 # bluetooth
 bluez
@@ -81,7 +75,7 @@ pulseaudio-bluetooth
 
 # file system
 dosfstools # fat32
-#ntfs-3g
+#ntfs-3g # windows
 
 # virtual
 docker

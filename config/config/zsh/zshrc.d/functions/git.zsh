@@ -17,12 +17,12 @@ function fga() { # git add をfilterで選択して行う。<C-v>でgit diffを�
   [[ -n ${selected_files} ]] && git add $@ $(echo ${selected_files} | tr '\n' ' ')
 }
 
-function fgco() { # git checkout の引数をfilterで選択する
+function fgsw() { # git switch の引数をfilterで選択する
   is_managed_by_git || return 1
   [[ -z ${commands[fzf]} ]] && return 1
 
   local -r branch=$(git branch | tr -d ' ' | sed /^\*/d | fzf)
-  [[ -n ${branch} ]] && git checkout "${branch}"
+  [[ -n ${branch} ]] && git switch "${branch}"
 }
 
 function gmv() { # git mv
@@ -107,7 +107,8 @@ alias ga='git add'
 alias gcm='git commit -m'
 alias gl='git log'
 alias gb='git branch'
-alias gco='git checkout'
+alias gsw='git switch'
+alias grs='git restore'
 alias gpl='git pull origin'
 alias gd='git diff'
 alias gdc='git diff --cached'

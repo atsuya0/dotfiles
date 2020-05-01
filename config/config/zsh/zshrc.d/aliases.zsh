@@ -25,17 +25,18 @@ alias poweroff='confirm systemctl poweroff'
 alias reboot='confirm systemctl reboot'
 alias logout='confirm i3-msg exit'
 alias xbg="xbacklight -get | xargs printf '%.0f%%\n'"
-alias xephyr='Xephyr -wr -resizeable :1' # white
+alias xephyr='Xephyr -wr -resizeable :1'
 # alias lock='light-locker-command -l'
 alias lock='i3lock'
 alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias wallpaper='feh --no-fehbg --bg-scale /home/tayusa/contents/pictures/wallpaper/arch/Ju5PuBC.jpg'
+alias pip-upgrade="pip list -o | sed '1,2d' | tr -s ' ' | cut -d' ' -f1 | xargs -I{} pip install -U {}"
 
 alias -g @g='| grep'
 alias -g @l='| less'
 alias -g @j='| jq'
-alias -g LF='$(ls | fzf)'
-alias -g FF='$(find -type f | fzf)'
+alias -g L='$(ls | fzf)'
+alias -g F='$(find -type f | fzf)'
 alias -g ..2='../..'
 alias -g ..3='../../..'
 

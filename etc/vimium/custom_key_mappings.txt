@@ -1,0 +1,6 @@
+# Insert your preferred key mappings here.
+map <a-f> LinkHints.activateModeToOpenIncognito
+map H previousTab
+map L nextTab
+map <a-h> goBack
+map <a-l> goForward

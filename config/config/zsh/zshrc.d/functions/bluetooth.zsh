@@ -5,7 +5,7 @@ function bluetooth_pairing() {
     echo 'power on'
     sleep 1
     echo "connect $1"
-    sleep 3
+    sleep 5
     echo 'quit'
   } $1 | bluetoothctl
 }
