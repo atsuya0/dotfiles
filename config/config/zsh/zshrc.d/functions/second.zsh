@@ -1,6 +1,6 @@
 function second() {
   [[ $1 == 'change' ]] \
-    && eval cd $(command second $@ || echo '.') 2> /dev/null \
+    && eval cd $(command second $@ | grep '/' || echo '.') 2> /dev/null \
     || command second $@
 }
 
@@ -8,7 +8,7 @@ function _second() {
   function sub_commands() {
     _values 'Commands' \
       'change' \
-      'display' \
+      'show' \
       'register' \
       'list' \
       'remove' \
@@ -26,14 +26,14 @@ function _second() {
         (register)
           _arguments \
             '(-n --name)'{-n,--name}'[Second name]' \
-            '(-p --path)'{-p,--path}'[Target path]'
+            '(-p --path)'{-p,--path}'[Target path]' \
+            '(-s --sub)'{-s,--sub}'[sub directory]'
         ;;
         (change)
-          _values \
-            'Second names' \
-            $(second list --name)
+          _arguments \
+            '(-s --sub)'{-s,--sub}'[sub directory]'
         ;;
-        (display)
+        (show)
           _values \
             'Second names' \
             $(second list --name)
@@ -44,9 +44,8 @@ function _second() {
             '(-p --path)'{-p,--path}'[Target path]'
         ;;
         (remove)
-          _values \
-            'Second names' \
-            $(second list --name)
+          _arguments \
+            '(-s --sub)'{-s,--sub}'[sub directory]'
         ;;
         (init)
         ;;
@@ -82,7 +81,7 @@ function second_with_tmux_session() {
       && { echo 'already exists'; return 1; }
   fi
 
-  tmux new-session -s ${session_name} -d -c $(command second change ${session_name})
+  tmux new-session -s ${session_name} -d -c $(command second show ${session_name})
   tmux switch-client -t ${session_name}
 }
 

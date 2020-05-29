@@ -3,7 +3,7 @@
   || [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp -p /tmp cdh_XXXXXX.tmp)
 
 { [[ -n ${commands[tmux]} ]] && tmux list-session &> /dev/null ;} || () {
-  [[ -n ${commands[trash]} ]] && trash auto-delete
+  [[ -n ${commands[trs]} ]] && trs auto-remove
 }
 
 () { # tmux

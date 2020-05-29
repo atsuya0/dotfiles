@@ -39,7 +39,7 @@ typeset -ar __ignore_cmds__=(
 
   up down dw second sc tsc
   gs ga gd gcm gco gb gmv
-  trash trs bak rs rn crawl cb convert mk 'dc exec' 'dc run'
+  trs bak rs rn crawl cb to_pdf convert mk 'dc exec' 'dc run'
 )
 
 function __save_cmd__() {

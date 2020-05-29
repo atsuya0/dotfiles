@@ -83,7 +83,7 @@ function jwm() { # dockerでjwmを動かす。
   [[ ${existed} -eq 0 ]] && pkill Xephyr
 }
 
-function convert() {
+function to_pdf() {
   [[ $# -eq 0 ]] && return 1
   is_docker_running || return 1
 
@@ -95,4 +95,15 @@ function convert() {
     docker run --rm -it -v ${PWD}:/images -w /images ${image} \
       convert "${dir}/*" "${dir}.pdf"
   done
+}
+
+function convert() {
+  [[ $# -eq 0 ]] && return 1
+  is_docker_running || return 1
+
+  local -r image="${USER}/imagemagick-alpine"
+  image_exists ${image} || return 1
+
+  docker run --rm -it -v ${PWD}:/images -w /images ${image} \
+    convert $@
 }

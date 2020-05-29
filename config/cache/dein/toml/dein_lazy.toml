@@ -4,10 +4,9 @@ on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
 hook_source = 'colorscheme quantum'
 
 # [[plugins]] # color scheme
-# repo = 'rakr/vim-one'
-# hook_add = '''
-#   let g:airline_theme='deus'
-# '''
+# repo = 'joshdick/onedark.vim'
+# on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
+# hook_source = 'colorscheme onedark'
 
 [[plugins]] # visually displaying indent levels
 repo = 'Yggdroot/indentLine'
@@ -118,8 +117,8 @@ hook_add = '''
   let g:go_def_mapping_enabled = 0
   let g:go_doc_keywordprg_enabled = 0
 
-  nnoremap <silent> [denite]d :Denite -auto_preview decls<CR>
-  nnoremap <silent> [denite]D :DeniteCursorWord -auto_preview decls<CR>
+  nnoremap <silent> [denite]d :Denite decls<CR>
+  nnoremap <silent> [denite]D :DeniteCursorWord decls<CR>
 '''
 
 [[plugins]] # syntax highlighting and formatting for rust
