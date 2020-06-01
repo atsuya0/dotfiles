@@ -11,7 +11,7 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
 
 () { # fzfの拡張を読み込む
   [[ ${OSTYPE} =~ 'darwin' ]] \
-    && local -r fzf_directory='/usr/local/Cellar/fzf/0.18.0/shell' \
+    && local -r fzf_directory='/usr/local/Cellar/fzf/0.21.1/shell' \
     || local -r fzf_directory='/usr/share/fzf'
   local -r keybind="${fzf_directory}/key-bindings.zsh"
   local -r completion="${fzf_directory}/completion.zsh"

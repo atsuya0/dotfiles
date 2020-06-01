@@ -29,13 +29,11 @@ build = 'bash install.sh'
 on_i = 1
 hook_add = '''
   let g:LanguageClient_autoStart = 1
-  nnoremap <silent> K :call LanguageClien
   let g:LanguageClient_serverCommands = {
     \ 'go': ['gopls'],
     \ 'ruby': ['solargraph', 'stdio'],
   \ }
 '''
-# let g:LanguageClient_loadSettings = 1
 
 [[plugins]] # unite all interfaces
 repo = 'Shougo/denite.nvim'
@@ -136,4 +134,18 @@ on_ft = 'rust'
 hook_source = '''
   let g:racer_cmd = "~/.cargo/bin/racer"
   let g:racer_experimental_completer = 1
+'''
+
+
+[[plugins]] # ruby template
+repo = 'slim-template/vim-slim'
+on_ft = 'slim'
+
+[[plugins]] # Check syntax in Vim asynchronously and fix files
+repo = 'dense-analysis/ale'
+on_ft = 'rb'
+hook_source = '''
+  let b:ale_fixers = {'ruby': ['rubocop']}
+  let b:ale_sign_error = '>>'
+  let b:ale_sign_warning = '--'
 '''

@@ -147,6 +147,8 @@ function battery() {
 }
 
 function main() {
+  [[ ${OSTYPE} != 'linux-gnu' ]] && return 1
+
   if [[ $1 == 'short' ]];then
     echo -n "$(memory)$(load_average)"
   else

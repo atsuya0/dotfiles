@@ -58,7 +58,7 @@ function gss() {
       [[ -z ${stash} ]] && return 1
       git stash apply ${stash}
     ;;
-    '-s'|'--show' )
+    '-p'|'--print' )
       local -r stash=$(filter 'show')
       [[ -z ${stash} ]] && return 1
       git stash show -p ${stash}
@@ -68,19 +68,21 @@ function gss() {
       [[ -z ${stash} ]] && return 1
       confirm git stash drop ${stash}
     ;;
-    '-l'|'--list' ) # -p
-      git stash list
+    '-s'|'--save' )
+      [[ $# > 1 ]] || return 1
+      git stash save -u $2
     ;;
     * )
-      [[ -z $1 ]] && return 1
-      git stash save -u $1
+      git stash list
     ;;
   esac
 }
 
 function gu() {
   is_managed_by_git || return 1
-  xdg-open $(git config --get remote.origin.url)
+  [[ ${OSTYPE} == 'linux-gnu' ]] \
+    && xdg-open $(git config --get remote.origin.url) \
+    || open $(git config --get remote.origin.url)
 }
 
 function gph() {
@@ -99,13 +101,14 @@ function __git_working_tree_status__() {
     | cut -c 4- \
     | fzf --preview='git diff --color=always {}' \
       --preview-window='right:95%:hidden' \
-      --bind='ctrl-v:toggle-preview'
+      --bind='ctrl-v:toggle-preview' \
+  | sed "s@^@$(git rev-parse --show-toplevel)/@"
 }
 
 alias gs='git status'
 alias ga='git add'
 alias gcm='git commit -m'
-alias gl='git log'
+alias gl='git log --stat'
 alias gb='git branch'
 alias gsw='git switch'
 alias grs='git restore'
@@ -113,6 +116,7 @@ alias gpl='git pull origin'
 alias gd='git diff'
 alias gdc='git diff --cached'
 alias gc1='git clone -b master --depth 1'
+alias gcp='git cherry-pick'
 
 alias -g @gb='$(__git_branch_list__)'
 alias -g @gw='$(__git_working_tree_status__)'
