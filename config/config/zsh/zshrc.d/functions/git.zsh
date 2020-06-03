@@ -90,6 +90,15 @@ function gph() {
   git push origin $(git branch | grep '^*' | cut -d' ' -f2)
 }
 
+function gclean() {
+  is_managed_by_git || return 1
+  git fetch --prune
+  git switch develop &> /dev/null \
+    && git branch --merged \
+    | grep -v 'develop\|master' \
+    | xargs -I {} git branch -d {}
+}
+
 function __git_branch_list__() {
   is_managed_by_git || return 1
   git branch | grep -v "^*" | tr -d " " | fzf
