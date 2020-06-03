@@ -19,8 +19,10 @@
 #   }
 # done
 
-[[ ${OSTYPE} =~ 'darwin' ]] \
-  && local -r nvm_path='/usr/local/opt/nvm' \
-  || local -r nvm_path='/usr/share/nvm'
-alias invm="source ${nvm_path}/nvm.sh"
-
+function invm() {
+  type nvm &> /dev/null && return
+  [[ ${OSTYPE} =~ 'darwin' ]] \
+    && local -r nvm_path='/usr/local/opt/nvm' \
+    || local -r nvm_path='/usr/share/nvm'
+  source ${nvm_path}/nvm.sh
+}
