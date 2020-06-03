@@ -1,7 +1,5 @@
 export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理
 
-export TRASH_CAN_PATH="${HOME}/.Trash"
-
 typeset -a path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
@@ -10,6 +8,7 @@ typeset -a path=(
 
 case ${OSTYPE} in
   darwin* )
+    export TRASH_CAN_PATH="${HOME}/Trash"
     typeset -ar path=(
       ${path}
       /usr/local/opt/coreutils/libexec/gnubin
@@ -20,9 +19,11 @@ case ${OSTYPE} in
       /bin
       /usr/sbin
       /sbin
+      /usr/local/opt/mysql@5.6/bin
     )
   ;;
   'linux-gnu' )
+    export TRASH_CAN_PATH="${HOME}/.Trash"
     typeset -ar path=(
       ${path}
       /usr/bin

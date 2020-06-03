@@ -7,9 +7,8 @@
 }
 
 () { # tmux
-  [[ -z ${WINDOWID} ]] && return 1 # GUI
-  [[ "$(ps hco cmd ${PPID})" =~ 'termite|alacritty' ]] \
-    || return 1
+  [[ ${OSTYPE} == 'linux-gnu' && -z ${WINDOWID} &&  ! "$(ps hco cmd ${PPID})" =~ 'termite|alacritty' ]] \
+    && return 1
   [[ -n ${commands[tmux_management.sh]} ]] \
     && tmux_management.sh \
     && exit
@@ -18,3 +17,5 @@
 [[ -n ${commands[rbenv]} ]] \
   && eval "$(rbenv init -)" \
   && export PATH="${HOME}/.rbenv/bin:${PATH}"
+
+[[ -n ${commands[direnv]} ]] && eval "$(direnv hook zsh)"
