@@ -7,11 +7,12 @@
 }
 
 () { # tmux
-  [[ ${OSTYPE} == 'linux-gnu' && -z ${WINDOWID} &&  ! "$(ps hco cmd ${PPID})" =~ 'termite|alacritty' ]] \
+  [[ ${OSTYPE} == 'linux-gnu' ]] \
+    && [[ -z ${WINDOWID} || ! "$(ps hco cmd ${PPID})" =~ 'termite|alacritty' ]] \
     && return 1
-  [[ -n ${commands[tmux_management.sh]} ]] \
-    && tmux_management.sh \
-    && exit
+  [[ -z ${commands[tmux_management.sh]} ]] && return 1
+  tmux_management.sh
+  exit
 }
 
 [[ -n ${commands[rbenv]} ]] \
