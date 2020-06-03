@@ -101,3 +101,4 @@ dunst # notify daemon
 poppler # preview pdf
 ffmpegthumbnailer # preview video
 protobuf # gRPC
+grpc-cli # gRPC cli
