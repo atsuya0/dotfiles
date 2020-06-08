@@ -11,8 +11,7 @@
     && [[ -z ${WINDOWID} || ! "$(ps hco cmd ${PPID})" =~ 'termite|alacritty' ]] \
     && return 1
   [[ -z ${commands[tmux_management.sh]} ]] && return 1
-  tmux_management.sh
-  exit
+  tmux_management.sh && exit
 }
 
 [[ -n ${commands[rbenv]} ]] \
