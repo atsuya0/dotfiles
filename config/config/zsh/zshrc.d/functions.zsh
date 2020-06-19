@@ -331,3 +331,9 @@ function update() {
   echo '\e[31;1msudo pacman -Syu'
   sudo pacman -Syu
 }
+
+
+function remove_orphans() {
+  echo '\e[31;1msudo pacman -Rsn $(pacman -Qdmq)'
+  sudo pacman -Rsn $(pacman -Qdmq)
+}
