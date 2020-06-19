@@ -62,18 +62,6 @@ function jwm() { # dockerでjwmを動かす。
         Xephyr -wr -resizeable :1 &> /dev/null &;
        }
 
-  function share() {
-    [[ $1 != 's' ]] && return 1
-    local -r \
-      root="${HOME}/workspace/docker/ubuntu-jwm/share" \
-      docker='/home/docker'
-    [[ -d ${root} ]] || return 1
-
-    echo "-v ${root}/data:${docker}/data" \
-      && echo "-v ${root}/epiphany:${docker}/.config/epiphany" \
-      && echo "-v ${root}/google-chrome:${docker}/.config/google-chrome"
-  }
-
   docker run $(share $1) \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "/run/user/${UID}/pulse/native:/tmp/pulse/native" \
