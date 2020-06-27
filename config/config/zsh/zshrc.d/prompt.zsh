@@ -5,10 +5,13 @@ function __path_prompt__() { # カレントディレクトリのpathを画面の
   let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c 'test 1 -gt {} && echo 1 || echo {}')/$(echo ${pwd} | grep -o '[~/]' | wc -l)
   [[ 0 -eq ${num} ]] && num=1
 
-  # CUI/neovim と GUI で表示を変える
-  [[ ${OSTYPE} =~ 'darwin' || -n ${WINDOWID} || $(ps hco cmd ${PPID}) != 'nvim' ]] \
-    && PROMPT="%{${fg[blue]}${bg[black]}%}%n %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "\
-    || PROMPT="%n ${fg[blue]}$(sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g" <<< ${pwd})${reset_color} "
+  stylish_prompt="%{${fg[blue]}${bg[black]}%}%n %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
+
+  [[ ${OSTYPE} == 'linux-gnu' && -n ${WINDOWID} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
+    && PROMPT=${stylish_prompt} && return
+  [[ ${OSTYPE} =~ 'darwin' && $(ps co comm ${PPID} | tail -1) != 'nvim' ]] \
+    && PROMPT=${stylish_prompt} && return
+  PROMPT="%n ${fg[blue]}$(sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g" <<< ${pwd})${reset_color} "
 }
 add-zsh-hook precmd __path_prompt__
 
