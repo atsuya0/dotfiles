@@ -37,3 +37,5 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*' use-cache yes
 # 詳細
 zstyle ':completion:*' verbose yes
+# tabを挿入しない
+zstyle ':completion:*' insert-tab false

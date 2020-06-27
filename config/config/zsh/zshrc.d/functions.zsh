@@ -333,7 +333,7 @@ function update() {
 }
 
 
-function remove_orphans() {
+function rm_orphan_pkgs() {
   echo '\e[31;1msudo pacman -Rsn $(pacman -Qdmq)'
   sudo pacman -Rsn $(pacman -Qdmq)
 }

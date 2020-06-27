@@ -24,5 +24,4 @@ bindkey -M viins '\ed' kill-word
 bindkey -M viins '\e.' insert-last-word
 bindkey -M viins '\en' history-beginning-search-forward-end
 bindkey -M viins '\ep' history-beginning-search-backward-end
-bindkey -M viins '\ep' history-beginning-search-backward-end
 bindkey -M viins '\e\u0020' redisplay
