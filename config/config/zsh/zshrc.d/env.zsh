@@ -20,6 +20,7 @@ case ${OSTYPE} in
       /usr/sbin
       /sbin
       /usr/local/opt/mysql@5.6/bin
+      "${HOME}/google-cloud-sdk/bin"
     )
   ;;
   'linux-gnu' )

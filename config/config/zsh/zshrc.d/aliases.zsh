@@ -12,7 +12,9 @@ alias free='free -wh'
 alias du='du -h'
 alias df='df -Th'
 alias mk='make'
-alias pgrep='pgrep --list-full'
+if [[ ${OSTYPE} == 'linux-gnu' ]]; then
+  alias pgrep='pgrep --list-full'
+fi
 alias diff='diff --color'
 alias ip='ip --color=auto'
 alias nano='nano -$ -l -i -O -m -c' # '-$liOmc' does not work.
