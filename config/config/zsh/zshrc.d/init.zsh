@@ -22,3 +22,4 @@
   && export PATH="${HOME}/.rbenv/bin:${PATH}"
 
 [[ -n ${commands[direnv]} ]] && eval "$(direnv hook zsh)"
+[[ -n ${commands[nodenv]} ]] && eval "$(nodenv init -)"

@@ -1,5 +1,3 @@
-export NVM_DIR="${HOME}/.nvm" # Node.jsのversion管理
-
 typeset -a path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
