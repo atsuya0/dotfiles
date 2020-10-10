@@ -117,7 +117,7 @@ function __git_working_tree_status__() {
 alias gs='git status'
 alias ga='git add'
 alias gcm='git commit -m'
-alias gl='git log --stat'
+alias gl='git log --pretty=oneline -n 30 --graph --abbrev-commit --stat'
 alias gb='git branch'
 alias gsw='git switch'
 alias grs='git restore'
