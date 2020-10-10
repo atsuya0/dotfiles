@@ -39,3 +39,9 @@ zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' verbose yes
 # tabを挿入しない
 zstyle ':completion:*' insert-tab false
+
+() {
+  local -r completion_zsh_inc="${HOME}/google-cloud-sdk/completion.zsh.inc"
+  [[ -f ${completion_zsh_inc} ]] \
+    && source ${completion_zsh_inc}
+}
