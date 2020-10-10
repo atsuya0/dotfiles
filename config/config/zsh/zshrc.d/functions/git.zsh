@@ -108,10 +108,11 @@ function __git_working_tree_status__() {
   is_managed_by_git || return 1
   git status --porcelain | grep -e '^??' -e '^.M' -e '^.D' \
     | cut -c 4- \
+    | sed "s@^@$(git rev-parse --show-toplevel)/@" \
+    | sed "s@$(pwd)@\.@" \
     | fzf --preview='git diff --color=always {}' \
       --preview-window='right:95%:hidden' \
-      --bind='ctrl-v:toggle-preview' \
-  | sed "s@^@$(git rev-parse --show-toplevel)/@"
+      --bind='ctrl-v:toggle-preview'
 }
 
 alias gs='git status'
