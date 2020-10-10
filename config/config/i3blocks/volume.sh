@@ -33,6 +33,7 @@ function print_volume() {
 
 function main() {
   which pactl &> /dev/null || return 1
+  LANG=C
 
   print_volume
 

@@ -35,6 +35,7 @@ function sync_status_bar() {
 
 function main() {
   which pactl &> /dev/null || return 1
+  LANG=C
 
   case ${1:-show} in
     'up' )
