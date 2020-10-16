@@ -115,6 +115,16 @@ function __git_working_tree_status__() {
       --bind='ctrl-v:toggle-preview'
 }
 
+
+function open_prs() {
+  local url
+  url=$(git config --get remote.origin.url | sed 's/\.git$//')
+  local num
+  for num in $(gh pr list --assignee $(git config --global user.name) | grep -o '[0-9]\{4\}' | sed '/^$/d'); do
+    open "${url}/pull/${num}"
+  done
+}
+
 alias gs='git status'
 alias ga='git add'
 alias gcm='git commit -m'
