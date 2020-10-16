@@ -56,19 +56,15 @@ function jwm() { # dockerでjwmを動かす。
   is_docker_running || return 1
 
   [[ -e /tmp/.X11-unix/X1 ]] \
-    && local -r existed=1 \
-    || {
-        local -r existed=0;
-        Xephyr -wr -resizeable :1 &> /dev/null &;
-       }
+    || Xephyr -wr -resizeable :1 &> /dev/null &
 
-  docker run $(share $1) \
+  docker run \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "/run/user/${UID}/pulse/native:/tmp/pulse/native" \
     -v "${HOME}/.config/pulse/cookie:/tmp/pulse/cookie" \
     -it --rm "${USER}/ubuntu-jwm" &> /dev/null
 
-  [[ ${existed} -eq 0 ]] && pkill Xephyr
+  pkill Xephyr &> /dev/null
 }
 
 function to_pdf() {
