@@ -109,7 +109,7 @@ function __git_working_tree_status__() {
   git status --porcelain | grep -e '^??' -e '^.M' -e '^.D' \
     | cut -c 4- \
     | sed "s@^@$(git rev-parse --show-toplevel)/@" \
-    | sed "s@$(pwd)@\.@" \
+    | xargs -I{} realpath --relative-to=. {} \
     | fzf --preview='git diff --color=always {}' \
       --preview-window='right:95%:hidden' \
       --bind='ctrl-v:toggle-preview'
