@@ -45,3 +45,5 @@ zstyle ':completion:*' insert-tab false
   [[ -f ${completion_zsh_inc} ]] \
     && source ${completion_zsh_inc}
 }
+
+eval $(gh completion -s zsh)
