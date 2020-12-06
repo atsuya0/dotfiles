@@ -32,6 +32,7 @@ alias lock='i3lock'
 alias noise='paplay /usr/share/sounds/alsa/Noise.wav'
 alias wallpaper='feh --no-fehbg --bg-scale /home/tayusa/contents/pictures/wallpaper/arch/Ju5PuBC.jpg'
 alias pip-upgrade="pip list -o | sed '1,2d' | tr -s ' ' | cut -d' ' -f1 | xargs -I{} pip install -U {}"
+alias pip3-upgrade="pip3 list -o | sed '1,2d' | tr -s ' ' | cut -d' ' -f1 | xargs -I{} pip3 install -U {}"
 
 alias -g @g='| grep'
 alias -g @l='| less'
