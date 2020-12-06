@@ -118,13 +118,33 @@ function __git_working_tree_status__() {
       --bind='ctrl-v:toggle-preview'
 }
 
+function print_updated_prs() {
+  is_managed_by_git || return 1
+  [[ -z ${commands[gh]} ]] \
+    && { echo 'github cli is required'; return 1; }
+  [[ -z ${commands[jq]} ]] \
+    && { echo 'jq is required'; return 1; }
 
-function open_prs() {
-  local url
-  url=$(git config --get remote.origin.url | sed 's/\.git$//')
-  local num
-  for num in $(gh pr list --assignee $(git config --global user.name) | grep -o '[0-9]\{4\}' | sed '/^$/d'); do
-    open "${url}/pull/${num}"
+  function fetch_recent_prs() {
+    gh pr list --assignee $(git config --global user.name) \
+      --state all \
+      --limit 5 \
+      | awk '{print $1, $2}'
+  }
+
+  function fetch_pr_updated_at() {
+    gh api "https://api.github.com/repos/${1}/pulls/${2}" \
+      | jq '.updated_at' \
+      | grep -o '[0-9]*-[0-9]*-[0-9]*'
+  }
+
+  local -r repo=$(git config --get remote.origin.url | sed 's/\.git$//' | rev | cut -d/ -f 1,2 | rev)
+  fetch_recent_prs | while read -r pr; do
+    local number=$(echo ${pr} | cut -d' ' -f1)
+    local name=$(echo ${pr} | cut -d' ' -f2)
+    [[ $(date '+%Y-%m-%d') =~ $(fetch_pr_updated_at ${repo} ${number}) ]] || continue
+    echo ${name}
+    echo "https://github.com/${repo}/pull/${number}"
   done
 }
 
