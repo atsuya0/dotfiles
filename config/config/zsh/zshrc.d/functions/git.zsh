@@ -1,6 +1,9 @@
 function is_managed_by_git() {
-  [[ -z ${commands[git]} ]] && return 1
-  git status &> /dev/null || return 1
+  [[ -z ${commands[git]} ]] \
+    && { echo 'git is required'; return 1; }
+  git status &> /dev/null \
+    || { echo "It's not managed by git"; return 1; }
+
 }
 
 function fga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
