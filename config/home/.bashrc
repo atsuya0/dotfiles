@@ -23,7 +23,7 @@ export SUDO_EDITOR='rnano'
 # shell variables
 #----------------------------------------
 # prompt
-PS1='\[\033[01;36m\]\u@\h\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\] \$ '
+PS1='\[\033[01;36m\]\u\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\] \$ '
 # lines which begin with a space character are not saved. (ignorespace)
 # lines matching the previous history entry to not be saved. (ignoredups)
 HISTCONTROL=ignoreboth
