@@ -93,6 +93,7 @@ openssh # ssh
 rofi # launcher
 feh # image viewer
 scrot # screen shot
+gnome-screenshot # screen shot
 tlp # power
 libmtp # mtp
 neofetch # system information
