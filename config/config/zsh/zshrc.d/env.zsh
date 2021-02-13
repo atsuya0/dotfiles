@@ -1,7 +1,9 @@
 typeset -a path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
-  $([[ -n ${commands[ruby]} ]] && echo "$(ruby -e 'print Gem.user_dir')/bin")
+  $([[ -n ${commands[ruby]} \
+    && -d "$(ruby -e 'print Gem.user_dir')/bin" ]] \
+      && echo "$(ruby -e 'print Gem.user_dir')/bin")
 )
 
 case ${OSTYPE} in
