@@ -205,6 +205,7 @@ augroup END
 
 augroup HTML
   autocmd!
+  autocmd FileType html set expandtab
   autocmd FileType html set commentstring=\ <!--\ %s\ -->
 augroup END
 
