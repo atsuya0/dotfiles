@@ -1,6 +1,9 @@
+export VOLTA_HOME="${HOME}/.volta"
+
 typeset -a path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
+  $([[ -d ${VOLTA_HOME}/bin ]] && echo ${VOLTA_HOME}/bin)
   $([[ -n ${commands[ruby]} \
     && -d "$(ruby -e 'print Gem.user_dir')/bin" ]] \
       && echo "$(ruby -e 'print Gem.user_dir')/bin")
