@@ -98,7 +98,7 @@ function gclean() {
   git fetch --prune
   git switch develop &> /dev/null \
     && git branch --merged \
-    | grep -v 'develop\|master' \
+    | grep -v 'develop\|master\|main' \
     | xargs -I {} git branch -d {}
 }
 
