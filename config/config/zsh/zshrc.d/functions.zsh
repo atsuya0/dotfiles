@@ -319,10 +319,10 @@ function twitter_search() {
 function cb() {
   case $1 in
     '-s'|'--secret' )
-      chromium --new-window --incognito
+      google-chrome-stable --new-window --incognito
     ;;
     * )
-      chromium
+      google-chrome-stable
     ;;
   esac
 }
