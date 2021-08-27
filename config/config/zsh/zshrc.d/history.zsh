@@ -35,7 +35,7 @@ typeset -ar __ignore_cmds__=(
   chmod print printf make
   'pacman -Si' 'pacman -Ss' 'pacman -Qi' 'pacman -Qs'
 
-  vim nvim code python 'npm search' xsel tree chromium w3m feh rg
+  vim nvim code python 'npm search' xsel tree google-chrome-stable w3m feh rg
 
   up down dw second sc tsc
   gs ga gd gcm gco gb gmv
