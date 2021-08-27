@@ -3,11 +3,6 @@ repo = 'tyrannicaltoucan/vim-quantum'
 on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
 hook_source = 'colorscheme quantum'
 
-# [[plugins]] # color scheme
-# repo = 'joshdick/onedark.vim'
-# on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
-# hook_source = 'colorscheme onedark'
-
 [[plugins]] # visually displaying indent levels
 repo = 'Yggdroot/indentLine'
 on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
@@ -117,35 +112,4 @@ hook_add = '''
 
   nnoremap <silent> [denite]d :Denite decls<CR>
   nnoremap <silent> [denite]D :DeniteCursorWord decls<CR>
-'''
-
-[[plugins]] # syntax highlighting and formatting for rust
-repo = 'rust-lang/rust.vim'
-on_ft = 'rust'
-hook_source = '''
-  let g:syntastic_rust_checkers = ['cargo']
-  let g:rustfmt_command = "~/.cargo/bin/rustfmt"
-  let g:rustfmt_autosave = 1
-'''
-
-[[plugins]] # completion for rust
-repo = 'racer-rust/vim-racer'
-on_ft = 'rust'
-hook_source = '''
-  let g:racer_cmd = "~/.cargo/bin/racer"
-  let g:racer_experimental_completer = 1
-'''
-
-
-[[plugins]] # ruby template
-repo = 'slim-template/vim-slim'
-on_ft = 'slim'
-
-[[plugins]] # Check syntax in Vim asynchronously and fix files
-repo = 'dense-analysis/ale'
-on_ft = 'rb'
-hook_source = '''
-  let b:ale_fixers = {'ruby': ['rubocop']}
-  let b:ale_sign_error = '>>'
-  let b:ale_sign_warning = '--'
 '''

@@ -1,12 +1,6 @@
 [[plugins]] # plugin manager
 repo = 'Shougo/dein.vim'
 
-[[plugins]] # snippet
-repo = 'Shougo/neosnippet.vim'
-
-[[plugins]] # The standard snippets repository for neosnippet.
-repo = 'Shougo/neosnippet-snippets'
-
 [[plugins]] # browse files.
 repo = 'Shougo/defx.nvim'
 hook_add = '''
