@@ -44,5 +44,5 @@ alias -g ..2='../..'
 alias -g ..3='../../..'
 
 alias -s txt='less'
-alias -s {html,md,pdf,mp3,mp4}='chromium'
+alias -s {html,md,pdf,mp3,mp4}='google-chrome-stable'
 alias -s {png,jpg,jpeg}='feh'
