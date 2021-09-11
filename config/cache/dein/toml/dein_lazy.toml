@@ -11,23 +11,78 @@ hook_source = '''
   autocmd Filetype json let g:indentLine_conceallevel = 0
 '''
 
-[[plugins]] # completion framework
-repo = 'Shougo/deoplete.nvim'
-if = 'has("nvim")'
-on_i = 1
-hook_add = 'let g:deoplete#enable_at_startup = 1'
+[[plugins]]
+repo = 'Shougo/ddc.vim'
+depends = 'denops.vim'
+on_event = 'InsertEnter'
+hook_source = '''
+  inoremap <silent><expr> <C-l> ddc#complete_common_string()
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? "\<C-n>" :
+        \ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+        \ "\<TAB>" : ddc#manual_complete()
+  call ddc#custom#patch_global(
+      \ 'sources',
+      \ ['around'],
+      \ )
+  call ddc#custom#patch_global('sourceOptions', {
+      \ '_': {
+      \   'ignoreCase': v:true,
+      \   'matchers': ['matcher_head'],
+      \   'sorters': ['sorter_rank'],
+      \   'converters': ['converter_remove_overlap'],
+      \ },
+      \ 'around': {
+      \   'mark': 'A',
+      \   'matchers': ['matcher_head', 'matcher_length'],
+      \ },
+      \ 'nvimlsp': {'mark': 'lsp', 'forceCompletionPattern': '\\.|:|->'},
+      \ })
+  call ddc#custom#patch_filetype(
+      \ ['help', 'markdown', 'gitcommit', 'toml'], 'sources',
+      \ ['around']
+      \ )
+  call ddc#custom#patch_filetype(
+      \ ['typescript', 'go'], 'sources',
+      \ ['nvimlsp', 'around']
+      \ )
+  call ddc#enable()
+'''
 
-[[plugins]] # LSP
-repo = 'autozimu/LanguageClient-neovim'
-rev = 'next'
-build = 'bash install.sh'
-on_i = 1
-hook_add = '''
-  let g:LanguageClient_autoStart = 1
-  let g:LanguageClient_serverCommands = {
-    \ 'go': ['gopls'],
-    \ 'ruby': ['solargraph', 'stdio'],
-  \ }
+[[plugins]]
+repo = 'Shougo/ddc-around'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-nvim-lsp'
+on_source = 'nvim-lspconfig'
+
+[[plugins]]
+repo = 'Shougo/ddc-matcher_head'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-matcher_length'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-sorter_rank'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-converter_remove_overlap'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+on_ft = ['typescript', 'go']
+if = 'has("nvim")'
+depends = 'ddc.vim'
+hook_source = '''
+  lua << EOF
+require'lspconfig'.denols.setup{}
+require'lspconfig'.gopls.setup{}
+EOF
 '''
 
 [[plugins]] # unite all interfaces
