@@ -104,3 +104,5 @@ ffmpegthumbnailer # preview video
 protobuf # gRPC
 grpc-cli # gRPC cli
 simplescreenrecorder
+gnome-keyring # git password access token
+libsecret # git password access token
