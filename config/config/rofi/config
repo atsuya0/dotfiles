@@ -1,7 +1,0 @@
-rofi.modi: drun,system:~/.config/rofi/rofi_system.sh,wifi:~/.config/rofi/rofi_wifi.sh,monitor:~/.config/rofi/rofi_monitor.sh
-rofi.sidebar-mode:  true
-rofi.hide-scrollbar: true
-rofi.kb-cancel: Escape,Control+bracketleft
-rofi.kb-mode-previous: Alt+u
-rofi.kb-mode-next: Alt+i
-rofi.theme: /usr/share/rofi/themes/Arc-Dark.rasi

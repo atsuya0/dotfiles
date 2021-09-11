@@ -1,0 +1,9 @@
+configuration {
+  modi: "drun,system:~/.config/rofi/rofi_system.sh,wifi:~/.config/rofi/rofi_wifi.sh,monitor:~/.config/rofi/rofi_monitor.sh";
+  sidebar-mode:  true;
+  hide-scrollbar: true;
+  kb-cancel: "Escape,Control+bracketleft";
+  kb-mode-previous: "Alt+u";
+  kb-mode-next: "Alt+i";
+  theme: "/usr/share/rofi/themes/Arc-Dark.rasi";
+}
