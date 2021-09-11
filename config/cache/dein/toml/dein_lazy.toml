@@ -101,15 +101,3 @@ hook_source = '''
   let g:deoplete#sources#jedi#python_path = g:python3_host_prog
 '''
 
-[[plugins]] # various features for go
-repo = 'fatih/vim-go'
-on_ft = 'go'
-hook_add = '''
-  let g:go_fmt_command = "goimports"
-
-  let g:go_def_mapping_enabled = 0
-  let g:go_doc_keywordprg_enabled = 0
-
-  nnoremap <silent> [denite]d :Denite decls<CR>
-  nnoremap <silent> [denite]D :DeniteCursorWord decls<CR>
-'''
