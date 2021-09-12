@@ -37,7 +37,7 @@ typeset -ar __ignore_cmds__=(
 
   vim nvim code python 'npm search' xsel tree google-chrome-stable w3m feh rg
 
-  up down dw second sc tsc
+  up down dw scd tscd
   gs ga gd gcm gco gb gmv
   trs bak rs rn crawl cb to_pdf convert mk 'dc exec' 'dc run'
 )

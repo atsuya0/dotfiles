@@ -1,10 +1,10 @@
-function second() {
+function scd() {
   [[ $1 == 'change' ]] \
-    && eval cd $(command second $@ | grep '/' || echo '.') 2> /dev/null \
-    || command second $@
+    && eval cd $(command scd $@ | grep '/' || echo '.') 2> /dev/null \
+    || command scd $@
 }
 
-function _second() {
+function _scd() {
   function sub_commands() {
     _values 'Commands' \
       'change' \
@@ -52,18 +52,16 @@ function _second() {
       esac
   esac
 }
-compdef _second second
-
-alias sc='second'
+compdef _scd scd
 
 function print_available_session_names() {
   diff --new-line-format='' --old-line-format='%L' --unchanged-line-format='' \
-    <(second list --name) <(tmux ls -F '#{session_name}')
+    <(scd list --name) <(tmux ls -F '#{session_name}')
 }
 
-function second_with_tmux_session() {
-  [[ -z ${commands[second]} ]] \
-    && { echo 'second is required.';  return 1; }
+function scd_with_tmux_session() {
+  [[ -z ${commands[scd]} ]] \
+    && { echo 'scd is required.';  return 1; }
   [[ -z ${commands[tmux]} ]] \
     && { echo 'tmux is required.'; return 1; }
 
@@ -73,7 +71,7 @@ function second_with_tmux_session() {
     [[ -z ${session_name} ]] && return 1
   else
     local -r session_name=$1
-    second list --name \
+    scd list --name \
       | grep -q "^${session_name}$" \
       || { echo 'invalid argument'; return 1; }
     tmux ls -F '#{session_name}' \
@@ -81,15 +79,15 @@ function second_with_tmux_session() {
       && { echo 'already exists'; return 1; }
   fi
 
-  tmux new-session -s ${session_name} -d -c $(command second show ${session_name})
+  tmux new-session -s ${session_name} -d -c $(command scd change ${session_name})
   tmux switch-client -t ${session_name}
 }
 
-function _second_with_tmux_session() {
+function _scd_with_tmux_session() {
   _values \
     'Session names' \
     $(print_available_session_names)
 }
-compdef _second_with_tmux_session second_with_tmux_session
+compdef _scd_with_tmux_session scd_with_tmux_session
 
-alias tsc='second_with_tmux_session'
+alias tscd='scd_with_tmux_session'
