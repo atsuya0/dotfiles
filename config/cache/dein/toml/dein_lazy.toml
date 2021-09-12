@@ -12,6 +12,17 @@ hook_source = '''
 '''
 
 [[plugins]]
+repo = 'neovim/nvim-lspconfig'
+on_ft = ['typescript', 'go']
+if = 'has("nvim")'
+hook_source = '''
+  lua << EOF
+require'lspconfig'.denols.setup{}
+require'lspconfig'.gopls.setup{}
+EOF
+'''
+
+[[plugins]]
 repo = 'Shougo/ddc.vim'
 depends = 'denops.vim'
 on_event = 'InsertEnter'
@@ -72,18 +83,6 @@ on_source = 'ddc.vim'
 [[plugins]]
 repo = 'Shougo/ddc-converter_remove_overlap'
 on_source = 'ddc.vim'
-
-[[plugins]]
-repo = 'neovim/nvim-lspconfig'
-on_ft = ['typescript', 'go']
-if = 'has("nvim")'
-depends = 'ddc.vim'
-hook_source = '''
-  lua << EOF
-require'lspconfig'.denols.setup{}
-require'lspconfig'.gopls.setup{}
-EOF
-'''
 
 [[plugins]] # unite all interfaces
 repo = 'Shougo/denite.nvim'
