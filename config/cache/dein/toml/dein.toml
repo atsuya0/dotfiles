@@ -16,7 +16,6 @@ hook_add = '''
   let g:airline_theme='quantum'
 '''
 
-
 [[plugins]] # An ecosystem of Vim/Neovim which allows developers to write plugins in Deno.
 repo = 'vim-denops/denops.vim'
 
