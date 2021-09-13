@@ -28,3 +28,12 @@ hook_add = '''
   nnoremap <silent> [surround]c :ChSurround<space>
   nnoremap <silent> [surround]r :RmSurround<CR>
 '''
+
+[[plugins]]
+repo = 'prabirshrestha/vim-lsp'
+hook_add = '''
+  autocmd BufWritePre *.go call execute(['LspCodeActionSync source.organizeImports', 'LspDocumentFormatSync'])
+'''
+
+[[plugins]]
+repo = 'mattn/vim-lsp-settings'
