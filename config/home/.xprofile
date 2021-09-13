@@ -11,8 +11,7 @@ fi
 export GTK_IM_MODULE='fcitx'
 export QT_IM_MODULE='fcitx'
 export XMODIFIERS='@im=fcitx'
-export DefalutIMModule='fcitx'
-which fcitx-autostart &> /dev/null && fcitx-autostart &
+which fcitx5 &> /dev/null && fcitx5 &
 
 # 壁紙を設定
 which feh &> /dev/null \

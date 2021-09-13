@@ -27,9 +27,10 @@ i3blocks
 #lightdm-gtk-greeter
 
 # input method framework
-fcitx-mozc
-fcitx-gtk3
-fcitx-configtool
+fcitx5
+fcitx5-mozc
+fcitx5-gtk
+fcitx5-configtool
 
 # sound
 alsa-utils
