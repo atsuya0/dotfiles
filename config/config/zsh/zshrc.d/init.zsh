@@ -8,7 +8,7 @@
 
 () { # tmux
   if [[ ${OSTYPE} == 'linux-gnu' ]]; then
-    [[ -n ${WINDOWID} && "$(ps hco cmd ${PPID})" =~ 'termite|alacritty' ]] \
+    [[ -n ${WINDOWID} && "$(ps hco cmd ${PPID})" =~ 'kitty|alacritty' ]] \
       || return 1
   else
     [[ "$(ps co comm ${PPID} | tail -1)" == 'tmux' ]] && return 1
