@@ -39,7 +39,7 @@ pavucontrol
 bluez-firmware # wireless earphone
 
 # terminal
-termite
+kitty
 alacritty
 alacritty-terminfo
 tmux
