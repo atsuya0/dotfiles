@@ -11,6 +11,8 @@ fi
 export GTK_IM_MODULE='fcitx'
 export QT_IM_MODULE='fcitx'
 export XMODIFIERS='@im=fcitx'
+# kitty用
+export GLFW_IM_MODULE='ibus'
 which fcitx5 &> /dev/null && fcitx5 &
 
 # 壁紙を設定
