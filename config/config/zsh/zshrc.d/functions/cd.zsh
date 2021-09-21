@@ -70,28 +70,28 @@ alias dw='down'
 
 function __save_pwd__() { # 移動履歴をファイルに記録する。~, / は記録しない。
   local -r pwd=$(pwd | sed "s@${HOME}@~@")
-  [[ ${#pwd} -gt 2 ]] && echo "${pwd}" >> "${_CD_FILE}"
+  [[ ${#pwd} -gt 2 ]] && echo "${pwd}" >> "${_CD_HISTORY}"
 }
 add-zsh-hook chpwd __save_pwd__
 
 function cdh() { # 移動履歴からfilterを使って選んでcd
   case $1 in
-    '-l' ) cat "${_CD_FILE}" | sort | uniq -c | sort -r | tr -s ' ' ;;
-    '--delete-all' ) : > "${_CD_FILE}" ;;
+    '-l' ) cat "${_CD_HISTORY}" | sort | uniq -c | sort -r | tr -s ' ' ;;
+    '--delete-all' ) : > "${_CD_HISTORY}" ;;
     '-d' )
       [[ -z ${commands[fzf]} ]] && return 1
 
-      cat "${_CD_FILE}" \
+      cat "${_CD_HISTORY}" \
         | fzf --header='delete directory in the record' \
             --preview='tree -C {}' --preview-window='right:hidden' \
             --bind='ctrl-v:toggle-preview' \
-        | xargs -I{} sed -i 's@^{}$@@;/^$/d' "${_CD_FILE}"
+        | xargs -I{} sed -i 's@^{}$@@;/^$/d' "${_CD_HISTORY}"
     ;;
     * ) # 使用頻度順
       if [[ $# -eq 0 ]]; then
         [[ -z ${commands[fzf]} ]] && return 1
 
-        local dir=$(cat ${_CD_FILE} | sort | uniq -c | sort -r | tr -s ' ' | cut -d' ' -f3 \
+        local dir=$(cat ${_CD_HISTORY} | sort | uniq -c | sort -r | tr -s ' ' | cut -d' ' -f3 \
           | fzf --preview='tree -C {}' --preview-window='right:hidden' --bind='ctrl-v:toggle-preview')
         [[ -z ${dir} ]] && return 1
       fi
@@ -103,7 +103,7 @@ function cdh() { # 移動履歴からfilterを使って選んでcd
 function _cdh() {
   function visited() {
     _values 'visited' \
-      $(cat ${_CD_FILE} | sort | uniq -c | sort -r | awk '{print $2}')
+      $(cat ${_CD_HISTORY} | sort | uniq -c | sort -r | awk '{print $2}')
   }
   _arguments \
     '-l[list]' \

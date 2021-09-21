@@ -1,6 +1,8 @@
-[[ ${OSTYPE} =~ 'darwin' ]] \
-  && [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp) \
-  || [[ -e ${_CD_FILE} ]] || export _CD_FILE=$(mktemp -p /tmp cdh_XXXXXX.tmp)
+if [[ ${OSTYPE} =~ 'darwin' ]]; then
+  [[ -e ${_CD_HISTORY} ]] || export _CD_HISTORY=$(mktemp)
+else
+  [[ -e ${_CD_HISTORY} ]] || export _CD_HISTORY=$(mktemp -p /tmp cdh_XXXXXX.tmp)
+fi
 
 { [[ -n ${commands[tmux]} ]] && tmux list-session &> /dev/null ;} || () {
   [[ -n ${commands[trs]} ]] && trs auto-remove
