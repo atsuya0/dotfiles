@@ -107,3 +107,5 @@ source "${ZDOTDIR}/zshrc.d/functions.zsh"
 source "${ZDOTDIR}/zshrc.d/aliases.zsh"
 
 source <(scd script)
+source <(cremem script)
+alias c='cremem'
