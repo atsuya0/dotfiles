@@ -316,13 +316,13 @@ function twitter_search() {
   xdg-open "https://twitter.com/search?q=${query}OR%20${user}&src=typd"
 }
 
-function cb() {
+function chrome() {
   case $1 in
     '-s'|'--secret' )
-      google-chrome-stable --new-window --incognito
+      google-chrome-stable --new-window --incognito ${argv[2,-1]}
     ;;
     * )
-      google-chrome-stable
+      google-chrome-stable $@
     ;;
   esac
 }
