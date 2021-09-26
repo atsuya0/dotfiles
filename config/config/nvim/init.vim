@@ -171,7 +171,7 @@ cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
 "==================================================
 augroup IME
   autocmd!
-  autocmd InsertLeave * call system('fcitx-remote -c')
+  autocmd InsertLeave * call system('fcitx5-remote -c')
 augroup END
 
 augroup ChangeFocus
