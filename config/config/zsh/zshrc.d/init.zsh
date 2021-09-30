@@ -9,7 +9,9 @@ fi
 }
 
 () { # tmux
-  if [[ ${OSTYPE} == 'linux-gnu' ]]; then
+  if [[ -n ${WSLENV} ]]; then
+    [[ "$(ps hco cmd ${PPID})" =~ 'tmux' ]] && return 1
+  elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
     [[ -n ${WINDOWID} && "$(ps hco cmd ${PPID})" =~ 'kitty|alacritty' ]] \
       || return 1
   else
