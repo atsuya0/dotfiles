@@ -9,6 +9,8 @@ function __path_prompt__() { # カレントディレクトリのpathを画面の
 
   [[ ${OSTYPE} == 'linux-gnu' && -n ${WINDOWID} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
     && PROMPT=${stylish_prompt} && return
+  [[ ${OSTYPE} == 'linux-gnu' && -n ${WSLENV} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
+    && PROMPT=${stylish_prompt} && return
   [[ ${OSTYPE} =~ 'darwin' && $(ps co comm ${PPID} | tail -1) != 'nvim' ]] \
     && PROMPT=${stylish_prompt} && return
   PROMPT="%n %{${fg[blue]}%}$(sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g" <<< ${pwd}) %{${reset_color}%}$ "
