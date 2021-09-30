@@ -20,13 +20,13 @@ hook_add = '''
 repo = 'vim-denops/denops.vim'
 
 [[plugins]]
-repo = '~/workspace/develop/vim/surround.vim'
+repo = '~/workspace/develop/vim/dps-surrounding.vim'
 hook_add = '''
-  nmap <LocalLeader>s [surround]
-  nnoremap <silent> [surround]l :SurroundLine<space>
-  nnoremap <silent> [surround]w :SurroundWord<space>
-  nnoremap <silent> [surround]c :ChSurround<space>
-  nnoremap <silent> [surround]r :RmSurround<CR>
+  nmap <LocalLeader>s [surrounding]
+  nnoremap <silent> [surrounding]l :SurroundLine<space>
+  nnoremap <silent> [surrounding]w :SurroundWord<space>
+  nnoremap <silent> [surrounding]c :ChSurround<space>
+  nnoremap <silent> [surrounding]r :RmSurround<CR>
 '''
 
 [[plugins]]
