@@ -32,6 +32,7 @@ elif [[ -n ${WSLENV} ]]; then
     ${path}
     /usr/bin
     /usr/local/bin
+    '/mnt/c/Windows/System32/WindowsPowerShell/v1.0'
     '/mnt/c/Users/atsuy/AppData/Local/Programs/Microsoft VS Code/bin'
   )
 elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
