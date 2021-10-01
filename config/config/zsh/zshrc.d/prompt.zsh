@@ -5,7 +5,7 @@ function __path_prompt__() { # カレントディレクトリのpathを画面の
   let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c 'test 1 -gt {} && echo 1 || echo {}')/$(echo ${pwd} | grep -o '[~/]' | wc -l)
   [[ 0 -eq ${num} ]] && num=1
 
-  stylish_prompt="%{${fg[blue]}${bg[black]}%}%n %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} "
+  stylish_prompt="%{${fg[blue]}${bg[black]}%}%n %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} %{${reset_color}%}"
 
   [[ ${OSTYPE} == 'linux-gnu' && -n ${WINDOWID} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
     && PROMPT=${stylish_prompt} && return
