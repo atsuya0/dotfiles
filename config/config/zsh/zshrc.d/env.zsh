@@ -31,6 +31,7 @@ elif [[ -n ${WSLENV} ]]; then
   typeset -ar path=(
     ${path}
     /usr/bin
+    /usr/local/bin
     '/mnt/c/Users/atsuy/AppData/Local/Programs/Microsoft VS Code/bin'
   )
 elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
