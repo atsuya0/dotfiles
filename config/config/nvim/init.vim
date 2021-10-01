@@ -172,6 +172,7 @@ cnoremap <expr> / getcmdtype() == '/' ? '\/' : '/'
 augroup IME
   autocmd!
   autocmd InsertLeave * call system('fcitx5-remote -c')
+  " autocmd InsertLeave * call system("/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -command \"Add-Type -AssemblyName System.Windows.Forms;[System.Windows.Forms.SendKeys]::SendWait('+ ')\"")
 augroup END
 
 augroup ChangeFocus
