@@ -83,9 +83,14 @@ function gss() {
 
 function gu() {
   is_managed_by_git || return 1
-  [[ ${OSTYPE} == 'linux-gnu' ]] \
-    && xdg-open $(git config --get remote.origin.url) \
-    || open $(git config --get remote.origin.url)
+  local -r url=$(git config --get remote.origin.url)
+  if [[ ${OSTYPE} =~ 'darwin' ]]; then
+    open ${url}
+  elif [[ -n ${WSLENV} ]]; then
+    '/mnt/c/Program Files/Google/Chrome/Application/chrome.exe' ${url}
+  else
+    xdg-open ${url}
+  fi
 }
 
 function gph() {
