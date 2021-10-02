@@ -55,6 +55,18 @@ function install_fonts() {
     curl -fsSL ${hack[1]}/{${hack[0]}-${face}.ttf} -o ${font_dir}/#1
   done
 
+  curl -LO https://github.com/yuru7/Firge/releases/download/v0.2.0/FirgeNerd_v0.2.0.zip \
+    && bsdtar xf FirgeNerd_v0.2.0.zip \
+    && rm FirgeNerd_v0.2.0.zip \
+    && mv FirgeNerd_v0.2.0/* -t ${font_dir} \
+    && rmdir FirgeNerd_v0.2.0
+
+  curl -LO https://github.com/yuru7/HackGen/releases/download/v2.5.1/HackGenNerd_v2.5.1.zip \
+    && bsdtar xf HackGenNerd_v2.5.1.zip \
+    && rm HackGenNerd_v2.5.1.zip \
+    && mv HackGenNerd_v2.5.1/* -t ${font_dir} \
+    && rmdir HackGenNerd_v2.5.1
+
   fc-cache
 }
 
