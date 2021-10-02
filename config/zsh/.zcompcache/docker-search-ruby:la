@@ -1,4 +1,0 @@
-result=( ${(Q)"${(z)$(<<\EO:result
-'yoones/railsondeb' 'filestack/ruby' 'ywatase/perl-ruby-chromedriver' 'suzumura/ruby-runner' 'starnix/jenkins-ruby-ssh-slave' 'mwwe/ruby-prebuilt' 'brandsr/pe-string' 'creep04/rubygtime'
-EO:result
-)}"} )

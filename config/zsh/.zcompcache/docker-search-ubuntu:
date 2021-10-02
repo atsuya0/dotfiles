@@ -1,4 +1,0 @@
-result=( ${(Q)"${(z)$(<<\EO:result
-'ubuntu' 'dorowu/ubuntu-desktop-lxde-vnc' 'rastasheep/ubuntu-sshd' 'consol/ubuntu-xfce-vnc' 'ubuntu-upstart' 'ansible/ubuntu14.04-ansible' 'neurodebian' '1and1internet/ubuntu-16-nginx-php-phpmyadmin-mysql-5' 'ubuntu-debootstrap' 'nuagebec/ubuntu' 'tutum/ubuntu' 'i386/ubuntu' '1and1internet/ubuntu-16-apache-php-7.0' 'ppc64le/ubuntu' 'eclipse/ubuntu_jdk8' 'codenvy/ubuntu_jdk8' 'darksheer/ubuntu' 'pivotaldata/ubuntu' '1and1internet/ubuntu-16-sshd' 'smartentry/ubuntu' 'paasmule/bosh-tools-ubuntu' 'ossobv/ubuntu' 'pivotaldata/ubuntu-gpdb-dev' '1and1internet/ubuntu-16-healthcheck' '1and1internet/ubuntu-16-rspec'
-EO:result
-)}"} )

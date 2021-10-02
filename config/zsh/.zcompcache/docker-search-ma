@@ -1,4 +1,0 @@
-result=( ${(Q)"${(z)$(<<\EO:result
-'mysql' 'elasticsearch' 'wordpress' 'mariadb' 'logstash' 'maven' 'redmine' 'drupal' 'rethinkdb' 'composer' 'percona' 'elixir' 'adminer' 'erlang' 'joomla' 'bitnami/mariadb' 'matomo' 'linuxserver/mariadb' 'mattermost/mattermost-prod-app' 'mautic/mautic' 'mayanedms/mayanedms' 'manageiq/manageiq' 'mageia' 'mesosphere/marathon-lb' 'mattermost/mattermost-prod-db'
-EO:result
-)}"} )
