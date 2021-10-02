@@ -107,3 +107,4 @@ grpc-cli # gRPC cli
 simplescreenrecorder
 gnome-keyring # git password access token
 libsecret # git password access token
+foliate # epub reader
