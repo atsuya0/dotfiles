@@ -14,13 +14,13 @@ hook_source = '''
 [[plugins]] # completion framework
 repo = 'Shougo/deoplete.nvim'
 if = 'has("nvim")'
-on_i = 1
+on_event = 'InsertCharPre'
 hook_add = 'let g:deoplete#enable_at_startup = 1'
 
 [[plugins]]
 repo = 'lighttiger2505/deoplete-vim-lsp'
 if = 'has("nvim")'
-on_i = 1
+on_event = 'InsertCharPre'
 
 [[plugins]] # unite all interfaces
 repo = 'Shougo/denite.nvim'
