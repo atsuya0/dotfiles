@@ -1,0 +1,11 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =9
+let g:netrw_dirhist_9='/home/tayusa/study'
+let g:netrw_dirhist_8='/home/tayusa/study/common'
+let g:netrw_dirhist_7='/home/tayusa/study'
+let g:netrw_dirhist_6='/home/tayusa/study/common'
+let g:netrw_dirhist_5='/home/tayusa/workspace/develop/web/uzabase/rssfeeder'
+let g:netrw_dirhist_4='/home/tayusa/study/common'
+let g:netrw_dirhist_3='/home/tayusa/workspace/develop/web/chat/client/chat-client/src/assets'
+let g:netrw_dirhist_2='/home/tayusa/dotfiles/config/config/zsh/zshrc.d/functions'
+let g:netrw_dirhist_1='/home/tayusa/workspace/develop/cli/trash/cmd'

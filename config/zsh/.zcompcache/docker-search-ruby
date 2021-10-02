@@ -1,0 +1,4 @@
+result=( ${(Q)"${(z)$(<<\EO:result
+'ruby' 'redmine' 'jruby' 'circleci/ruby' 'starefossen/ruby-node' 'heroku/ruby' 'bitnami/ruby' 'iron/ruby' 'drecom/centos-ruby' 'hoteltonight/ruby-jemalloc' 'centos/ruby-23-centos7' 'centos/ruby-22-centos7' 'openshift/ruby-20-centos7' 'centos/ruby-24-centos7' 'instructure/ruby' 'instructure/ruby-passenger' 'appsvc/ruby' 'rylnd/ruby' 'articulate/articulate-ruby' 'pivotalcfbam/bam-ruby-2.5-image' 'aptible/ruby' 'kapost/ruby' 'paasmule/paas-tools-ruby' 'appsvctest/ruby' 'quipper/circleci-ruby'
+EO:result
+)}"} )

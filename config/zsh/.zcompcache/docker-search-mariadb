@@ -1,0 +1,4 @@
+result=( ${(Q)"${(z)$(<<\EO:result
+'mariadb' 'bitnami/mariadb' 'linuxserver/mariadb' 'toughiq/mariadb-cluster' 'colinmollenhour/mariadb-galera-swarm' 'panubo/mariadb-galera' 'mariadb/server' 'lsioarmhf/mariadb' 'webhippie/mariadb' 'bianjp/mariadb-alpine' 'centos/mariadb-101-centos7' 'severalnines/mariadb' 'centos/mariadb-102-centos7' 'wodby/mariadb' 'tutum/mariadb' 'circleci/mariadb' 'tiredofit/mariadb-backup' 'kitpages/mariadb-galera' 'jonbaldie/mariadb' 'rightctrl/mariadb' 'demyx/mariadb' 'ccitest/mariadb' 'jelastic/mariadb' 'ansibleplaybookbundle/mariadb-apb' 'alvistack/mariadb'
+EO:result
+)}"} )
