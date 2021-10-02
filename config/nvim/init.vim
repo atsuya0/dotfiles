@@ -28,7 +28,7 @@ endif
 set undofile
 set undolevels=100
 if has('nvim')
-  set undodir=$XDG_CONFIG_HOME/nvim/undo
+  set undodir=$XDG_DATA_HOME/nvim/undo
 else
   set undodir=$HOME/.vim/undo
 endif
