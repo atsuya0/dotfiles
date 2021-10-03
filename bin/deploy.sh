@@ -6,14 +6,14 @@ function link_config_file() {
   local -r dotfiles="${DOTFILES:-${HOME}/dotfiles}"
 
   ls -A "${dotfiles}/home" | while read -r file; do
-    [[ -f "${HOME}/${file}" ]] && rm -r "${HOME}/${file}"
-    ln -s "${dotfiles}/home/${file}" ${HOME}/
+    [[ -e "${HOME}/${file}" ]] && rm -r "${HOME}/${file}"
+    ln -sf "${dotfiles}/home/${file}" ${HOME}/
   done
 
   ls "${dotfiles}/config" | while read -r file; do
     local target="${XDG_CONFIG_HOME:-${HOME}/.config}/${file}"
-    [[ -f ${target} ]] && rm -r ${target}
-    ln -s "${dotfiles}/config/${file}" ${target}
+    [[ -e ${target} ]] && rm -r ${target}
+    ln -sf "${dotfiles}/config/${file}" ${target}
   done
 }
 
