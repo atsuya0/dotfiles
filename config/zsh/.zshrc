@@ -25,14 +25,13 @@ setopt print_eight_bit
 # setopt bsd_echo
 
 () {
-  case ${OSTYPE} in
-    darwin* )
-      local -r zsh='/usr/local/share'
-    ;;
-    'linux-gnu' )
-      local -r zsh='/usr/share/zsh/plugins'
-    ;;
-  esac
+  if [[ -n ${WSLENV} ]]; then
+    local -r zsh='/usr/share'
+  elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
+    local -r zsh='/usr/share/zsh/plugins'
+  elif [[ ${OSTYPE} =~ 'darwin' ]]; then
+    local -r zsh='/usr/local/share'
+  fi
   source "${zsh}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" 2> /dev/null
   # source "${zsh}/zsh-autosuggestions/zsh-autosuggestions.zsh" 2> /dev/null
 }
