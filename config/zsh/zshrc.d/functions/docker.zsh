@@ -1,5 +1,5 @@
 function is_docker_running() {
-  sudo docker info &> /dev/null && return 0
+  docker info &> /dev/null && return 0
   echo 'Is the docker daemon running?'
   [[ -n ${WSLENV} ]] \
     && print -z 'sudo service docker start' \
@@ -12,35 +12,35 @@ function image_exists() {
   [[ $# -eq 0 ]] && return 1
   is_docker_running || return 1
 
-  sudo docker images --format "{{.Repository}}" | grep -q "^${1}$" \
+  docker images --format "{{.Repository}}" | grep -q "^${1}$" \
     && return 0 \
     || return 1
 }
 
 function _image_exists() {
-  sudo docker info &> /dev/null || return 1
+  docker info &> /dev/null || return 1
 
   _values \
-    $(sudo docker images --format "{{.Repository}}")
+    $(docker images --format "{{.Repository}}")
 }
 compdef _image_exists image_exists
 
-function docker-compose() {
-  [[ -z ${commands[docker-compose]} ]] && { echo 'Not installed'; return 1; }
-  type is_docker_running &> /dev/null \
-    && is_docker_running \
-    && command docker-compose $@
-}
+# function docker-compose() {
+#   [[ -z ${commands[docker-compose]} ]] && { echo 'Not installed'; return 1; }
+#   type is_docker_running &> /dev/null \
+#     && is_docker_running \
+#     && command docker-compose $@
+# }
 
 function drm() { # dockerのcontainerを選択して破棄
   is_docker_running || return 1
   [[ -z ${commands[fzf]} ]] && return 1
 
   local -r container=$(
-    sudo docker ps -a | sed 1d | fzf --header="$(sudo docker ps -a | sed -n 1p)"
+    docker ps -a | sed 1d | fzf --header="$(docker ps -a | sed -n 1p)"
   )
   [[ -n ${container} ]] \
-    && echo "${container}" | tr -s ' ' | cut -d' ' -f1 | xargs sudo docker rm
+    && echo "${container}" | tr -s ' ' | cut -d' ' -f1 | xargs docker rm
 }
 
 function drmi() { # dockerのimageを選択して破棄
@@ -48,10 +48,10 @@ function drmi() { # dockerのimageを選択して破棄
   [[ -z ${commands[fzf]} ]] && return 1
 
   local -r image=$(
-    sudo docker images | sed 1d | fzf --header="$(sudo docker images | sed -n 1p)"
+    docker images | sed 1d | fzf --header="$(docker images | sed -n 1p)"
   )
   [[ -n ${image} ]] \
-    && echo "${image}" | tr -s ' ' | cut -d' ' -f3 | xargs sudo docker rmi
+    && echo "${image}" | tr -s ' ' | cut -d' ' -f3 | xargs docker rmi
 }
 
 function jwm() { # dockerでjwmを動かす。
@@ -60,7 +60,7 @@ function jwm() { # dockerでjwmを動かす。
   [[ -e /tmp/.X11-unix/X1 ]] \
     || Xephyr -wr -resizeable :1 &> /dev/null &
 
-  sudo docker run \
+  docker run \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v "/run/user/${UID}/pulse/native:/tmp/pulse/native" \
     -v "${HOME}/.config/pulse/cookie:/tmp/pulse/cookie" \
@@ -78,7 +78,7 @@ function to_pdf() {
 
   local dir
   for dir in $@; do
-    sudo docker run --rm -it -v ${PWD}:/images -w /images ${image} \
+    docker run --rm -it -v ${PWD}:/images -w /images ${image} \
       convert "${dir}/*" "${dir}.pdf"
   done
 }
@@ -90,6 +90,6 @@ function convert() {
   local -r image="${USER}/imagemagick-alpine"
   image_exists ${image} || return 1
 
-  sudo docker run --rm -it -v ${PWD}:/images -w /images ${image} \
+  docker run --rm -it -v ${PWD}:/images -w /images ${image} \
     convert $@
 }
