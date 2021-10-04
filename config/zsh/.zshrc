@@ -105,6 +105,8 @@ source "${ZDOTDIR}/zshrc.d/fzf.zsh"
 source "${ZDOTDIR}/zshrc.d/functions.zsh"
 source "${ZDOTDIR}/zshrc.d/aliases.zsh"
 
+[[ -n ${commands[kubectl]} ]] \
+  && source <(kubectl completion zsh)
 source <(scd script)
 source <(cremem script)
 alias c='cremem'
