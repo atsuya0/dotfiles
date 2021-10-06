@@ -10,9 +10,13 @@
 export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap --bind 'ctrl-v:toggle-preview'"
 
 () { # fzfの拡張を読み込む
-  [[ ${OSTYPE} =~ 'darwin' ]] \
-    && local -r fzf_directory="/usr/local/Cellar/fzf/$(ls /usr/local/Cellar/fzf | head -1)/shell" \
-    || local -r fzf_directory='/usr/share/fzf'
+  if [[ -n ${WSLENV} ]]; then
+    local -r fzf_directory='/usr/share/doc/fzf/examples'
+  elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
+    local -r fzf_directory='/usr/share/fzf'
+  elif [[ ${OSTYPE} =~ 'darwin' ]]; then
+    local -r fzf_directory="/usr/local/Cellar/fzf/$(ls /usr/local/Cellar/fzf | head -1)/shell"
+  fi
   local -r keybind="${fzf_directory}/key-bindings.zsh"
   local -r completion="${fzf_directory}/completion.zsh"
   [[ -f ${keybind} ]] && source ${keybind}
