@@ -2,12 +2,12 @@
 
 set -euCo pipefail
 
-function separator() {
+function print_sep() {
   [[ $# -lt 1 ]] && return 1
-  output --color-name $1 --string ''
+  print_value --color-name $1 --string ''
 }
 
-function output() {
+function print_value() {
   [[ $# -lt 2 ]] && return 1
 
   local -rA colors=(
@@ -23,13 +23,7 @@ function output() {
         local color=${colors[$2]}
         shift 2
       ;;
-      '-c'|'--color-code' )
-        [[ -z $2 || $2 =~ ^-+ ]] && return 1
-        local color=$2
-        shift 2
-      ;;
       '-s'|'--string' )
-        # -30dBm
         [[ -z $2 ]] && return 1
         local string=$2
         shift 2
@@ -40,11 +34,18 @@ function output() {
   echo "${color} ${string}${colors['default']}"
 }
 
+function format_value() {
+  [[ $# -lt 2 ]] && return 1
+  # $1数値か
+
+  [[ $(( $1 % 2 )) == 0 ]] \
+    && echo -n $(print_sep 'blue')$(print_value -n 'black' -s "$2") \
+    || echo -n $(print_sep 'black')$(print_value -n 'blue' -s "$2")
+}
+
 # メモリ使用量
 function memory() {
-  local src
-  src=$(free -h | sed '/^Mem:/!d;s/  */ /g' | cut -d' ' -f3)
-  echo "$(separator 'blue')$(output -n 'black' -s ${src})"
+  free -h | sed '/^Mem:/!d;s/  */ /g' | cut -d' ' -f3
 }
 
 # ロードアベレージ
@@ -52,108 +53,28 @@ function load_average() {
   local src cpus
   src=$(uptime | sed -E 's/.*load average: ([0-9]\.[0-9][0-9]).*/\1/g')
   cpus=$(grep 'processor' /proc/cpuinfo | wc -l)
-  echo "$(separator 'black')$(output -n 'blue' -s ${src}/${cpus})"
+  echo ${src}/${cpus}
 }
 
-# 電波強度
-function network_level() {
-  local -r interface='wlp4s0'
-
-  [[ -n $(ip link show up dev ${interface}) ]] \
-    && local -r signal=$(cat /proc/net/wireless \
-      | tail -1 | tr -s ' ' | cut -d' ' -f4 | sed 's/\./dBm/') \
-    || local -r signal='---'
-
-  echo "$(separator 'blue')$(output -n 'black' -s ${signal})"
+function k8s_ctx() {
+  which kubectl &> /dev/null || return 1
+  kubectl config current-context
 }
 
-# 音量
-function sound() {
-  function get_volume() {
-    local volume
-    volume="$(pactl list sinks \
-      | grep 'Volume' | grep -o '[0-9]*%' | head -1 | tr -d '%')"
-    [[ ${volume} -gt 100 ]] && echo 100 || echo "${volume}"
-  }
-
-  function get_muted() {
-    pactl list sinks \
-      | grep 'Mute' | sed 's/[[:space:]]//g' | cut -d: -f2 | head -1
-  }
-
-  function to_blocks() {
-    seq -f '%02g' -s '' 1 5 $1 | sed 's/.\{2\}/■/g'
-  }
-
-  function to_spaces() {
-    seq -s '_' $1 5 100 | tr -d '[:digit:]'
-  }
-
-  function to_meters() {
-    echo "[$(to_blocks $1)$(to_spaces $1)]"
-  }
-
-  which pactl &> /dev/null \
-    || { echo "$(sep 'black')$(value 'blue' '×') "; return 1; }
-
-  local -rA colors=(
-    ['yes']='#[fg=colour237,bg=black]'
-    ['no']='blue'
-  )
-  local -rA options=(
-    ['yes']='--color-code'
-    ['no']='--color-name'
-  )
-  local muted
-  muted=$(get_muted)
-
-  echo "$(separator 'black')$(output \
-      ${options[${muted}]} ${colors[${muted}]} \
-      -s $(to_meters $(get_volume)))" \
-      | sed 's/_/ /g'
-}
-
-# 時刻
-function hours_minutes() {
-  echo "$(separator 'blue')$(output -n 'black' -s $(date +%H:%M))"
-}
-
-# バッテリー残量
-function battery() {
-  function online() {
-    [[ $(cat /sys/class/power_supply/ADP1/online) != '1' ]] \
-      && return
-    local -ar icons=('' '' '' '' '')
-    local index
-    index=$(expr $(date +%S) % ${#icons[@]})
-    output -n 'blue' -s ${icons[${index}]}
-  }
-
-  [[ -e '/sys/class/power_supply/BAT1' ]] \
-    || { echo "$(separator 'black')$(online)"; return; }
-
-  local charge
-  charge=$(< /sys/class/power_supply/BAT1/capacity)
-
-  if [[ ${charge} -gt 79 ]];then
-    local -r color='#[fg=#08d137,bg=black]'
-  elif [[ ${charge} -gt 20 ]];then
-    local -r color='#[fg=#509de0,bg=black]'
-  else
-    local -r color='#[fg=#f73525,bg=black]'
-  fi
-
-  echo "$(separator 'black')$(online) $(output -c ${color} -s ${charge}%)"
+function k8s_ns() {
+  which kubectl &> /dev/null || return 1
+  kubectl config get-contexts | grep '^*' | tr -s ' ' | cut -d' ' -f 5
 }
 
 function main() {
   [[ ${OSTYPE} != 'linux-gnu' ]] && return 1
 
-  if [[ $1 == 'short' ]];then
-    echo -n "$(memory)$(load_average)"
-  else
-    echo -n "$(memory)$(load_average)$(network_level)$(sound)$(hours_minutes)$(battery)"
-  fi
+  local -ra values=($(memory) $(load_average) $(k8s_ctx) $(k8s_ns))
+  local i=0
+  for value in "${values[@]}"; do
+    format_value ${i} "${value}" && let ++i
+  done
+  # if [[ $1 == 'short' ]];then
   echo '  '
 }
 
