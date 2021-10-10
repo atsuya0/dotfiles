@@ -74,7 +74,6 @@ function main() {
   for value in "${values[@]}"; do
     format_value ${i} "${value}" && let ++i
   done
-  # if [[ $1 == 'short' ]];then
   echo '  '
 }
 
