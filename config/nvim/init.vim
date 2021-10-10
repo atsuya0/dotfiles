@@ -1,6 +1,7 @@
 " Vim tries to use the first mentioned character encoding.
 set fileencodings=ucs-bom,utf-8,cp932,euc-jp,sjis,iso-2022-jp
 " To ALWAYS use the clipboard for ALL operations
+set clipboard&
 set clipboard+=unnamedplus
 set history=10000 "nvim-default
 set mouse=a "nvim-default
