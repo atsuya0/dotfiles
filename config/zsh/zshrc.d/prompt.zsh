@@ -1,21 +1,41 @@
-function __path_prompt__() { # カレントディレクトリのpathを画面の横幅に応じて短縮する。
-  local -r pwd=$(pwd | sed "s@${HOME}@~@")
-  local num
-  # 表示するディレクトリ名の文字数を決める
-  let num=$(expr $(tput cols) - 55 | xargs -I{} sh -c 'test 1 -gt {} && echo 1 || echo {}')/$(echo ${pwd} | grep -o '[~/]' | wc -l)
-  [[ 0 -eq ${num} ]] && num=1
+function __prompt__() { # カレントディレクトリのpathを画面の横幅に応じて短縮する。
+  local -r wd=$(pwd | sed "s@${HOME}@~@")
 
-  stylish_prompt="%{${fg[blue]}${bg[black]}%}%n %{${fg[black]}${bg[blue]}%}%{${fg[black]}${bg[blue]}%} $(echo ${pwd} | sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g") %{${reset_color}${fg[blue]}%} %{${reset_color}%}"
+  local short_wd
+  () {
+    # 表示するディレクトリ名の文字数を決める
+    local -r path_chars_num=$(($(($(tput cols) / 3)) / $(echo ${wd} | grep -o '[~/]' | wc -l)))
+    [[ 0 -eq ${path_chars_num} ]] && path_chars_num=1
+    short_wd=$(sed "s@\(/[^/]\{${path_chars_num}\}\)[^/]*@\1@g" <<< ${wd})
+  }
 
-  [[ ${OSTYPE} == 'linux-gnu' && -n ${WINDOWID} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
-    && PROMPT=${stylish_prompt} && return
-  [[ ${OSTYPE} == 'linux-gnu' && -n ${WSLENV} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
-    && PROMPT=${stylish_prompt} && return
-  [[ ${OSTYPE} =~ 'darwin' && $(ps co comm ${PPID} | tail -1) != 'nvim' ]] \
-    && PROMPT=${stylish_prompt} && return
-  PROMPT="%n %{${fg[blue]}%}$(sed "s@\(/[^/]\{${num}\}\)[^/]*@\1@g" <<< ${pwd}) %{${reset_color}%}$ "
+  local graphic_prompt
+  () {
+    local -r icon=''
+    local -r blue="%{${fg[blue]}${bg[black]}%}"
+    local -r blue_bg="%{${fg[black]}${bg[blue]}%}"
+    local -r green="%{${fg[green]}${bg[black]}%}"
+
+    [[ ${KEYMAP} == 'vicmd' ]] \
+      && local mode="${green} NORM ${blue_bg}" \
+      || local mode="${blue} INS ${blue_bg}"
+
+    graphic_prompt="${mode}${icon}${blue_bg} ${short_wd} ${blue}${icon} %{${reset_color}%}"
+  }
+
+  if [[ ${OSTYPE} == 'linux-gnu' && -n ${WINDOWID} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
+    || [[ ${OSTYPE} == 'linux-gnu' && -n ${WSLENV} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
+    || [[ ${OSTYPE} =~ 'darwin' && $(ps co comm ${PPID} | tail -1) != 'nvim' ]]; then
+    PROMPT=${graphic_prompt}
+  else
+    PROMPT="%n %{${fg[blue]}%}${short_wd} %{${reset_color}%}$ "
+  fi
+
+  zle reset-prompt
 }
-add-zsh-hook precmd __path_prompt__
+# add-zsh-hook precmd __prompt__
+zle -N zle-line-init __prompt__
+zle -N zle-keymap-select __prompt__
 
 function __git_prompt__() {
   RPROMPT=''

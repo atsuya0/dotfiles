@@ -97,7 +97,7 @@ function ignore_filetypes() {
 
 autoload -Uz colors && colors
 source "${ZDOTDIR}/zshrc.d/prompt.zsh"
-source "${ZDOTDIR}/zshrc.d/tmux_status.zsh"
+# source "${ZDOTDIR}/zshrc.d/tmux_status.zsh"
 source "${ZDOTDIR}/zshrc.d/completion.zsh"
 source "${ZDOTDIR}/zshrc.d/history.zsh"
 source "${ZDOTDIR}/zshrc.d/keybind.zsh"
