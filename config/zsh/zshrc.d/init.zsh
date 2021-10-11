@@ -12,7 +12,7 @@ fi
   if [[ -n ${WSLENV} ]]; then
     [[ "$(ps hco cmd ${PPID})" =~ 'tmux' ]] && return 1
   elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
-    [[ -n ${WINDOWID} && "$(ps hco cmd ${PPID})" =~ 'kitty|alacritty' ]] \
+    [[ -n ${WINDOWID} && "$(ps hco cmd ${PPID})" =~ 'kitty|alacritty|xfce4-terminal' ]] \
       || return 1
   else
     [[ "$(ps co comm ${PPID} | tail -1)" == 'tmux' ]] && return 1
