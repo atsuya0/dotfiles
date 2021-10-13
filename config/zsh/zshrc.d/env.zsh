@@ -31,6 +31,7 @@ elif [[ -n ${WSLENV} ]]; then
   typeset -ar path=(
     ${path}
     /usr/bin
+    /usr/sbin
     /usr/local/bin
     '/mnt/c/Windows/System32/WindowsPowerShell/v1.0'
     '/mnt/c/Users/atsuy/AppData/Local/Programs/Microsoft VS Code/bin'
