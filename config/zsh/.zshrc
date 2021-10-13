@@ -107,6 +107,8 @@ source "${ZDOTDIR}/zshrc.d/aliases.zsh"
 
 [[ -n ${commands[kubectl]} ]] \
   && source <(kubectl completion zsh)
+[[ -n ${commands[pack]} ]] \
+  && source $(pack completion --shell zsh)
 source <(scd script)
 source <(cremem script)
 alias c='cremem'
