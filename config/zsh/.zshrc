@@ -25,7 +25,7 @@ setopt print_eight_bit
 # setopt bsd_echo
 
 () {
-  if [[ -n ${WSLENV} ]]; then
+  if [[ -n ${WSL_INTEROP} ]]; then
     local -r zsh='/usr/share'
   elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
     local -r zsh='/usr/share/zsh/plugins'

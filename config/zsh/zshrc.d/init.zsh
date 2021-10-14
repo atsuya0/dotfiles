@@ -9,7 +9,7 @@ fi
 }
 
 () { # tmux
-  if [[ -n ${WSLENV} ]]; then
+  if [[ -n ${WSL_INTEROP} ]]; then
     [[ "$(ps hco cmd ${PPID})" =~ 'tmux' ]] && return 1
   elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
     [[ -n ${WINDOWID} && "$(ps hco cmd ${PPID})" =~ 'kitty|alacritty|xfce4-terminal' ]] \

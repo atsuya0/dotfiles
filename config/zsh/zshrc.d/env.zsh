@@ -26,7 +26,7 @@ if [[ ${OSTYPE} =~ 'darwin' ]]; then
     /usr/local/opt/mysql@5.6/bin
     "${HOME}/google-cloud-sdk/bin"
   )
-elif [[ -n ${WSLENV} ]]; then
+elif [[ -n ${WSL_INTEROP} ]]; then
   export TRASH_CAN_PATH="${HOME}/.Trash"
   typeset -ar path=(
     ${path}
