@@ -107,6 +107,10 @@ source "${ZDOTDIR}/zshrc.d/aliases.zsh"
 
 [[ -n ${commands[kubectl]} ]] \
   && source <(kubectl completion zsh)
+[[ -n ${commands[helm]} ]] \
+  && source <(helm completion zsh)
+[[ -n ${commands[kind]} ]] \
+  && source <(kind completion zsh)
 [[ -n ${commands[pack]} ]] \
   && source $(pack completion --shell zsh)
 source <(scd script)
