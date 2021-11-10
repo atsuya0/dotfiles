@@ -1,9 +1,8 @@
 function is_docker_running() {
   docker info &> /dev/null && return 0
   echo 'Is the docker daemon running?'
-  [[ -n ${WSLENV} ]] \
-    && print -z 'sudo service docker start' \
-    || print -z 'sudo systemctl start docker'
+  [[ ${OSTYPE} == 'linux-gnu' ]] \
+    && print -z 'sudo systemctl start docker'
 
   return 1
 }

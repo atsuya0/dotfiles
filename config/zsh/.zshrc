@@ -25,7 +25,7 @@ setopt print_eight_bit
 # setopt bsd_echo
 
 () {
-  if [[ -n ${WSLENV} ]]; then
+  if [[ -n ${WSL_INTEROP} ]]; then
     local -r zsh='/usr/share'
   elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
     local -r zsh='/usr/share/zsh/plugins'
@@ -107,6 +107,10 @@ source "${ZDOTDIR}/zshrc.d/aliases.zsh"
 
 [[ -n ${commands[kubectl]} ]] \
   && source <(kubectl completion zsh)
+[[ -n ${commands[helm]} ]] \
+  && source <(helm completion zsh)
+[[ -n ${commands[kind]} ]] \
+  && source <(kind completion zsh)
 [[ -n ${commands[pack]} ]] \
   && source $(pack completion --shell zsh)
 source <(scd script)

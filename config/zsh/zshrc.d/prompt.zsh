@@ -24,7 +24,7 @@ function __prompt__() { # カレントディレクトリのpathを画面の横�
   }
 
   if [[ ${OSTYPE} == 'linux-gnu' && -n ${WINDOWID} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
-    || [[ ${OSTYPE} == 'linux-gnu' && -n ${WSLENV} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
+    || [[ ${OSTYPE} == 'linux-gnu' && -n ${WSL_INTEROP} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
     || [[ ${OSTYPE} =~ 'darwin' && $(ps co comm ${PPID} | tail -1) != 'nvim' ]]; then
     PROMPT=${graphic_prompt}
   else

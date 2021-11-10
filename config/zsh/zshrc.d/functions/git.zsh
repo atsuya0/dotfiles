@@ -86,7 +86,7 @@ function gu() {
   local -r url=$(git config --get remote.origin.url)
   if [[ ${OSTYPE} =~ 'darwin' ]]; then
     open ${url}
-  elif [[ -n ${WSLENV} ]]; then
+  elif [[ -n ${WSL_INTEROP} ]]; then
     '/mnt/c/Program Files/Google/Chrome/Application/chrome.exe' ${url}
   else
     xdg-open ${url}

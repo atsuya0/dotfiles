@@ -10,7 +10,7 @@
 export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap --bind 'ctrl-v:toggle-preview'"
 
 () { # fzfの拡張を読み込む
-  if [[ -n ${WSLENV} ]]; then
+  if [[ -n ${WSL_INTEROP} ]]; then
     local -r fzf_directory='/usr/share/doc/fzf/examples'
   elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
     local -r fzf_directory='/usr/share/fzf'
