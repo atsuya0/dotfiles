@@ -45,5 +45,13 @@ zstyle ':completion:*' insert-tab false
   [[ -f ${completion_zsh_inc} ]] \
     && source ${completion_zsh_inc}
 }
+[[ -n ${commands[kubectl]} ]] \
+  && source <(kubectl completion zsh)
+[[ -n ${commands[helm]} ]] \
+  && source <(helm completion zsh)
+[[ -n ${commands[kind]} ]] \
+  && source <(kind completion zsh)
+[[ -n ${commands[pack]} ]] \
+  && source $(pack completion --shell zsh)
 
 [[ -n ${commands[gh]} ]] && eval $(gh completion -s zsh)
