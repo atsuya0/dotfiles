@@ -16,6 +16,7 @@ setopt numeric_glob_sort
 # 「~」や「=コマンド」などのファイル名展開を行う。
 setopt magic_equal_subst
 
+autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
 # 補完時にハイライト tab,C-n,C-f,C-p,C-b
 zstyle ':completion:*:default' menu select
@@ -41,9 +42,12 @@ zstyle ':completion:*' verbose yes
 zstyle ':completion:*' insert-tab false
 
 () {
-  local -r completion_zsh_inc="${HOME}/google-cloud-sdk/completion.zsh.inc"
-  [[ -f ${completion_zsh_inc} ]] \
-    && source ${completion_zsh_inc}
+  local -r completion="${HOME}/google-cloud-sdk/completion.zsh.inc"
+  [[ -f ${completion} ]] && source ${completion}
+}
+() {
+  local -r aws_completer='/usr/local/bin/aws_completer'
+  [[ -f ${aws_completer} ]] && complete -C ${aws_completer} aws
 }
 [[ -n ${commands[kubectl]} ]] \
   && source <(kubectl completion zsh)
