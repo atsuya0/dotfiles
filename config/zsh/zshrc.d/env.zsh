@@ -33,6 +33,7 @@ elif [[ -n ${WSL_INTEROP} ]]; then
     /usr/bin
     /usr/sbin
     /usr/local/bin
+    "${HOME}/.local/bin"
     '/mnt/c/Windows/System32/WindowsPowerShell/v1.0'
     '/mnt/c/Users/atsuy/AppData/Local/Programs/Microsoft VS Code/bin'
   )
