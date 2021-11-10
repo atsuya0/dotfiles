@@ -15,12 +15,21 @@
     "cat",
     "echo",
     "expr",
+    "exit",
     "make",
+    "vi",
     "vim",
+    "nvim",
     "tree",
+    "poweroff",
+    "startx",
+    "python",
+    "python3",
     "google-chrome-stable",
     "rg",
+    "ll",
     "ga",
+    "fga",
     "gcm",
     "gsw",
     "gb",
@@ -31,6 +40,8 @@
     "tscd",
     "trs",
     "bak",
-    "mk"
+    "mk",
+    "cdh",
+    "ce"
   ]
 }
