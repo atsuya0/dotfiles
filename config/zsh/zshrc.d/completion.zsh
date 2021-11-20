@@ -49,6 +49,8 @@ zstyle ':completion:*' insert-tab false
   local -r aws_completer='/usr/local/bin/aws_completer'
   [[ -f ${aws_completer} ]] && complete -C ${aws_completer} aws
 }
+[[ -n ${commands[terraform]} ]] \
+  && complete -o nospace -C /usr/bin/terraform terraform
 [[ -n ${commands[kubectl]} ]] \
   && source <(kubectl completion zsh)
 [[ -n ${commands[helm]} ]] \
