@@ -9,6 +9,7 @@ typeset -a path=(
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
   $([[ -d ${VOLTA_HOME}/bin ]] && echo ${VOLTA_HOME}/bin)
   $([[ -d ${DENO_INSTALL}/bin ]] && echo ${DENO_INSTALL}/bin)
+  $([[ -d ${HOME}/.google-cloud-sdk/bin ]] && echo ${HOME}/.google-cloud-sdk/bin)
   $([[ -n ${commands[ruby]} \
     && -d "$(ruby -e 'print Gem.user_dir')/bin" ]] \
       && echo "$(ruby -e 'print Gem.user_dir')/bin")
