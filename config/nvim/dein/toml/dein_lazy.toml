@@ -83,3 +83,7 @@ hook_source = '''
   call denite#custom#var('file/rec/git', 'command',
         \ ['git', 'ls-files', '-co', '--exclude-standard'])
 '''
+
+[[plugins]]
+repo = 'hashivim/vim-terraform'
+on_ft = 'tf'
