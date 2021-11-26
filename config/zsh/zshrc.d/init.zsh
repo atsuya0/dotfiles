@@ -21,5 +21,9 @@ fi
   tmux_management.sh && exit
 }
 
+() { # http://asdf-vm.com/
+  local -r asdf_sh="${HOME}/.asdf/asdf.sh"
+  [[ -n ${asdf_sh} ]] && source ${asdf_sh}
+}
 
 # [[ -n ${commands[direnv]} ]] && eval "$(direnv hook zsh)"

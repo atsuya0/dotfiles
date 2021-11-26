@@ -54,6 +54,7 @@ zstyle ':completion:*' insert-tab false
 [[ -n ${commands[kind]} ]] && source <(kind completion zsh)
 [[ -n ${commands[pack]} ]] && source $(pack completion --shell zsh)
 [[ -n ${commands[gh]} ]] && eval $(gh completion -s zsh)
+[[ -n ${ASDF_DIR} ]] && fpath=(${ASDF_DIR}/completions $fpath)
 
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
