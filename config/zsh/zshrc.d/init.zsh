@@ -21,8 +21,5 @@ fi
   tmux_management.sh && exit
 }
 
-[[ -n ${commands[rbenv]} ]] \
-  && eval "$(rbenv init -)" \
-  && export PATH="${HOME}/.rbenv/bin:${PATH}"
 
 # [[ -n ${commands[direnv]} ]] && eval "$(direnv hook zsh)"
