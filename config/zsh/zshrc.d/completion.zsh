@@ -40,7 +40,7 @@ zstyle ':completion:*' verbose yes
 zstyle ':completion:*' insert-tab false
 
 () {
-  local -r completion="${HOME}/.google-cloud-sdk/completion.zsh.inc"
+  local -r completion="${GCP_PATH}/completion.zsh.inc"
   [[ -f ${completion} ]] && source ${completion}
 }
 () {
