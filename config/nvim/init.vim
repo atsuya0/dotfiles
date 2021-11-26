@@ -120,8 +120,6 @@ let maplocalleader = "\<space>"
 noremap <F1> <Nop>
 noremap! <F1> <Nop>
 noremap ZQ <Nop>
-" #
-inoremap # X#
 " Insert blank line.
 nnoremap <silent> <Leader>j o<esc>
 nnoremap <silent> <Leader>k :call append(line('.')-1, '')<CR>
