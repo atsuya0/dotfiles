@@ -328,10 +328,19 @@ function chrome() {
 }
 
 function update() {
-  echo '\e[31;1msudo pacman -Syu'
-  sudo pacman -Syu
+  local -r name=$(cat /etc/os-release | grep ^ID= | cut -d= -f2)
+  case ${name} in
+    'ubuntu' )
+      echo 'sudo apt-get -y update && sudo apt-get -y upgrade'
+      sudo apt-get -y update \
+        && sudo apt-get -y upgrade
+    ;;
+    'arch' )
+      echo '\e[31;1msudo pacman -Syu'
+      sudo pacman -Syu
+    ;;
+  esac
 }
-
 
 function rm_orphan_pkgs() {
   echo '\e[31;1msudo pacman -Rsn $(pacman -Qdmq)'

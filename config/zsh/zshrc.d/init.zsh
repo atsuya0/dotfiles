@@ -21,8 +21,9 @@ fi
   tmux_management.sh && exit
 }
 
-[[ -n ${commands[rbenv]} ]] \
-  && eval "$(rbenv init -)" \
-  && export PATH="${HOME}/.rbenv/bin:${PATH}"
+() { # http://asdf-vm.com/
+  local -r asdf_sh="${HOME}/.asdf/asdf.sh"
+  [[ -n ${asdf_sh} ]] && source ${asdf_sh}
+}
 
-[[ -n ${commands[direnv]} ]] && eval "$(direnv hook zsh)"
+# [[ -n ${commands[direnv]} ]] && eval "$(direnv hook zsh)"

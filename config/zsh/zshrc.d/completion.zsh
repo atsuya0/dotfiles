@@ -16,8 +16,6 @@ setopt numeric_glob_sort
 # 「~」や「=コマンド」などのファイル名展開を行う。
 setopt magic_equal_subst
 
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit && compinit
 # 補完時にハイライト tab,C-n,C-f,C-p,C-b
 zstyle ':completion:*:default' menu select
 # 補完で大文字にも一致
@@ -42,7 +40,7 @@ zstyle ':completion:*' verbose yes
 zstyle ':completion:*' insert-tab false
 
 () {
-  local -r completion="${HOME}/google-cloud-sdk/completion.zsh.inc"
+  local -r completion="${GCP_PATH}/completion.zsh.inc"
   [[ -f ${completion} ]] && source ${completion}
 }
 () {
@@ -51,13 +49,12 @@ zstyle ':completion:*' insert-tab false
 }
 [[ -n ${commands[terraform]} ]] \
   && complete -o nospace -C /usr/bin/terraform terraform
-[[ -n ${commands[kubectl]} ]] \
-  && source <(kubectl completion zsh)
-[[ -n ${commands[helm]} ]] \
-  && source <(helm completion zsh)
-[[ -n ${commands[kind]} ]] \
-  && source <(kind completion zsh)
-[[ -n ${commands[pack]} ]] \
-  && source $(pack completion --shell zsh)
-
+[[ -n ${commands[kubectl]} ]] && source <(kubectl completion zsh)
+[[ -n ${commands[helm]} ]] && source <(helm completion zsh)
+[[ -n ${commands[kind]} ]] && source <(kind completion zsh)
+[[ -n ${commands[pack]} ]] && source $(pack completion --shell zsh)
 [[ -n ${commands[gh]} ]] && eval $(gh completion -s zsh)
+[[ -n ${ASDF_DIR} ]] && fpath=(${ASDF_DIR}/completions $fpath)
+
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit

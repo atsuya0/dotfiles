@@ -1,3 +1,4 @@
+export GCP_PATH="${HOME}/.google-cloud-sdk"
 export VOLTA_HOME="${HOME}/.volta"
 export DENO_INSTALL="${HOME}/.deno"
 
@@ -9,6 +10,7 @@ typeset -a path=(
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
   $([[ -d ${VOLTA_HOME}/bin ]] && echo ${VOLTA_HOME}/bin)
   $([[ -d ${DENO_INSTALL}/bin ]] && echo ${DENO_INSTALL}/bin)
+  $([[ -d ${GCP_PATH} ]] && echo ${GCP_PATH}/bin)
   $([[ -n ${commands[ruby]} \
     && -d "$(ruby -e 'print Gem.user_dir')/bin" ]] \
       && echo "$(ruby -e 'print Gem.user_dir')/bin")

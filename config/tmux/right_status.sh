@@ -58,7 +58,7 @@ function load_average() {
 
 function k8s_ctx() {
   which kubectl &> /dev/null || return 1
-  kubectl config current-context
+  kubectl config current-context | cut -c-35
 }
 
 function k8s_ns() {
