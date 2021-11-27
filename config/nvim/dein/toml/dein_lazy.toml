@@ -87,3 +87,4 @@ hook_source = '''
 [[plugins]]
 repo = 'hashivim/vim-terraform'
 on_ft = 'tf'
+hook_add = 'let g:terraform_fmt_on_save = 1'
