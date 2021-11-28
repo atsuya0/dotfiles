@@ -39,6 +39,11 @@ zstyle ':completion:*' verbose yes
 # tabを挿入しない
 zstyle ':completion:*' insert-tab false
 
+[[ -n ${ASDF_DIR} ]] && fpath=(${ASDF_DIR}/completions $fpath)
+
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
+
 () {
   local -r completion="${GCP_PATH}/completion.zsh.inc"
   [[ -f ${completion} ]] && source ${completion}
@@ -48,13 +53,9 @@ zstyle ':completion:*' insert-tab false
   [[ -f ${aws_completer} ]] && complete -C ${aws_completer} aws
 }
 [[ -n ${commands[terraform]} ]] \
-  && complete -o nospace -C /usr/bin/terraform terraform
+  && complete -o nospace -C ${ASDF_DIR}/shims/terraform terraform
 [[ -n ${commands[kubectl]} ]] && source <(kubectl completion zsh)
 [[ -n ${commands[helm]} ]] && source <(helm completion zsh)
 [[ -n ${commands[kind]} ]] && source <(kind completion zsh)
 [[ -n ${commands[pack]} ]] && source $(pack completion --shell zsh)
 [[ -n ${commands[gh]} ]] && eval $(gh completion -s zsh)
-[[ -n ${ASDF_DIR} ]] && fpath=(${ASDF_DIR}/completions $fpath)
-
-autoload bashcompinit && bashcompinit
-autoload -Uz compinit && compinit
