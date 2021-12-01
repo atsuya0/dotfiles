@@ -42,6 +42,7 @@ alias -g L='$(ls | fzf)'
 alias -g F='$(find -type f | fzf)'
 alias -g ..2='../..'
 alias -g ..3='../../..'
+alias -g @win='/mnt/c/Users/atsuy/Desktop'
 
 alias -s txt='less'
 alias -s {html,md,pdf,mp3,mp4}='google-chrome-stable'
