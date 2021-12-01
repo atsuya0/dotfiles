@@ -1,4 +1,10 @@
 export GCP_PATH="${HOME}/.google-cloud-sdk"
+
+
+# For terraform
+export TF_REGISTRY_CLIENT_TIMEOUT=1800
+export TF_REGISTRY_DISCOVERY_RETRY=10
+
 export VOLTA_HOME="${HOME}/.volta"
 export DENO_INSTALL="${HOME}/.deno"
 
