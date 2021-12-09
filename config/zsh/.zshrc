@@ -104,7 +104,10 @@ source "${ZDOTDIR}/zshrc.d/keybind.zsh"
 source "${ZDOTDIR}/zshrc.d/fzf.zsh"
 source "${ZDOTDIR}/zshrc.d/functions.zsh"
 source "${ZDOTDIR}/zshrc.d/aliases.zsh"
-source "${ZDOTDIR}/zshrc.d/private.zsh"
+() {
+  local -r zsh="${ZDOTDIR}/zshrc.d/private.zsh"
+  [[ -e ${zsh} ]] && source ${zsh}
+}
 
 source <(scd script)
 source <(cremem script)
