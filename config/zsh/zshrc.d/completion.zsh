@@ -39,7 +39,10 @@ zstyle ':completion:*' verbose yes
 # tabを挿入しない
 zstyle ':completion:*' insert-tab false
 
-[[ -n ${ASDF_DIR} ]] && fpath=(${ASDF_DIR}/completions $fpath)
+if [[ -n ${ASDF_DIR} ]]; then
+  istioctl completion zsh >| ${ASDF_DIR}/completions/_istioctl
+  fpath=(${ASDF_DIR}/completions $fpath)
+fi
 
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
