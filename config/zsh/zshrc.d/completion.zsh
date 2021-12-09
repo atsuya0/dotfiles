@@ -55,8 +55,10 @@ autoload -Uz compinit && compinit
   local -r aws_completer='/usr/local/bin/aws_completer'
   [[ -f ${aws_completer} ]] && complete -C ${aws_completer} aws
 }
-[[ -n ${commands[terraform]} ]] \
-  && complete -o nospace -C ${ASDF_DIR}/shims/terraform terraform
+if [[ -n ${ASDF_DIR} ]]; then
+  [[ -n ${commands[terraform]} ]] \
+    && complete -o nospace -C ${ASDF_DIR}/shims/terraform terraform
+fi
 [[ -n ${commands[kubectl]} ]] && source <(kubectl completion zsh)
 [[ -n ${commands[helm]} ]] && source <(helm completion zsh)
 [[ -n ${commands[kind]} ]] && source <(kind completion zsh)
