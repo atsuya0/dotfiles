@@ -5,5 +5,5 @@ configuration {
   kb-cancel: "Escape,Control+bracketleft";
   kb-mode-previous: "Alt+u";
   kb-mode-next: "Alt+i";
-  theme: "/usr/share/rofi/themes/Arc-Dark.rasi";
 }
+@theme "/usr/share/rofi/themes/Arc-Dark.rasi"
