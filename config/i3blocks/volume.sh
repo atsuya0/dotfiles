@@ -13,7 +13,8 @@ function get_muted() {
 }
 
 function to_blocks() {
-  seq -f '%02g' -s '' 1 5 $1 | sed 's/.\{2\}/■/g'
+  local -r i=█
+  seq -f '%02g' -s '' 1 5 $1 | sed "s/.\{2\}/${i}/g"
 }
 
 function to_spaces() {
@@ -21,7 +22,8 @@ function to_spaces() {
 }
 
 function to_meters() {
-  echo "[$(to_blocks $1)$(to_spaces $1)]"
+  local -r i=│
+  echo "${i}$(to_blocks $1)$(to_spaces $1)${i}"
 }
 
 function print_volume() {
