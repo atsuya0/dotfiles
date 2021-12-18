@@ -1,9 +1,6 @@
 export GCP_PATH="${HOME}/.google-cloud-sdk"
 
-
-# For terraform
-export TF_REGISTRY_CLIENT_TIMEOUT=600
-export TF_REGISTRY_DISCOVERY_RETRY=10
+# terraform
 export TF_LOG=trace
 export TF_LOG_PATH="${HOME}/.terraform.log"
 
