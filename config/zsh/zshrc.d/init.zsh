@@ -29,4 +29,7 @@ fi
   [[ -n ${asdf_sh} ]] && source ${asdf_sh}
 }
 
+[[ -n ${commands[pyenv]} ]] \
+  && { eval "$(pyenv init --path)"; eval "$(pyenv init -)"; }
+
 # [[ -n ${commands[direnv]} ]] && eval "$(direnv hook zsh)"
