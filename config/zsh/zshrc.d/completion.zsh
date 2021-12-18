@@ -44,6 +44,27 @@ if [[ -n ${ASDF_DIR} && -n ${commands[istioctl]} ]]; then
   fpath=(${ASDF_DIR}/completions $fpath)
 fi
 
+LOCAL_COMPLETIONS_DIR="${HOME}/.zsh_completions"
+mkdir -p ${LOCAL_COMPLETIONS_DIR}
+fpath=(${LOCAL_COMPLETIONS_DIR} $fpath)
+
+() {
+  [[ -z ${commands[yq]} ]] && return
+  yq --version | grep -q 'mikefarah' || return
+  local -r yq_completion="${LOCAL_COMPLETIONS_DIR}/_yq"
+  # yq自体を更新したときに更新
+  [[ ! -e ${yq_completion} ]] \
+    && yq shell-completion zsh > ${yq_completion}
+}
+
+() {
+  [[ -z ${commands[poetry]} ]] && return
+  local -r poetry_completion="${LOCAL_COMPLETIONS_DIR}/_poetry"
+  # poetry自体を更新したときに更新
+  [[ ! -e ${poetry_completion} ]] \
+    && poetry completions zsh > ${poetry_completion}
+}
+
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
 
