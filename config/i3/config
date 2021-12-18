@@ -151,8 +151,6 @@ mode "$mode_launcher" {
     bindsym t exec --no-startup-id kitty, mode "default"
     bindsym b exec --no-startup-id google-chrome-stable, mode "default"
     bindsym Shift+b exec --no-startup-id google-chrome-stable --new-window --incognito, mode "default"
-    # bindsym b exec --no-startup-id vivaldi-stable, mode "default"
-    # bindsym Shift+b exec --no-startup-id vivaldi-stable --new-window --incognito, mode "default"
     bindsym f exec --no-startup-id pcmanfm, mode "default"
     bindsym c exec --no-startup-id code, mode "default"
 
