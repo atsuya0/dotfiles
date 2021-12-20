@@ -8,9 +8,6 @@ export VOLTA_HOME="${HOME}/.volta"
 export DENO_INSTALL="${HOME}/.deno"
 export PYENV_ROOT="${HOME}/.pyenv"
 
-[[ -n ${WSL_INTEROP} ]] \
-  && export DISPLAY=$(hostname).mshome.net:0.0
-
 typeset -a path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
