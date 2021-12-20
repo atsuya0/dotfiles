@@ -1,23 +1,19 @@
 export GCP_PATH="${HOME}/.google-cloud-sdk"
 
-
-# For terraform
-export TF_REGISTRY_CLIENT_TIMEOUT=600
-export TF_REGISTRY_DISCOVERY_RETRY=10
+# terraform
 export TF_LOG=trace
 export TF_LOG_PATH="${HOME}/.terraform.log"
 
 export VOLTA_HOME="${HOME}/.volta"
 export DENO_INSTALL="${HOME}/.deno"
-
-[[ -n ${WSL_INTEROP} ]] \
-  && export DISPLAY=$(hostname).mshome.net:0.0
+export PYENV_ROOT="${HOME}/.pyenv"
 
 typeset -a path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
   $([[ -d ${VOLTA_HOME}/bin ]] && echo ${VOLTA_HOME}/bin)
   $([[ -d ${DENO_INSTALL}/bin ]] && echo ${DENO_INSTALL}/bin)
+  $([[ -d ${PYENV_ROOT}/bin ]] && echo ${PYENV_ROOT}/bin)
   $([[ -d ${GCP_PATH} ]] && echo ${GCP_PATH}/bin)
   $([[ -n ${commands[ruby]} \
     && -d "$(ruby -e 'print Gem.user_dir')/bin" ]] \
