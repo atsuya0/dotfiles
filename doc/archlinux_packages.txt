@@ -48,15 +48,10 @@ tmux
 neovim
 python-neovim
 
-# browser
-chromium # gui
-#w3m # cui
-
 # programming languages
 python
 python-pip
 go
-rustup
 
 # file manager
 ranger # cui
