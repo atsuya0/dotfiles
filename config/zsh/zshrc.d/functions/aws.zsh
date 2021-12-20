@@ -4,8 +4,8 @@ function set_aws_profile() {
   export AWS_PROFILE=${profile}
 }
 
-function aws() {
+function paws() {
   [[ -z ${AWS_PROFILE} ]] && set_aws_profile
   echo "AWS_PROFILE=${AWS_PROFILE}"
-  command aws $@
+  aws $@
 }
