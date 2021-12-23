@@ -1,3 +1,8 @@
+# [[ -n ${WSL_INTEROP} ]] \
+#   && export DISPLAY=$(hostname).mshome.net:0.0
+[[ -n ${WSL_INTEROP} ]] \
+  && export DISPLAY="$(ip route show scope global | grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*'):0.0"
+
 export GCP_PATH="${HOME}/.google-cloud-sdk"
 export CLOUDSDK_PYTHON="/usr/bin/python3"
 
