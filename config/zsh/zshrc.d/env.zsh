@@ -1,4 +1,5 @@
 export GCP_PATH="${HOME}/.google-cloud-sdk"
+export CLOUDSDK_PYTHON="/usr/bin/python3"
 
 # terraform
 export TF_LOG=trace
