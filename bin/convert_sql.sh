@@ -35,16 +35,15 @@ while read -r line; do
     table=$(echo ${table} | jq ".db |= \"$(echo ${line} | grep -o '`[^`]*`' | tr -d '`' | head -1)\"")
     table=$(echo ${table} | jq ".name |= \"$(echo ${line} | grep -o '`[^`]*`' | tr -d '`' | tail -1)\"")
   fi
-  if [[ ${in_table} -eq 1 ]]; then
-    left_bracket_num=$(expr ${left_bracket_num} + $(echo ${line} | grep -o '(' | tr -d '\n' | wc -m))
-    right_bracket_num=$(expr ${right_bracket_num} + $(echo ${line} | grep -o ')' | tr -d '\n' | wc -m))
-    if [[ ${right_bracket_num} -ge ${left_bracket_num} ]]; then
-      tables=$(echo ${tables} | jq ".tables |= .+  [${table}]")
-      init
-    else
-      column=$(echo ${line} | sed 's/^[[:space:]]*//' | cut -d' ' -f1 | grep -o '`[^`]*`' | tr -d '`') \
-        && table=$(echo ${table} | jq ".colmuns |= .+  [\"${column}\"]")
-    fi
+  [[ ${in_table} -eq 0 ]] && continue
+  left_bracket_num=$(expr ${left_bracket_num} + $(echo ${line} | grep -o '(' | tr -d '\n' | wc -m))
+  right_bracket_num=$(expr ${right_bracket_num} + $(echo ${line} | grep -o ')' | tr -d '\n' | wc -m))
+  if [[ ${right_bracket_num} -ge ${left_bracket_num} ]]; then
+    tables=$(echo ${tables} | jq ".tables |= .+  [${table}]")
+    init
+  else
+    column=$(echo ${line} | sed 's/^[[:space:]]*//' | cut -d' ' -f1 | grep -o '`[^`]*`' | tr -d '`') \
+      && table=$(echo ${table} | jq ".colmuns |= .+  [\"${column}\"]")
   fi
 done
 
