@@ -23,7 +23,7 @@ function init() {
   in_table=0
   left_bracket_num=1
   right_bracket_num=1
-  table='{"colmuns": []}'
+  table='{"name": "", "db": "", "colmuns": []}'
 }
 
 init
@@ -32,9 +32,8 @@ tables='{"tables": []}'
 while read -r line; do
   if [[ ${in_table} -eq 0 && ${line} =~ 'CREATE TABLE' ]]; then
     in_table=1
-    db=$(echo ${line} | grep -o '`[^`]*`' | tr -d '`' | head -1)
-    name=$(echo ${line} | grep -o '`[^`]*`' | tr -d '`' | tail -1)
-    table=$(echo ${table} | jq ". |= .+ {\"db\": \"${db}\", \"name\": \"${name}\"}")
+    table=$(echo ${table} | jq ".db |= \"$(echo ${line} | grep -o '`[^`]*`' | tr -d '`' | head -1)\"")
+    table=$(echo ${table} | jq ".name |= \"$(echo ${line} | grep -o '`[^`]*`' | tr -d '`' | tail -1)\"")
   fi
   if [[ ${in_table} -eq 1 ]]; then
     left_bracket_num=$(expr ${left_bracket_num} + $(echo ${line} | grep -o '(' | tr -d '\n' | wc -m))
