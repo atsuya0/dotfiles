@@ -83,8 +83,3 @@ hook_source = '''
   call denite#custom#var('file/rec/git', 'command',
         \ ['git', 'ls-files', '-co', '--exclude-standard'])
 '''
-
-[[plugins]]
-repo = 'hashivim/vim-terraform'
-on_ft = 'tf'
-hook_add = 'let g:terraform_fmt_on_save = 1'
