@@ -13,7 +13,7 @@ hook_add = '''
 [[plugins]] # status line themes
 repo = 'vim-airline/vim-airline-themes'
 hook_add = '''
-  let g:airline_theme='quantum'
+  let g:airline_theme='deep_space'
 '''
 
 [[plugins]] # An ecosystem of Vim/Neovim which allows developers to write plugins in Deno.

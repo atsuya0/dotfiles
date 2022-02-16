@@ -1,7 +1,12 @@
+# [[plugins]] # color scheme
+# repo = 'tyrannicaltoucan/vim-quantum'
+# on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
+# hook_source = 'colorscheme quantum'
+
 [[plugins]] # color scheme
-repo = 'tyrannicaltoucan/vim-quantum'
+repo = 'tyrannicaltoucan/vim-deep-space'
 on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
-hook_source = 'colorscheme quantum'
+hook_source = 'colorscheme deep-space'
 
 [[plugins]] # visually displaying indent levels
 repo = 'Yggdroot/indentLine'
