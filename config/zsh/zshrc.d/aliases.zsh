@@ -22,6 +22,7 @@ alias nano='nano -$ -l -i -O -m -c' # '-$liOmc' does not work.
 alias tree='tree -C'
 alias dc='docker-compose'
 alias k='kubectl'
+alias n3='nnn -caP p'
 alias poweroff='confirm systemctl poweroff'
 alias reboot='confirm systemctl reboot'
 alias logout='confirm i3-msg exit'

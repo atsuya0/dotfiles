@@ -4,7 +4,7 @@
   && export DISPLAY="$(ip route show scope global | grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*'):0.0"
 
 export GCP_PATH="${HOME}/.google-cloud-sdk"
-export CLOUDSDK_PYTHON="/usr/bin/python3"
+export CLOUDSDK_PYTHON='/usr/bin/python3'
 
 # terraform
 export TF_LOG=trace
@@ -13,6 +13,8 @@ export TF_LOG_PATH="${HOME}/.terraform.log"
 export VOLTA_HOME="${HOME}/.volta"
 export DENO_INSTALL="${HOME}/.deno"
 export PYENV_ROOT="${HOME}/.pyenv"
+export NNN_PLUG='p:preview-tui;z:!trs move $nnn'
+export NNN_OPENER="${DOTFILES}/bin/nnn_opener.sh"
 
 typeset -a path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)

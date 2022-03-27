@@ -1,6 +1,5 @@
 # fzf (A command-line fuzzy finder) 用の設定
 
-
 [[ -n ${commands[rg]} ]] && export FZF_DEFAULT_COMMAND='rg'
 # <C-y>で文字列をコピー
 [[ ${OSTYPE} =~ 'darwin' ]] \
