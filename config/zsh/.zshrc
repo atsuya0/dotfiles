@@ -82,6 +82,7 @@ function ignore_dirs() {
     'target' # rust
     'bundle' # rails
     'tmp/cache' # rails
+    '.terraform'
   )
   print -C 1 ${ignore_dirs[@]} \
     | sed 's/.*/-path \\*&\\* -prune -o/'
