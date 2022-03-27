@@ -37,8 +37,3 @@ function w3m(){
     command w3m "${parameter}"
   } || command w3m $@
 }
-
-# rangerのサブシェルでネストしないようにする。
-function ranger() {
-  [[ -z ${RANGER_LEVEL} ]] && command ranger $@ || exit
-}
