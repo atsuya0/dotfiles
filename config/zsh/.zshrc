@@ -113,3 +113,8 @@ source "${ZDOTDIR}/zshrc.d/aliases.zsh"
 source <(scd script)
 source <(cremem script)
 alias c='cremem'
+
+() {
+  local -r env="${HOME}/.env"
+  [[ -f ${env} ]] && export $(cat ${env})
+}
