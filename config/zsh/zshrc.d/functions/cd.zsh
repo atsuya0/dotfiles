@@ -2,10 +2,10 @@ function print_parents() {
   pwd | sed '/[^\/]$/s@$@/@;:a;s@[^/]\+/$@@;p;/^\/$/!ba;d'
 }
 
-# // pwd | shorten_path
+# pwd | shorten_path
 function shorten_path() {
   while read -r line; do
-    sed 's@\(.\)/$@\1@;s@\([^/]\{1\}\)[^/]*/@\1/@g' <<< ${line}
+    sed "s@\([^/]\{${1:-1}\}\)[^/]*/@\1/@g" <<< ${line}
   done
 }
 

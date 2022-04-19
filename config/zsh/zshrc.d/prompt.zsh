@@ -4,9 +4,9 @@ function __prompt__() { # カレントディレクトリのpathを画面の横�
   local short_wd
   () {
     # 表示するディレクトリ名の文字数を決める
-    local -r path_chars_num=$(($(($(tput cols) / 3)) / $(echo ${wd} | grep -o '[~/]' | wc -l)))
-    [[ 0 -eq ${path_chars_num} ]] && path_chars_num=1
-    short_wd=$(sed "s@\(/[^/]\{${path_chars_num}\}\)[^/]*@\1@g" <<< ${wd})
+    local path_chars_num=$(($(($(tput cols) / 3)) / $(echo ${wd} | grep -o '[~/]' | wc -l)))
+    [[ 0 -ge ${path_chars_num} ]] && path_chars_num=1
+    short_wd=$(echo ${wd} | shorten_path ${path_chars_num})
   }
 
   local graphic_prompt
