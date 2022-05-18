@@ -26,8 +26,11 @@ fi
 }
 
 () { # http://asdf-vm.com/
-  local -r asdf_sh="${HOME}/.asdf/asdf.sh"
-  [[ -n ${asdf_sh} ]] && source ${asdf_sh}
+  local -r asdf_sh_home="${HOME}/.asdf/asdf.sh"
+  [[ -e ${asdf_sh_home} ]] && { source ${asdf_sh_home}; return }
+
+  local -r asdf_sh_opt='/opt/asdf-vm/asdf.sh'
+  [[ -e ${asdf_sh_opt} ]] && { source ${asdf_sh_opt}; return }
 }
 
 [[ -n ${commands[pyenv]} ]] && eval "$(pyenv init --path)"
