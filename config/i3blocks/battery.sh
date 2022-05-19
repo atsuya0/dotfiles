@@ -17,9 +17,13 @@ function echo_battery() {
 }
 
 function get_battery() {
-  [[ -e '/sys/class/power_supply/BAT1/capacity' ]] \
-    && cat '/sys/class/power_supply/BAT1/capacity' \
-    || echo 0
+  if [[ -e '/sys/class/power_supply/BAT0/capacity' ]]; then
+    cat '/sys/class/power_supply/BAT0/capacity'
+  elif [[ -e '/sys/class/power_supply/BAT1/capacity' ]]; then
+    cat '/sys/class/power_supply/BAT1/capacity'
+  else
+    echo 0
+  fi
 }
 
 function online() {
