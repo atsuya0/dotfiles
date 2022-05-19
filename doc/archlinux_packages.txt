@@ -1,105 +1,65 @@
-# x window system
 xorg-server
 xorg-xinit # startx
 xorg-xbacklight # backlight
 xorg-server-xephyr # nest
 xorg-xrandr # dual monitor
 xsel # clip board
-
-# shell
+xf86-video-intel
 zsh
 zsh-completions
 zsh-syntax-highlighting
-
-# font
 otf-ipafont
 awesome-terminal-fonts
 ttf-font-awesome
 noto-fonts-emoji
-
-# window manager
 i3-wm
 i3blocks
-
-# display manager
-#lightdm
-#light-locker
-#lightdm-gtk-greeter
-
-# input method framework
+i3lock
 fcitx5
 fcitx5-mozc
 fcitx5-gtk
 fcitx5-configtool
-
-# sound
 alsa-utils
 pulseaudio
 pavucontrol
-bluez-firmware # wireless earphone
-
-# terminal
 kitty
-alacritty
-alacritty-terminfo
 tmux
-
-# editor
 neovim
-python-neovim
-
-# programming languages
 python
 python-pip
+python-neovim
 go
-
-# file manager
-ranger # cui
-pcmanfm-gtk3 # gui
-
-# CLI
+nnn # cui file manager
+pcmanfm-gtk3 # gui file manager
 tree
 fzf
 ripgrep
-iw
 jq
-
-# bluetooth
 bluez
 bluez-utils
 pulseaudio-bluetooth
-
-# file system
 dosfstools # fat32
-#ntfs-3g # windows
-
-# virtual
-docker
-docker-compose
-#virtualbox
-#virtualbox-host-modules-arch
-
-# sound player
-cmus
-libmad
-
-# etc
 pacman-contrib # pacman
 openssh # ssh
 rofi # launcher
 feh # image viewer
-scrot # screen shot
 gnome-screenshot # screen shot
 tlp # power
-libmtp # mtp
 neofetch # system information
 libnotify # notify-send
 dunst # notify daemon
 poppler # preview pdf
 ffmpegthumbnailer # preview video
-protobuf # gRPC
-grpc-cli # gRPC cli
-simplescreenrecorder
+ueberzug # prewview image
 gnome-keyring # git password access token
 libsecret # git password access token
 foliate # epub reader
+docker
+docker-compose
+iwd
+iw
+dhcpcd
+wpa_supplicant
+dialog
+curl
+git
