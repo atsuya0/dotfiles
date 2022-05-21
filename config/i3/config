@@ -107,20 +107,15 @@ bindsym $mod+Shift+e exec --no-startup-id \
 -f 'pango:IPAGothic Regular 10'"
 
 #音量調整
-bindsym F8 exec --no-startup-id ~/dotfiles/bin/sound.sh down
-bindsym F9 exec --no-startup-id ~/dotfiles/bin/sound.sh up
-bindsym F10 exec --no-startup-id ~/dotfiles/bin/sound.sh mute
-#XF86AudioLowerVolume
-#XF86AudioRaiseVolume
-#XF86AudioMute
+bindsym XF86AudioLowerVolume exec --no-startup-id ~/dotfiles/bin/sound.sh down
+bindsym XF86AudioRaiseVolume exec --no-startup-id ~/dotfiles/bin/sound.sh up
+bindsym XF86AudioMute exec --no-startup-id ~/dotfiles/bin/sound.sh mute
 
 #輝度調整
-bindsym F6 exec --no-startup-id \
+bindsym XF86MonBrightnessDown exec --no-startup-id \
   [[ $(xbacklight -get | cut -d. -f1) -gt 9 ]] && xbacklight -dec 10 && pkill -SIGRTMIN+2 i3blocks
-bindsym F7 exec --no-startup-id \
+bindsym XF86MonBrightnessUp exec --no-startup-id \
   xbacklight -inc 10 && pkill -SIGRTMIN+2 i3blocks
-#XF86MonBrightnessUp
-#XF86MonBrightnessDown
 
 #画面ロック
 bindsym $mod+Shift+Control+l exec i3lock -c 6b91aa
