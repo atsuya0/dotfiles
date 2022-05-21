@@ -103,8 +103,6 @@ function wifi() {
     return 0
   fi
 
-  [[ -n $(ip link show up dev 'wlp4s0') ]] && return 1
-
   [[ $# -ne 0 ]] && { sudo netctl start $1; return 0; }
 
   local -r ssid=$(netctl list | fzf --select-1)
