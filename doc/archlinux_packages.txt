@@ -29,6 +29,7 @@ python
 python-pip
 python-neovim
 go
+gopls
 nnn # cui file manager
 pcmanfm-gtk3 # gui file manager
 tree
