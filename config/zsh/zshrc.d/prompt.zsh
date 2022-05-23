@@ -9,24 +9,31 @@ function __prompt__() { # カレントディレクトリのpathを画面の横�
     short_wd=$(echo ${wd} | shorten_path ${path_chars_num})
   }
 
-  local graphic_prompt
-  () {
-    local -r icon=''
-    local -r blue="%{${fg[blue]}${bg[black]}%}"
-    local -r blue_bg="%{${fg[black]}${bg[blue]}%}"
-    local -r green="%{${fg[green]}${bg[black]}%}"
-
-    [[ ${KEYMAP} == 'vicmd' ]] \
-      && local mode="${green} NORM ${blue_bg}" \
-      || local mode="${blue} INS ${blue_bg}"
-
-    graphic_prompt="${mode}${icon}${blue_bg} ${short_wd} ${blue}${icon} %{${reset_color}%}"
-  }
-
   if [[ ${OSTYPE} == 'linux-gnu' && -n ${WINDOWID} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
     || [[ ${OSTYPE} == 'linux-gnu' && -n ${WSL_INTEROP} && $(ps hco cmd ${PPID}) != 'nvim' ]] \
     || [[ ${OSTYPE} =~ 'darwin' && $(ps co comm ${PPID} | tail -1) != 'nvim' ]]; then
-    PROMPT=${graphic_prompt}
+
+    local graphic_prompt
+    () {
+      local -r icon=''
+      local -r blue="%{${fg[blue]}${bg[black]}%}"
+      local -r blue_bg="%{${fg[black]}${bg[blue]}%}"
+      local -r green="%{${fg[green]}${bg[black]}%}"
+
+      [[ ${KEYMAP} == 'vicmd' ]] \
+        && local mode="${green} NORM ${blue_bg}" \
+        || local mode="${blue} INS ${blue_bg}"
+
+      local -r cluster=$(kubectl config current-context)
+      local -r ns=$(kubectl config get-contexts | grep '^*' | tr -s ' ' | cut -d' ' -f 5)
+      k8s="${cluster}:${ns}"
+      prompt="${mode}${icon}${blue_bg} ${short_wd} ${blue}${icon} %{${reset_color}%}"
+    }
+    if [[ -n ${K} ]]; then
+      PROMPT=${k8s}$'\n'${prompt}
+    else
+      PROMPT=${prompt}
+    fi
   else
     PROMPT="%n %{${fg[blue]}%}${short_wd} %{${reset_color}%}$ "
   fi
