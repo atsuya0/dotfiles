@@ -1,67 +1,52 @@
 #!/usr/bin/env bash
 
-# [todo] graphic driver(xf86-video-intel)のinstall
-
 set -euCo pipefail
 
-function add_docker_group() {
-  groups | grep docker \
-    && sudo groupadd docker \
-    && sudo gpasswd -a $(whoami) docker
+function install_my_tools() {
+  mkdir ${HOME}/workspace
+  (
+    cd  ${HOME}/workspace
+    git clone https://github.com/atsuya0/scd
+    git clone https://github.com/atsuya0/trs
+    git clone https://github.com/atsuya0/aurm
+    git clone https://github.com/atsuya0/cremem
+  )
 }
 
 function setup_packages() {
   which zsh &> /dev/null \
-    && chsh -s $(which zsh)
+    && chsh -s $(type zsh | cut -d' ' -f3)
 
   which pip &> /dev/null \
     && pip install --user pynvim
 
-  which lightdm &> /dev/null \
-    && sudo systemctl enable lightdm.service \
-    && sed -i \
-        's/^\(ENV=\)\(lightdm-gtk-greeter\)/\1env GTK_THEME=Adwaita:dark \2/' \
-        /usr/share/xgreeters/lightdm-gtk-greeter.desktop
-
   which tlp &> /dev/null \
     && sudo systemctl enable tlp.service tlp-sleep.service \
     && sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
-
-  which docker &> /dev/null \
-    && add_docker_group
 }
 
 # --noconfirm: Bypass any and all “Are you sure?” messages.
 # --needed: Do not reinstall the targets that are already up-to-date.
 function install_packages() {
+  sed -i '1i Server = http://ftp.jaist.ac.jp/pub/Linux/ArchLinux/$repo/os/$arch' \
+    /etc/pacman.d/mirrorlist
+
   local -r file="${DOTFILES}/doc/packages.txt"
   [[ -s ${file} ]] || return 1
 
   sudo pacman -S --needed --noconfirm \
     $(cat ${file} | sed 's/#.*//;s/ //g;/^$/d')
   setup_packages
+
+  curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/google-chrome.tar.gz
+  bsdtar xf google-chrome.tar.gz
 }
 
-function install_fonts() {
+function install_font() {
   local -r font_dir="${HOME}/.local/share/fonts/"
   mkdir -p ${font_dir}
 
-  local -ar faces=('Regular' 'Bold' 'Italic')
-  local -ar fira_code=('FiraCode' 'https://github.com/tonsky/FiraCode/raw/master/distr/ttf')
-  local -ar hack=('Hack' 'https://github.com/source-foundry/Hack/raw/master/build/ttf')
-
-  for face in ${faces[@]}; do
-    curl -fsSL ${fira_code[1]}/{${fira_code[0]}-${face}.ttf} -o ${font_dir}/#1
-    curl -fsSL ${hack[1]}/{${hack[0]}-${face}.ttf} -o ${font_dir}/#1
-  done
-
-  curl -LO https://github.com/yuru7/Firge/releases/download/v0.2.0/FirgeNerd_v0.2.0.zip \
-    && bsdtar xf FirgeNerd_v0.2.0.zip \
-    && rm FirgeNerd_v0.2.0.zip \
-    && mv FirgeNerd_v0.2.0/* -t ${font_dir} \
-    && rmdir FirgeNerd_v0.2.0
-
-  curl -LO https://github.com/yuru7/HackGen/releases/download/v2.5.1/HackGenNerd_v2.5.1.zip \
+  curl -LO https://github.com/yuru7/HackGen/releases/download/v2.6.3/HackGenNerd_v2.6.3.zip \
     && bsdtar xf HackGenNerd_v2.5.1.zip \
     && rm HackGenNerd_v2.5.1.zip \
     && mv HackGenNerd_v2.5.1/* -t ${font_dir} \
@@ -85,7 +70,7 @@ function set_locale() {
 
 function set_touchpad() {
   sudo mkdir -p /etc/X11/xorg.conf.d
-  cat << "EOF" | sudo tee /etc/X11/xorg.conf.d/40-libinput.conf
+  cat << "EOF" | sudo tee /etc/X11/xorg.conf.d/40-libinput.conf > /dev/null
 Section "InputClass"
   Identifier "libinput touchpad catchall"
   MatchIsTouchpad "on"
@@ -101,6 +86,31 @@ EndSection
 EOF
 }
 
+
+# sudo systemctl start systemd-networkd
+function set_dhcp() {
+  cat << EOF | sudo tee /etc/systemd/network/dhcp.network > /dev/null
+[Match]
+Name=$(networkctl list | grep ther | tr -s ' ' | cut -d' ' -f 3)
+
+[Network]
+DHCP=ipv4
+EOF
+}
+
+function create_symlink() {
+  local -r name=$(basename $(git config --get remote.origin.url))
+  local -r root=$(echo ${PWD}${0:1} | sed ":a;s@/[^/]\+\$@@;/${name}$/!ba")
+
+  ls -A ${root}/home | while read -r file; do
+    ln -s "${root}/home/${file}" "${HOME}/"
+  done
+
+  ls -A ${root}/config | while read -r dir; do
+    ln -s "${root}/config/${dir}" "${HOME}/.config/"
+  done
+}
+
 function main() {
   [[ $(id -u) -eq 0 ]] && return 1
   [[ $# -eq 0 ]] \
@@ -113,7 +123,11 @@ function main() {
   set_datetime
   set_locale
   set_touchpad
-  install_fonts
+  set_dhcp
+  install_font
+  sudo sytemctl enable fstrim.timer
+  sudo sytemctl enable bluetooth
+  create_symlink
 }
 
 main $@

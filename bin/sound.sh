@@ -30,7 +30,7 @@ function sync_muted() {
 
 function sync_status_bar() {
   pkill -SIGRTMIN+1 i3blocks
-  tmux refresh -S
+  # tmux refresh -S
 }
 
 function main() {
@@ -54,7 +54,6 @@ function main() {
     ;;
     'show' )
       echo "volume: $(get_volume), muted: $(get_muted)"
-      return 0
     ;;
   esac
 
