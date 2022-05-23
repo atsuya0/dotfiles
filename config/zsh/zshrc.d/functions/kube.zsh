@@ -3,7 +3,7 @@ function kubec() {
   [[ -z ${commands[kubectl]} ]] && return 1
 
   local -r name=$(kubectl config get-contexts -o=name \
-    | grep -v "$(kubectl config current-context)" \
+    | grep -v "^$(kubectl config current-context)$" \
     | fzf)
   [[ -n ${name} ]] && kubectl config use-context ${name}
 }
