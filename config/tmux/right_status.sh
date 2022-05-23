@@ -56,20 +56,10 @@ function load_average() {
   echo ${src}/${cpus}
 }
 
-function k8s_ctx() {
-  which kubectl &> /dev/null || return 1
-  kubectl config current-context | cut -c-35
-}
-
-function k8s_ns() {
-  which kubectl &> /dev/null || return 1
-  kubectl config get-contexts | grep '^*' | tr -s ' ' | cut -d' ' -f 5
-}
-
 function main() {
   [[ ${OSTYPE} != 'linux-gnu' ]] && return 1
 
-  local -ra values=($(memory) $(load_average) $(k8s_ctx) $(k8s_ns))
+  local -ra values=($(memory) $(load_average))
   local i=0
   for value in "${values[@]}"; do
     format_value ${i} "${value}" && let ++i
