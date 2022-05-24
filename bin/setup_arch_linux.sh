@@ -3,13 +3,15 @@
 set -euCo pipefail
 
 function install_my_tools() {
-  mkdir ${HOME}/workspace
+  mkdir ${HOME}/workspace/vim
   (
     cd  ${HOME}/workspace
     git clone https://github.com/atsuya0/scd
     git clone https://github.com/atsuya0/trs
     git clone https://github.com/atsuya0/aurm
     git clone https://github.com/atsuya0/cremem
+    cd ${HOME}/workspace/vim
+    git clone https://github.com/atsuya0/dps-surrounding.vim
   )
 }
 
@@ -127,6 +129,7 @@ function main() {
   install_font
   sudo sytemctl enable fstrim.timer
   sudo sytemctl enable bluetooth
+  install_my_tools
   create_symlink
 }
 
