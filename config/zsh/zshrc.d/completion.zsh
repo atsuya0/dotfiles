@@ -39,10 +39,7 @@ zstyle ':completion:*' verbose yes
 # tabを挿入しない
 zstyle ':completion:*' insert-tab false
 
-if [[ -n ${ASDF_DIR} && -n ${commands[istioctl]} ]]; then
-  istioctl completion zsh >| ${ASDF_DIR}/completions/_istioctl
-  fpath=(${ASDF_DIR}/completions $fpath)
-fi
+fpath=(${ASDF_DIR}/completions $fpath)
 
 LOCAL_COMPLETIONS_DIR="${HOME}/.zsh_completions"
 mkdir -p ${LOCAL_COMPLETIONS_DIR}
