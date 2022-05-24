@@ -24,12 +24,12 @@ function __prompt__() { # カレントディレクトリのpathを画面の横�
         && local mode="${green} NORM ${blue_bg}" \
         || local mode="${blue} INS ${blue_bg}"
 
+      prompt="${mode}${icon}${blue_bg} ${short_wd} ${blue}${icon} %{${reset_color}%}"
+    }
+    if [[ -n ${K} && ${commands[kubectl]} ]]; then
       local -r cluster=$(kubectl config current-context)
       local -r ns=$(kubectl config get-contexts | grep '^*' | tr -s ' ' | cut -d' ' -f 5)
       k8s="${cluster}:${ns}"
-      prompt="${mode}${icon}${blue_bg} ${short_wd} ${blue}${icon} %{${reset_color}%}"
-    }
-    if [[ -n ${K} ]]; then
       PROMPT=${k8s}$'\n'${prompt}
     else
       PROMPT=${prompt}
