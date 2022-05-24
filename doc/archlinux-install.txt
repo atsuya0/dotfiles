@@ -1,0 +1,141 @@
+一旦、セキュアブートを無効
+
+# インストール用のArchを起動
+isoをダウンロード
+https://www.archlinux.jp/download/
+
+usbメモリに書き込み
+dd bs=4M status=progress if=arch.iso of=/dev/sdz && sync`
+
+usbメモリでブート
+
+# 初期設定
+$ loadkeys jp106
+で一時的にCUI上でjpのkeyboardに変更
+
+インターネット
+有線の場合は `systemctl start dhcpcd@${interface}.service` でnetworkに繋ぐ
+interfaceは`networkctl list`や`ip addr`で確認する
+無線の場合は `wifi-menu`でnetworkに繋ぐ
+
+$ timedatectl set-ntp true
+
+# パーティション
+$ cfdisk /dev/sdz
+でpartitionを区切る
+デュアルブートの場合、bootのパーティションいらない
+
+| name | size | type |
+| - | - | - |
+| boot | 300M | ef00(EFI) |
+| root | 余っているもの全て | default(linux filesystem) |
+
+
+フォーマット
+- bootは `mkfs.vfat -F32 /dev/sdz1`
+- rootは `mkfs.ext4 /dev/sdz2`
+
+mount
+- mount /dev/sdz2 /mnt
+- mkdir /mnt/boot
+- mount /dev/sdz1 /mnt/boot
+
+mirrorlist
+/etc/pacman.d/mirrorlist
+Server = http://ftp.jaist.ac.jp/pub/Linux/ArchLinux/$repo/os/$arch を追記
+
+### baseのpackageをinstall
+再インストールの場合には、boot内のEFI以外のファイルを削除してから実行する。
+pacstrap /mnt base linux linux-firmware neovim sof-firmware iwd iw dhcpcd wpa_supplicant dialog curl git sudo
+
+### fstabを設定する。https://wiki.archlinux.jp/index.php/Fstab
+`genfstab -U /mnt >> /mnt/etc/fstab`
+
+### root directoryを変更
+`arch-chroot /mnt`
+
+### rootのパスワードを設定する
+passwd
+
+#### UEFI
+`bootctl --path=/boot install`
+```
+# /boot/loader/loader.conf
+
+default arch
+timeout 60 # 60秒でdefaultが起動する
+editor no # 無効
+```
+
+Arch-Linuxのエントリーを作る。windowsは自動検出されるので必要ない。
+intelのcpuを使用している場合は`pacman -S intel-ucode`でmicro codeをinstallする。
+`cp /usr/share/systemd/bootctl/arch.conf /boot/loader/entries/arch.conf`で雛形を作成する。
+`blkid -s PARTUUID -o value /dev/sdz2 >> /boot/loader/entries/arch.conf`でPARTUUIDを書き込む。
+整形して下記の通りにする。
+```
+# /boot/loader/entries/arch.conf
+
+title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /intel-ucode.img
+initrd  /initramfs-linux.img
+options root=PARTUUID=xxxxxxxxxxxxx rw
+```
+
+後始末
+exit
+poweroff
+
+---
+
+## Setup
+### 一般ユーザの追加
+- useradd -m USERNAME -g wheel
+- passwd USERNAME
+
+一般ユーザに権限を付与するため `visudo` で下記を追加
+```
+hoge ALL=(ALL) ALL
+Defaults:hoge timestamp_timeout=0
+hoge ALL=(ALL) NOPASSWD: /usr/bin/netctl, /usr/bin/file -s, /usr/bin/mount, /usr/bin/umount, /usr/bin/dhcpcd, /usr/bin/pacman -Syu, /usr/bin/tlp stat
+```
+
+---
+
+
+
+テザリング
+  usb
+  端末をUSBポートに挿す
+  ip link でinterfaceを知る
+  sudo dhcpcd interfaceで接続
+
+  アクセスポイント
+    wifi-menu
+
+  bluetooth
+  初回
+    systemctl start bluetooth
+    bluetoothctl
+      power on
+      scan on
+      devices
+      agent on
+      pair address
+      connect address
+    bash /usr/bin/dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_AC_CF_85_B7_9D_9A org.bluez.Network1.Connetct string:'nap'
+    ip link で端末名を知る
+    sudo dhcpcd 端末名で接続
+
+    接続ができない場合はpulseaudioを再起動する
+      ps aux | grep pulseaudio
+      kill PID
+
+  次回以降
+    systemctl start bluetooth
+    bluetoothctl
+      power on
+      connect address
+    bash /usr/bin/dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_AC_CF_85_B7_9D_9A org.bluez.Network1.Connetct string:'nap'
+    ip link で端末名を知る
+    sudo dhcpcd 端末名で接続
