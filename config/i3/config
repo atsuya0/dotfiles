@@ -110,11 +110,18 @@ bindsym $mod+Shift+e exec --no-startup-id \
 bindsym XF86AudioLowerVolume exec --no-startup-id ~/dotfiles/bin/sound.sh down
 bindsym XF86AudioRaiseVolume exec --no-startup-id ~/dotfiles/bin/sound.sh up
 bindsym XF86AudioMute exec --no-startup-id ~/dotfiles/bin/sound.sh mute
+bindsym F8 exec --no-startup-id ~/dotfiles/bin/sound.sh down
+bindsym F9 exec --no-startup-id ~/dotfiles/bin/sound.sh up
+bindsym F10 exec --no-startup-id ~/dotfiles/bin/sound.sh mute
 
 #輝度調整
 bindsym XF86MonBrightnessDown exec --no-startup-id \
   [[ $(xbacklight -get | cut -d. -f1) -gt 9 ]] && xbacklight -dec 10 && pkill -SIGRTMIN+2 i3blocks
 bindsym XF86MonBrightnessUp exec --no-startup-id \
+  xbacklight -inc 10 && pkill -SIGRTMIN+2 i3blocks
+bindsym F4 exec --no-startup-id \
+  [[ $(xbacklight -get | cut -d. -f1) -gt 9 ]] && xbacklight -dec 10 && pkill -SIGRTMIN+2 i3blocks
+bindsym F5 exec --no-startup-id \
   xbacklight -inc 10 && pkill -SIGRTMIN+2 i3blocks
 
 #画面ロック
