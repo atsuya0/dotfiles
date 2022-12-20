@@ -6,6 +6,8 @@
 export GCP_PATH="${HOME}/.google-cloud-sdk"
 export CLOUDSDK_PYTHON='/usr/bin/python3'
 
+export AQUA_ROOT_DIR="${XDG_DATA_HOME}/aquaproj-aqua"
+
 # terraform
 export TF_LOG=trace
 export TF_LOG_PATH="${HOME}/.terraform.log"
@@ -18,6 +20,7 @@ export NNN_OPENER="${DOTFILES}/bin/nnn_opener.sh"
 
 typeset -a path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
+  $([[ -d ${AQUA_ROOT_DIR}/bin ]] && echo ${AQUA_ROOT_DIR}/bin)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
   $([[ -d ${VOLTA_HOME}/bin ]] && echo ${VOLTA_HOME}/bin)
   $([[ -d ${DENO_INSTALL}/bin ]] && echo ${DENO_INSTALL}/bin)

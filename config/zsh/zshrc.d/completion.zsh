@@ -45,6 +45,8 @@ LOCAL_COMPLETIONS_DIR="${HOME}/.zsh_completions"
 mkdir -p ${LOCAL_COMPLETIONS_DIR}
 fpath=(${LOCAL_COMPLETIONS_DIR} $fpath)
 
+if command -v aqua &> /dev/null; then source <(aqua completion zsh); fi
+
 () {
   [[ -z ${commands[yq]} ]] && return
   yq --version | grep -q 'mikefarah' || return
@@ -73,10 +75,17 @@ autoload -Uz compinit && compinit
   local -r aws_completer='/usr/local/bin/aws_completer'
   [[ -f ${aws_completer} ]] && complete -C ${aws_completer} aws
 }
+
 if [[ -n ${ASDF_DIR} ]]; then
   [[ -n ${commands[terraform]} ]] \
     && complete -o nospace -C ${ASDF_DIR}/shims/terraform terraform
 fi
+
+# if [[ -n ${AQUA_ROOT_DIR} ]]; then
+#   [[ -n ${commands[terraform]} ]] \
+#     && complete -o nospace -C ${AQUA_ROOT_DIR}/bin/terraform terraform
+# fi
+
 [[ -n ${commands[kubectl]} ]] && source <(kubectl completion zsh)
 [[ -n ${commands[helm]} ]] && source <(helm completion zsh)
 [[ -n ${commands[kind]} ]] && source <(kind completion zsh)
