@@ -26,6 +26,9 @@ fi
 }
 
 () { # http://asdf-vm.com/
+  [[ -n ${commands[brew]} ]] \
+    && { source "$(brew --prefix asdf)/libexec/asdf.sh"; return }
+
   local -r asdf_sh_home="${HOME}/.asdf/asdf.sh"
   [[ -e ${asdf_sh_home} ]] && { source ${asdf_sh_home}; return }
 
