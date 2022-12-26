@@ -19,6 +19,7 @@ alias diff='diff --color'
 alias ip='ip --color=auto'
 alias nano='nano -$ -l -i -O -m -c' # '-$liOmc' does not work.
 
+alias rgon='rg --no-filename --no-line-number --no-heading'
 alias tree='tree -C'
 alias dc='docker-compose'
 alias k='kubectl'

@@ -318,10 +318,18 @@ function twitter_search() {
 function chrome() {
   case $1 in
     '-s'|'--secret' )
-      google-chrome-stable --new-window --incognito ${argv[2,-1]}
+      if [[ -n ${WSL_INTEROP} ]]; then
+        '/mnt/c/Program Files/Google/Chrome/Application/chrome.exe' --new-window --incognito $(wslpath -w $2)
+      else
+        google-chrome-stable --new-window --incognito $2
+      fi
     ;;
     * )
-      google-chrome-stable $@
+      if [[ -n ${WSL_INTEROP} ]]; then
+        '/mnt/c/Program Files/Google/Chrome/Application/chrome.exe' $(wslpath -w $1)
+      else
+        google-chrome-stable $1
+      fi
     ;;
   esac
 }

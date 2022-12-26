@@ -13,7 +13,7 @@ hook_add = '''
 [[plugins]] # status line themes
 repo = 'vim-airline/vim-airline-themes'
 hook_add = '''
-  let g:airline_theme='deep_space'
+  let g:airline_theme='everforest'
 '''
 
 [[plugins]] # An ecosystem of Vim/Neovim which allows developers to write plugins in Deno.
@@ -30,10 +30,4 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'prabirshrestha/vim-lsp'
-hook_add = '''
-  autocmd BufWritePre *.go call execute(['LspCodeActionSync source.organizeImports', 'LspDocumentFormatSync'])
-'''
-
-[[plugins]]
-repo = 'mattn/vim-lsp-settings'
+repo = 'hashivim/vim-terraform'

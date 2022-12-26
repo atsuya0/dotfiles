@@ -1,12 +1,12 @@
-# [[plugins]] # color scheme
-# repo = 'tyrannicaltoucan/vim-quantum'
-# on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
-# hook_source = 'colorscheme quantum'
-
 [[plugins]] # color scheme
-repo = 'tyrannicaltoucan/vim-deep-space'
+repo = 'sainnhe/everforest'
 on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
-hook_source = 'colorscheme deep-space'
+hook_source = 'colorscheme everforest'
+
+# [[plugins]] # color scheme
+# repo = 'softmotions/vim-dark-frost-theme'
+# on_event = ['BufRead', 'BufNewFile', 'BufWinEnter']
+# hook_source = 'colorscheme darkfrost'
 
 [[plugins]] # visually displaying indent levels
 repo = 'Yggdroot/indentLine'
@@ -16,16 +16,61 @@ hook_source = '''
   autocmd Filetype json let g:indentLine_conceallevel = 0
 '''
 
-[[plugins]] # completion framework
-repo = 'Shougo/deoplete.nvim'
-if = 'has("nvim")'
-on_event = 'InsertCharPre'
-hook_add = 'let g:deoplete#enable_at_startup = 1'
+###################################################################
 
 [[plugins]]
-repo = 'lighttiger2505/deoplete-vim-lsp'
-if = 'has("nvim")'
-on_event = 'InsertCharPre'
+repo = 'Shougo/ddc.vim'
+on_event = 'InsertEnter'
+depends = ['denops.vim']
+hook_source = '''
+  call ddc#custom#patch_global('sources', ['nvim-lsp', 'around'])
+  call ddc#custom#patch_global('sourceOptions', {
+        \ '_': {
+        \   'matchers': ['matcher_head'],
+        \   'sorters': ['sorter_rank']},
+        \ 'around': {
+        \   'mark': 'around' },
+        \ 'nvim-lsp': {
+        \   'mark': 'lsp',
+        \   'forceCompletionPattern': '\.\w*|:\w*|->\w*' },
+        \ })
+  call ddc#enable()
+'''
+
+[[plugins]]
+repo = 'Shougo/ddc-around'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-matcher_head'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-sorter_rank'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-nvim-lsp'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+on_event = 'BufEnter'
+hook_source= '''
+lua << EOF
+local lsp_installer = require("nvim-lsp-installer")
+lsp_installer.on_server_ready(function(server)
+  local opts = {}
+  server:setup(opts)
+end)
+EOF
+'''
+
+[[plugins]]
+repo = 'williamboman/nvim-lsp-installer'
+on_source = 'nvim-lspconfig'
+
+###################################################################
 
 [[plugins]] # unite all interfaces
 repo = 'Shougo/denite.nvim'
