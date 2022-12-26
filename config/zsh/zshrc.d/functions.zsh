@@ -217,14 +217,15 @@ function md() { # multi displays
   local -r primary=$(xrandr --listactivemonitors | sed '1d;s/[[:space:]][[:space:]] */ /g' | cut -d' ' -f5 | head -1)
 
   case $1 in
-  'school' )
-    local -r secondary=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
-    xrandr --output ${secondary} --left-of ${primary} --mode 1600x900
-    return
-  ;;
   'home' )
     local -r secondary=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
     xrandr --output ${secondary} --left-of ${primary} --mode 1366x768
+1920x1080
+    return
+  ;;
+  'parents-home' )
+    local -r secondary=$(xrandr | grep ' connected' | cut -d' ' -f1 | grep -v ${primary})
+    xrandr --output ${secondary} --left-of ${primary} --mode 1360x768
     return
   ;;
   'off' )
@@ -243,8 +244,8 @@ function md() { # multi displays
 function _md() {
   _values \
     'args' \
-    'school' \
     'home' \
+    'parents-home' \
     'off'
 }
 compdef _md md
