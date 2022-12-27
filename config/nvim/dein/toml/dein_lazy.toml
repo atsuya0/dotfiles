@@ -25,15 +25,21 @@ depends = ['denops.vim']
 hook_source = '''
   call ddc#custom#patch_global('sources', ['nvim-lsp', 'around'])
   call ddc#custom#patch_global('sourceOptions', {
-        \ '_': {
-        \   'matchers': ['matcher_head'],
-        \   'sorters': ['sorter_rank']},
-        \ 'around': {
-        \   'mark': 'around' },
-        \ 'nvim-lsp': {
-        \   'mark': 'lsp',
-        \   'forceCompletionPattern': '\.\w*|:\w*|->\w*' },
-        \ })
+    \ '_': {
+    \   'matchers': ['matcher_head'],
+    \   'sorters': ['sorter_rank']},
+    \ 'around': {
+    \   'mark': 'around' },
+    \ 'nvim-lsp': {
+    \   'mark': 'lsp',
+    \   'forceCompletionPattern': '\.\w*|:\w*|->\w*' },
+    \ })
+  call ddc#custom#patch_global('ui', 'native')
+  inoremap <silent><expr> <TAB>
+    \ pumvisible() ? '<C-n>' :
+    \ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+    \ '<TAB>' : ddc#map#manual_complete()
+  inoremap <expr><S-TAB>  pumvisible() ? '<C-p>' : '<C-h>'
   call ddc#enable()
 '''
 
@@ -69,6 +75,10 @@ EOF
 [[plugins]]
 repo = 'williamboman/nvim-lsp-installer'
 on_source = 'nvim-lspconfig'
+
+[[plugins]]
+repo = 'Shougo/ddc-ui-native'
+on_source = 'ddc.vim'
 
 ###################################################################
 
