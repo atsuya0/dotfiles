@@ -28,6 +28,7 @@ function connect_earphone() {
     ['soundpeats_q35']='51:53:5B:00:D8:0E'
     ['1more']='0C:73:EB:38:76:E9'
     ['soundcore_life_u2']='E8:07:BF:AF:58:23'
+    ['pixel_buds_pro']='24:29:34:B4:78:DB'
   )
   local -r key=$(print -C 1 ${(k)mac_addresses[@]} | fzf --select-1)
   [[ -n ${mac_addresses[${key}]} ]] && bluetooth_pairing ${mac_addresses[${key}]}
