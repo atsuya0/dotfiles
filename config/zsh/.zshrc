@@ -110,9 +110,10 @@ source "${ZDOTDIR}/zshrc.d/aliases.zsh"
   [[ -e ${zsh} ]] && source ${zsh}
 }
 
-source <(scd script)
-source <(cremem script)
-alias c='cremem'
+[[ -n ${commands[scd]} ]] && source <(scd script)
+[[ -n ${commands[cremem]} ]] \
+  && source <(cremem script) \
+  && alias c='cremem'
 
 () {
   local -r env="${HOME}/.env"
