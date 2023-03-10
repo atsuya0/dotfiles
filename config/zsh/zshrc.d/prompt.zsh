@@ -26,11 +26,8 @@ function __prompt__() { # カレントディレクトリのpathを画面の横�
 
       prompt="${mode}${icon}${blue_bg} ${short_wd} ${blue}${icon} %{${reset_color}%}"
     }
-    if [[ -n ${K} && ${commands[kubectl]} ]]; then
-      local -r cluster=$(kubectl config current-context)
-      local -r ns=$(kubectl config get-contexts | grep '^*' | tr -s ' ' | cut -d' ' -f 5)
-      k8s="${cluster}:${ns}"
-      PROMPT=${k8s}$'\n'${prompt}
+    if [[ -n ${KUBE_CONTEXT} ]]; then
+      PROMPT=${KUBE_CONTEXT}$'\n'${prompt}
     else
       PROMPT=${prompt}
     fi
