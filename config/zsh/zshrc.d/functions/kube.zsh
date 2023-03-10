@@ -30,7 +30,7 @@ function kubes() {
   [[ -z ${commands[kubectl]} ]] && return 1
 
   case $1 in
-    '-r' )
+    '-s' )
       export KUBE_CONTEXT=
     ;;
     * )
