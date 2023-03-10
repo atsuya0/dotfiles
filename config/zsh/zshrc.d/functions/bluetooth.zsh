@@ -42,3 +42,8 @@ function disconnect() {
     echo 'quit'
   } $1 | bluetoothctl
 }
+
+function reset_bluetooth() {
+  sudo rmmod btusb
+  sudo modprobe btusb
+}
