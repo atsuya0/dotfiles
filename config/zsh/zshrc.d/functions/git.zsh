@@ -11,7 +11,7 @@ function fga() { # git add をfilterで選択して行う。<C-v>でgit diffを�
   local file unadded_files
   for file in "${(f)$(git status --short)}"; do
     local header=$(echo ${file} | cut -c1-2)
-    [[ ${header} == '??' || ${header} =~ '( |M|A|R|U)(M|U)' ]] \
+    [[ ${header} == '??' || ${header} =~ '( |M|A|R|U)(M|U|D)' ]] \
       && local unadded_files="${unadded_files}\n$(echo ${file} | rev | cut -d' ' -f1 | rev)"
   done
   local selected_files=$(echo ${unadded_files} | sed /^$/d \
