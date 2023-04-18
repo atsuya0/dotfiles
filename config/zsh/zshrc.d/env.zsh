@@ -26,6 +26,7 @@ typeset -a path=(
   $([[ -d ${DENO_INSTALL}/bin ]] && echo ${DENO_INSTALL}/bin)
   $([[ -d ${PYENV_ROOT}/bin ]] && echo ${PYENV_ROOT}/bin)
   $([[ -d ${GCP_PATH} ]] && echo ${GCP_PATH}/bin)
+  $([[ -d "${HOME}/.krew/bin" ]] && echo "${HOME}/.krew/bin")
   $([[ -n ${commands[ruby]} \
     && -d "$(ruby -e 'print Gem.user_dir')/bin" ]] \
       && echo "$(ruby -e 'print Gem.user_dir')/bin")
