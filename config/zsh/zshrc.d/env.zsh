@@ -26,6 +26,7 @@ typeset -a path=(
   $([[ -d ${DENO_INSTALL}/bin ]] && echo ${DENO_INSTALL}/bin)
   $([[ -d ${PYENV_ROOT}/bin ]] && echo ${PYENV_ROOT}/bin)
   $([[ -d ${GCP_PATH} ]] && echo ${GCP_PATH}/bin)
+  $([[ -d "${HOME}/.krew/bin" ]] && echo "${HOME}/.krew/bin")
   $([[ -n ${commands[ruby]} \
     && -d "$(ruby -e 'print Gem.user_dir')/bin" ]] \
       && echo "$(ruby -e 'print Gem.user_dir')/bin")
@@ -46,7 +47,7 @@ if [[ ${OSTYPE} =~ 'darwin' ]]; then
     /usr/local/opt/mysql@5.6/bin
     "${HOME}/google-cloud-sdk/bin"
   )
-  export DOCKER_HOST="unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
+  export DOCKER_HOST="unix://$(podman machine inspect $(podman machine info -f '{{.Host.CurrentMachine}}') --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
   export KIND_EXPERIMENTAL_PROVIDER=podman
 elif [[ -n ${WSL_INTEROP} ]]; then
   export TRASH_CAN_PATH="${HOME}/.Trash"

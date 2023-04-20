@@ -87,7 +87,9 @@ fi
 # fi
 
 [[ -n ${commands[kubectl]} ]] && source <(kubectl completion zsh)
+[[ -n ${commands[kubectl-argo-rollouts]} ]] && source <(kubectl-argo-rollouts completion zsh)
 [[ -n ${commands[helm]} ]] && source <(helm completion zsh)
 [[ -n ${commands[kind]} ]] && source <(kind completion zsh)
 [[ -n ${commands[pack]} ]] && source $(pack completion --shell zsh)
+[[ -n ${commands[gh]} ]] && eval $(gh completion -s zsh)
 [[ -n ${commands[gh]} ]] && eval $(gh completion -s zsh)
