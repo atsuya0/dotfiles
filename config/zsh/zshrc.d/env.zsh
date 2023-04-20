@@ -33,12 +33,13 @@ typeset -a path=(
 )
 
 if [[ ${OSTYPE} =~ 'darwin' ]]; then
+  [[ -f '/opt/homebrew/bin/brew' ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
   export TRASH_CAN_PATH="${HOME}/Trash"
   typeset -ar path=(
     ${path}
-    /usr/local/opt/coreutils/libexec/gnubin
-    /usr/local/opt/findutils/libexec/gnubin
-    /usr/local/opt/gnu-sed/libexec/gnubin
+    "${HOMEBREW_PREFIX}/opt/coreutils/libexec/gnubin"
+    "${HOMEBREW_PREFIX}/opt/findutils/libexec/gnubin"
+    "${HOMEBREW_PREFIX}/opt/gnu-sed/libexec/gnubin"
     /usr/local/bin
     /usr/bin
     /bin

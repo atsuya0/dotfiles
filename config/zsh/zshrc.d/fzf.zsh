@@ -14,7 +14,7 @@ export FZF_CTRL_R_OPTS="--preview='echo {}' --preview-window=down:3:hidden:wrap 
   elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
     local -r fzf_directory='/usr/share/fzf'
   elif [[ ${OSTYPE} =~ 'darwin' ]]; then
-    local -r fzf_directory="/usr/local/Cellar/fzf/$(ls /usr/local/Cellar/fzf | head -1)/shell"
+    local -r fzf_directory="${HOMEBREW_PREFIX}/opt/fzf/shell"
   fi
   local -r keybind="${fzf_directory}/key-bindings.zsh"
   local -r completion="${fzf_directory}/completion.zsh"
