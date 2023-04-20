@@ -183,7 +183,7 @@ function gitlab_projects_total_pages_by_group_id() {
 
   local -r total=$(curl -i -s --header "PRIVATE-TOKEN: ${GITLAB_ACCESS_TOKEN}" \
     "https://${GITLAB_FQDN}/api/v4/groups/$1/projects?include_subgroups=true&simple=true&per_page=1" \
-    | grep x-total: | cut -d' ' -f2 | sed 's/[[:space:]]//')
+    | grep X-Total: | cut -d' ' -f2 | sed 's/[[:space:]]//')
   expr ${total} / 100 + 1
 }
 
