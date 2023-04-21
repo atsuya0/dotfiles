@@ -37,7 +37,7 @@ if [[ ${OSTYPE} =~ 'darwin' ]]; then
   export TRASH_CAN_PATH="${HOME}/Trash"
   typeset -ar path=(
     ${path}
-    "${HOMEBREW_PREFIX}/opt/coreutils/libexec/gnubin"
+    "${HOMEBREW_PREFIX:=/usr/local}/opt/coreutils/libexec/gnubin"
     "${HOMEBREW_PREFIX}/opt/findutils/libexec/gnubin"
     "${HOMEBREW_PREFIX}/opt/gnu-sed/libexec/gnubin"
     /usr/local/bin
