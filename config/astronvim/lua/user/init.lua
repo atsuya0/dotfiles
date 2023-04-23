@@ -1,3 +1,3 @@
 return {
-  colorscheme = "everforest"
+  --colorscheme = "everforest"
 }
