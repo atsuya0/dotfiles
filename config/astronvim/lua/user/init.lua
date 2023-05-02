@@ -7,9 +7,10 @@ return {
     pattern = "*",
     group = "imeoff",
     callback = function()
-      if vim.fn.has("unix") == 1 then
-        vim.fn.system('fcitx5-remote -c')
-      elseif vim.fn.has("macunix") == 1 then
+      if vim.fn.has("macunix") == 1 then
+        vim.fn.system("/opt/homebrew/bin/im-select com.apple.keylayout.ABC")
+      elseif vim.fn.has("unix") == 1 then
+        vim.fn.system("fcitx5-remote -c")
       end
     end,
   })
