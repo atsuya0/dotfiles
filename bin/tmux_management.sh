@@ -15,8 +15,8 @@ function choose() {
   function title() {
     echo "\n[ \033[1;34m$1\033[0;49m ]\n"
   }
-  local -r list_windows="tmux list-windows -t {} | cut -d' ' -f1-2"
-  local -r capture_pane='tmux capture-pane -e -J -t {} -p'
+  local -r list_windows="$(which tmux) list-windows -t {} | cut -d' ' -f1-2"
+  local -r capture_pane="$(which tmux) capture-pane -e -J -t {} -p"
 
   fzf --reverse --header="${1:-none}" \
     --exit-0 ${2:-} \
