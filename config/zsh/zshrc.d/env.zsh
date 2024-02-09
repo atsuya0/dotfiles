@@ -18,7 +18,9 @@ export PYENV_ROOT="${HOME}/.pyenv"
 export NNN_PLUG='p:preview-tui;z:!trs move "$nnn"*'
 export NNN_OPENER="${DOTFILES}/bin/nnn_opener.sh"
 
-typeset -a path=(
+typeset -a path=()
+[[ -f '/opt/homebrew/bin/brew' ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
   $([[ -d ${AQUA_ROOT_DIR}/bin ]] && echo ${AQUA_ROOT_DIR}/bin)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
@@ -30,10 +32,10 @@ typeset -a path=(
   $([[ -n ${commands[ruby]} \
     && -d "$(ruby -e 'print Gem.user_dir')/bin" ]] \
       && echo "$(ruby -e 'print Gem.user_dir')/bin")
+  ${path}
 )
 
 if [[ ${OSTYPE} =~ 'darwin' ]]; then
-  [[ -f '/opt/homebrew/bin/brew' ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
   export TRASH_CAN_PATH="${HOME}/Trash"
   export PIP_CERT="${HOME}/certs/zscaler.cer"
   export SSL_CERT_DIR="$HOME/certs"
