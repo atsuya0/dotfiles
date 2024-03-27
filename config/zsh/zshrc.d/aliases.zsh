@@ -51,4 +51,4 @@ alias -g @win='/mnt/c/Users/atsuy/Desktop'
 
 alias -s txt='less'
 alias -s {html,md,pdf,mp3,mp4}='google-chrome-stable'
-alias -s {png,jpg,jpeg}='feh'
+alias -s {png,jpg,jpeg}='kitty +kitten icat'

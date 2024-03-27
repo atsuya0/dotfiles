@@ -9,7 +9,7 @@ elif [[ ${OSTYPE} =~ 'darwin' ]]; then
   export PATH='/usr/local/bin:/usr/bin:/bin:/usr/sbin/:/sbin'
 fi
 export LANG='ja_JP.UTF-8'
-export TERM='xterm-256color'
+#export TERM='xterm-256color'
 export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_CACHE_HOME="${HOME}/.cache"
 export XDG_DATA_HOME="${HOME}/.local/share"
