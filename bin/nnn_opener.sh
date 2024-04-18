@@ -4,13 +4,14 @@ set -euCo pipefail
 
 case ${1##*.} in
   'txt'|'md'|'sh'|'go'|'py'|'yaml'|'json' )
-    ${EDITOR} $1
+    ${EDITOR} "$1"
   ;;
-  'jpg'|'png' )
-    feh $1 &> /dev/null
+  'jpg'|'png'|'webp' )
+    #feh $1 &> /dev/null
+    qlmanage -p "$1" &> /dev/null
   ;;
-  'mp4' )
-    vlc $1 &> /dev/null
+  'mp4'|'webm' )
+    vlc "$1" &> /dev/null
   ;;
   * )
     google-chrome-stable $1 &> /dev/null
