@@ -39,6 +39,7 @@ if [[ ${OSTYPE} =~ 'darwin' ]]; then
   export TRASH_CAN_PATH="${HOME}/Trash"
   export PIP_CERT="${HOME}/certs/zscaler.cer"
   export SSL_CERT_DIR="$HOME/certs"
+
   typeset -ar path=(
     ${path}
     "${HOMEBREW_PREFIX:=/usr/local}/opt/coreutils/libexec/gnubin"
@@ -52,6 +53,7 @@ if [[ ${OSTYPE} =~ 'darwin' ]]; then
     /usr/local/opt/mysql@5.6/bin
     "${HOME}/google-cloud-sdk/bin"
   )
+
   [[ -n ${commands[limactl]} ]] && export DOCKER_HOST=$(limactl list docker --format 'unix://{{.Dir}}/sock/docker.sock')
   #[[ -n ${commands[podman]} ]] && export DOCKER_HOST="unix://$(podman machine inspect $(podman machine info -f '{{.Host.CurrentMachine}}') --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
   #export KIND_EXPERIMENTAL_PROVIDER=podman
