@@ -6,7 +6,7 @@ if [[ -n ${WSL_INTEROP} ]]; then
 elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
   export PATH='/usr/bin:/usr/bin/core_perl'
 elif [[ ${OSTYPE} =~ 'darwin' ]]; then
-  export PATH='/usr/local/bin:/usr/bin:/bin:/usr/sbin/:/sbin'
+  export PATH='/usr/local/bin:/usr/bin:/bin:/usr/sbin/:/sbin:/opt/homebrew/bin'
 fi
 export LANG='ja_JP.UTF-8'
 export TERM='xterm-256color'
