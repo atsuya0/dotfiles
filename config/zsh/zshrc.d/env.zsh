@@ -52,8 +52,9 @@ if [[ ${OSTYPE} =~ 'darwin' ]]; then
     /usr/local/opt/mysql@5.6/bin
     "${HOME}/google-cloud-sdk/bin"
   )
-  [[ -n ${commands[podman]} ]] && export DOCKER_HOST="unix://$(podman machine inspect $(podman machine info -f '{{.Host.CurrentMachine}}') --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
-  export KIND_EXPERIMENTAL_PROVIDER=podman
+  [[ -n ${commands[limactl]} ]] && export DOCKER_HOST=$(limactl list docker --format 'unix://{{.Dir}}/sock/docker.sock')
+  #[[ -n ${commands[podman]} ]] && export DOCKER_HOST="unix://$(podman machine inspect $(podman machine info -f '{{.Host.CurrentMachine}}') --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
+  #export KIND_EXPERIMENTAL_PROVIDER=podman
 elif [[ -n ${WSL_INTEROP} ]]; then
   export TRASH_CAN_PATH="${HOME}/.Trash"
   typeset -ar path=(

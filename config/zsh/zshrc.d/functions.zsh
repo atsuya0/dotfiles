@@ -354,3 +354,18 @@ function rm_orphan_pkgs() {
   echo '\e[31;1msudo pacman -Rsn $(pacman -Qdmq)'
   sudo pacman -Rsn $(pacman -Qdmq)
 }
+
+function clyrics() {
+  #xsel | sed 's@<[^>]*>@\n@g' | grep -v '^$' | xsel -ib
+  xsel | sed 's@<[^>]*>@\n@g' | xsel -ib
+}
+
+#function kitty_view() {
+#  [[ -z ${commands[fzf]} ]] && return 1
+#
+#tmux split-window -h kitty +kitten icat thumb_image_230517195327.jpg
+#  ls | fzf \
+#    --preview='kitty +kitten icat "{}"' \
+#    --preview-window='right:80%' \
+#    --bind='ctrl-v:toggle-preview'
+#}
