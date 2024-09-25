@@ -25,18 +25,23 @@ fi
   tmux_management.sh && exit
 }
 
-() { # http://asdf-vm.com/
+() { # https://mise.jdx.dev
   [[ -n ${commands[brew]} ]] \
-    && local -r asdf_sh_brew="$(brew --prefix asdf)/libexec/asdf.sh" \
-    && [[ -e ${asdf_sh_brew} ]] \
-    && { source ${asdf_sh_brew}; return }
-
-  local -r asdf_sh_home="${HOME}/.asdf/asdf.sh"
-  [[ -e ${asdf_sh_home} ]] && { source ${asdf_sh_home}; return }
-
-  local -r asdf_sh_opt='/opt/asdf-vm/asdf.sh'
-  [[ -e ${asdf_sh_opt} ]] && { source ${asdf_sh_opt}; return }
+    && eval "$($(brew --prefix mise)/bin/mise activate zsh)"
 }
+
+#() { # http://asdf-vm.com/
+#  [[ -n ${commands[brew]} ]] \
+#    && local -r asdf_sh_brew="$(brew --prefix asdf)/libexec/asdf.sh" \
+#    && [[ -e ${asdf_sh_brew} ]] \
+#    && { source ${asdf_sh_brew}; return }
+#
+#  local -r asdf_sh_home="${HOME}/.asdf/asdf.sh"
+#  [[ -e ${asdf_sh_home} ]] && { source ${asdf_sh_home}; return }
+#
+#  local -r asdf_sh_opt='/opt/asdf-vm/asdf.sh'
+#  [[ -e ${asdf_sh_opt} ]] && { source ${asdf_sh_opt}; return }
+#}
 
 [[ -n ${commands[pyenv]} ]] && eval "$(pyenv init --path)"
 
