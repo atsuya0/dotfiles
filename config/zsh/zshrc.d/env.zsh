@@ -12,7 +12,7 @@ export AQUA_ROOT_DIR="${XDG_DATA_HOME}/aquaproj-aqua"
 export TF_LOG=trace
 export TF_LOG_PATH="${HOME}/.terraform.log"
 
-export VOLTA_HOME="${HOME}/.volta"
+#export VOLTA_HOME="${HOME}/.volta"
 export DENO_INSTALL="${HOME}/.deno"
 export PYENV_ROOT="${HOME}/.pyenv"
 export NNN_PLUG='p:preview-tui;z:!trs move "$nnn"*'
@@ -24,7 +24,7 @@ path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
   $([[ -d ${AQUA_ROOT_DIR}/bin ]] && echo ${AQUA_ROOT_DIR}/bin)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
-  $([[ -d ${VOLTA_HOME}/bin ]] && echo ${VOLTA_HOME}/bin)
+  #$([[ -d ${VOLTA_HOME}/bin ]] && echo ${VOLTA_HOME}/bin)
   $([[ -d ${DENO_INSTALL}/bin ]] && echo ${DENO_INSTALL}/bin)
   $([[ -d ${PYENV_ROOT}/bin ]] && echo ${PYENV_ROOT}/bin)
   $([[ -d ${GCP_PATH} ]] && echo ${GCP_PATH}/bin)
