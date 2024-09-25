@@ -37,8 +37,7 @@ path=(
 
 if [[ ${OSTYPE} =~ 'darwin' ]]; then
   export TRASH_CAN_PATH="${HOME}/Trash"
-  export PIP_CERT="${HOME}/certs/zscaler.cer"
-  export SSL_CERT_DIR="$HOME/certs"
+
   typeset -ar path=(
     ${path}
     "${HOMEBREW_PREFIX:=/usr/local}/opt/coreutils/libexec/gnubin"
