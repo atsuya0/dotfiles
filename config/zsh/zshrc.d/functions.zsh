@@ -265,15 +265,6 @@ function rn() { # Rename files using regular expression. Like perl's rename comm
   done
 }
 
-function crawl() {
-  [[ -z ${commands[crawl-img]} ]] && return 1
-  [[ -z ${commands[notify-send]} ]] && return 1
-  [[ $# -eq 0 ]] && return 1
-
-  crawl-img -u $1 || return 1
-  notify-send 'Image downloading is complete.'
-}
-
 # $ mnt /dev/sdb3
 function mnt() {
   [[ $# -eq 0 ]] && return 1
@@ -357,7 +348,8 @@ function rm_orphan_pkgs() {
 
 function clyrics() {
   #xsel | sed 's@<[^>]*>@\n@g' | grep -v '^$' | xsel -ib
-  xsel | sed 's@<[^>]*>@\n@g' | xsel -ib
+  #xsel | sed 's@<[^>]*>@\n@g' | xsel -ib
+  pbpaste | sed 's@<[^>]*>@\n@g' | pbcopy
 }
 
 #function kitty_view() {
