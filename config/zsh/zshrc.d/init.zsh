@@ -26,6 +26,7 @@ fi
 }
 
 () { # https://mise.jdx.dev
+  [[ -z ${commands[mise]} ]] && return
   [[ -n ${commands[brew]} ]] \
     && eval "$($(brew --prefix mise)/bin/mise activate zsh)"
 }
