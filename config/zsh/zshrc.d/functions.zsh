@@ -252,7 +252,8 @@ compdef _md md
 
 function rs() { # Remove spaces from file names.
   for file in $@; do
-    [[ -e ${file} && ${file} =~ ' ' ]] && mv "${file}" "${file// /}"
+    #[[ -e ${file} && ${file} =~ ' ' ]] && mv "${file}" "${file// /}"
+    [[ -e ${file} && ${file} =~ ' ' ]] && mv "${file}" $(echo ${file} | sed 's/ \+/_/g')
   done
 }
 
