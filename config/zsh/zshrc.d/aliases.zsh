@@ -13,6 +13,7 @@ if [[ ${OSTYPE} == 'linux-gnu' ]]; then
   alias light='xbacklight -$(echo "inc\ndec" | fzf) 10'
 elif [[ ${OSTYPE} =~ 'darwin' ]]; then
   alias format='diskutil eraseDisk FAT32 MBRFormat'
+  alias rotate="displayplacer list | tail -1 | sed 's/degree:90\"$/degree:0\"/;ta;s/degree:0\"$/degree:90\"/;:a;s/res:\([0-9]*\)x\([0-9]*\)/res:\2x\1/2' | cut -d' ' -f 2- | xargs displayplacer"
 fi
 
 alias ls='ls --color=auto'
