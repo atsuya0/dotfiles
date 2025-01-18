@@ -1,5 +1,3 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
 -- AstroCore provides a central place to modify mappings, vim options, autocommands, and more!
 -- Configuration documentation can be found with `:h astrocore`
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
@@ -31,7 +29,10 @@ return {
         number = true, -- sets vim.opt.number
         spell = false, -- sets vim.opt.spell
         signcolumn = "yes", -- sets vim.opt.signcolumn to yes
-        wrap = false, -- sets vim.opt.wrap
+        wrap = true, -- sets vim.opt.wrap
+        linebreak = false, -- https://vim-jp.org/vimdoc-ja/options.html#'linebreak'
+        list = true,
+        listchars = "trail:@",
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
@@ -66,6 +67,35 @@ return {
 
         -- setting a mapping to false will disable it
         -- ["<C-S>"] = false,
+
+        ["j"] = { "gj" },
+        ["k"] = { "gk" },
+      },
+      i = {
+        -- Emacs key bindings.
+        ["<C-f>"] = { "<C-o>l" },
+        ["<C-b>"] = { "<C-o>h" },
+        ["<C-a>"] = { "<C-o>^" },
+        ["<C-e>"] = { "<C-o>$" },
+        -- <C-h>
+        ["<C-d>"] = { "<del>" },
+        -- <C-w>
+        -- <C-u>
+        ["<C-k>"] = { "<C-o>d$" },
+        ["<M-f>"] = { "<C-o>W" },
+        ["<M-b>"] = { "<C-o>B" },
+        ["<M-d>"] = { "<C-o>dW" },
+      },
+      c = {
+        -- Emacs key bindings.
+        ["<C-f>"] = { "<left>" },
+        ["<C-b>"] = { "<right>" },
+        ["<C-a>"] = { "<home>" },
+        -- <C-e>
+        -- <C-h>
+        ["<C-d>"] = { "<del>" },
+        -- <C-w>
+        -- <C-u>
       },
     },
   },
