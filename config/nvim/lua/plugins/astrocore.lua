@@ -32,7 +32,7 @@ return {
         wrap = true, -- sets vim.opt.wrap
         linebreak = false, -- https://vim-jp.org/vimdoc-ja/options.html#'linebreak'
         list = true,
-        listchars = "trail:@",
+        listchars = "trail:@,tab:  ",
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
