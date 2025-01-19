@@ -59,6 +59,9 @@ focus-main:
 focus-screen-ccw:
   mod: mod3
   key: enter
+swap-ccw:
+  mod: mod4
+  key: space
 swap-screen-ccw:
   mod: mod4
   key: enter
