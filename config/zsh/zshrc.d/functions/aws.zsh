@@ -11,7 +11,7 @@ function paws() {
 }
 
 function tfcd() {
-  set_aws_profile || return
+  [[ -z ${AWS_PROFILE} ]] && { set_aws_profile || return }
 
   local -r wd=$(basename ${PWD})
 
