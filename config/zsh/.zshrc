@@ -1,4 +1,8 @@
 autoload -Uz add-zsh-hook
+() {
+  local -r env="${HOME}/.env"
+  [[ -f ${env} ]] && source ${env}
+}
 source "${ZDOTDIR}/zshrc.d/env.zsh"
 source "${ZDOTDIR}/zshrc.d/init.zsh"
 
@@ -114,8 +118,3 @@ source "${ZDOTDIR}/zshrc.d/aliases.zsh"
 [[ -n ${commands[cremem]} ]] \
   && source <(cremem script) \
   && alias c='cremem'
-
-() {
-  local -r env="${HOME}/.env"
-  [[ -f ${env} ]] && export $(cat ${env})
-}
