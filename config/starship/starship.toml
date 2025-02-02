@@ -29,6 +29,13 @@ truncation_length = 5
 truncate_to_repo = false
 truncation_symbol = '…/'
 
+[aws]
+format = '[($profile )(\($region\) )]($style)'
+
+[gcloud]
+disabled = true
+format = '[$$account(@$domain)(\($region\))]($style) '
+
 [direnv]
 disabled = false
 
