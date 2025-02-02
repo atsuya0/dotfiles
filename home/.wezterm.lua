@@ -51,7 +51,13 @@ config.keys = {
     },
   },
 }
+local copy_mode = wezterm.gui.default_key_tables().copy_mode
+table.insert(
+  copy_mode,
+  { key = 'v', mods = 'ALT', action = act.CopyMode { SetSelectionMode = 'SemanticZone' } }
+)
 config.key_tables = {
+  copy_mode = copy_mode,
   resize_pane = {
     { key = 'h',      action = act.AdjustPaneSize { 'Left', 10 } },
     { key = 'l',      action = act.AdjustPaneSize { 'Right', 10 } },
