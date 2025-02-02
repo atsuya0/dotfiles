@@ -11,9 +11,6 @@ config.color_scheme = 'Nord (Gogh)'
 config.font = wezterm.font('HackGen35 Console NF')
 config.font_size = 14
 
--- config.send_composed_key_when_left_alt_is_pressed = false
--- config.send_composed_key_when_right_alt_is_pressed = true
-
 config.audible_bell = 'Disabled'
 config.automatically_reload_config = true
 config.default_cursor_style = 'SteadyBar'
