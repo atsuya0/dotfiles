@@ -4,5 +4,6 @@
 /config/zsh/.zcompdump.zwc
 /config/zsh/.zsh_history
 /config/zsh/.zsh_sessions
+/config/zsh/zshrc.d/wezterm.sh
 /config/nvim/undo
 /config/nvim/.netrwhist

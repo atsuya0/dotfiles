@@ -43,6 +43,8 @@ config.keys = {
   { key = 'k',     mods = 'LEADER', action = act.ActivatePaneDirection 'Up' },
   { key = 'Space', mods = 'LEADER', action = act.RotatePanes 'Clockwise' },
   { key = 'z',     mods = 'LEADER', action = act.TogglePaneZoomState },
+  { key = 'p',     mods = 'LEADER', action = act.ScrollToPrompt(-1) },
+  { key = 'n',     mods = 'LEADER', action = act.ScrollToPrompt(1) },
   {
     key = 'r',
     mods = 'LEADER',
