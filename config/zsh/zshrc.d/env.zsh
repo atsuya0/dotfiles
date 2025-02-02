@@ -29,3 +29,8 @@ typeset -ar path=(
 
 [[ -n ${commands[limactl]} && $(limactl list -q 2> /dev/null | head -1) == 'default' ]] \
   && export DOCKER_HOST=$(limactl list default --format 'unix://{{.Dir}}/sock/docker.sock')
+
+() {
+  local -r env="${HOME}/.env"
+  [[ -f ${env} ]] && export $(cat ${env})
+}

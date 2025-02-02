@@ -24,8 +24,3 @@ source "${ZDOTDIR}/zshrc.d/history.zsh"
 source "${ZDOTDIR}/zshrc.d/keybind.zsh"
 source "${ZDOTDIR}/zshrc.d/functions.zsh"
 source "${ZDOTDIR}/zshrc.d/aliases.zsh"
-
-() {
-  local -r env="${HOME}/.env"
-  [[ -f ${env} ]] && export $(cat ${env})
-}
