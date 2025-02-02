@@ -30,71 +30,19 @@ config.leader = { key = 'Space', mods = 'SUPER', timeout_milliseconds = 1000 }
 local act = wezterm.action
 config.keys = {
   -- https://wezfurlong.org/wezterm/config/lua/keyassignment/index.html
-  {
-    key = '[',
-    mods = 'LEADER',
-    action = act.ActivateTabRelative(-1),
-  },
-  {
-    key = ']',
-    mods = 'LEADER',
-    action = act.ActivateTabRelative(1),
-  },
-  {
-    key = '{',
-    mods = 'LEADER',
-    action = act.MoveTabRelative(-1),
-  },
-  {
-    key = '}',
-    mods = 'LEADER',
-    action = act.MoveTabRelative(1),
-  },
-  {
-    key = 'c',
-    mods = 'LEADER',
-    action = act.ActivateCopyMode,
-  },
-  {
-    key = 's',
-    mods = 'LEADER',
-    action = act.SplitVertical { domain = 'CurrentPaneDomain' },
-  },
-  {
-    key = 'v',
-    mods = 'LEADER',
-    action = act.SplitHorizontal { domain = 'CurrentPaneDomain' },
-  },
-  {
-    key = 'h',
-    mods = 'LEADER',
-    action = act.ActivatePaneDirection 'Left',
-  },
-  {
-    key = 'l',
-    mods = 'LEADER',
-    action = act.ActivatePaneDirection 'Right',
-  },
-  {
-    key = 'j',
-    mods = 'LEADER',
-    action = act.ActivatePaneDirection 'Down',
-  },
-  {
-    key = 'k',
-    mods = 'LEADER',
-    action = act.ActivatePaneDirection 'Up',
-  },
-  {
-    key = 'Space',
-    mods = 'LEADER',
-    action = act.RotatePanes 'Clockwise',
-  },
-  {
-    key = 'z',
-    mods = 'LEADER',
-    action = act.TogglePaneZoomState,
-  },
+  { key = '[',     mods = 'LEADER', action = act.ActivateTabRelative(-1) },
+  { key = ']',     mods = 'LEADER', action = act.ActivateTabRelative(1) },
+  { key = '{',     mods = 'LEADER', action = act.MoveTabRelative(-1) },
+  { key = '}',     mods = 'LEADER', action = act.MoveTabRelative(1) },
+  { key = 'c',     mods = 'LEADER', action = act.ActivateCopyMode },
+  { key = 's',     mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
+  { key = 'v',     mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+  { key = 'h',     mods = 'LEADER', action = act.ActivatePaneDirection 'Left' },
+  { key = 'l',     mods = 'LEADER', action = act.ActivatePaneDirection 'Right' },
+  { key = 'j',     mods = 'LEADER', action = act.ActivatePaneDirection 'Down' },
+  { key = 'k',     mods = 'LEADER', action = act.ActivatePaneDirection 'Up' },
+  { key = 'Space', mods = 'LEADER', action = act.RotatePanes 'Clockwise' },
+  { key = 'z',     mods = 'LEADER', action = act.TogglePaneZoomState },
   {
     key = 'r',
     mods = 'LEADER',
