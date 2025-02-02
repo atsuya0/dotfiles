@@ -1,21 +1,6 @@
 [[ -e ${_CD_HISTORY} ]] || export _CD_HISTORY=$(mktemp)
 
-{ [[ -n ${commands[tmux]} ]] && tmux list-session &> /dev/null ;} || () {
-  [[ -n ${commands[trs]} ]] && trs auto-remove
-}
-
-() { # tmux
-  if [[ -n ${WSL_INTEROP} ]]; then
-    [[ "$(ps hco cmd ${PPID})" =~ 'tmux' ]] && return 1
-  elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
-    [[ -n ${WINDOWID} && "$(ps hco cmd ${PPID})" =~ 'kitty|alacritty|xfce4-terminal' ]] \
-      || return 1
-  else
-    [[ "$(ps co comm ${PPID} | tail -1)" == 'tmux' ]] && return 1
-  fi
-  [[ -z ${commands[tmux_management.sh]} ]] && return 1
-  tmux_management.sh && exit
-}
+[[ ${WEZTERM_PANE} -eq 0 ]] && [[ -n ${commands[trs]} ]] && trs auto-remove
 
 # A list of non-alphanumeric characters considered part of a word by the line editor.
 WORDCHARS='*?_-[]~&;!#$%^(){}<>' # /\=|.,
