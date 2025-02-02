@@ -23,3 +23,17 @@ function vim() { # Choose files to open by fzf.
   local -r files=$(choice $1)
   [[ -n ${files} ]] && eval $(editor ${files})
 }
+
+# google search
+# w3m search windows bsd linux
+function w3m(){
+  [[ $1 == 'search' && $# -ge 2 ]] && { \
+    local i parameter="search?&q=$2"
+    for i in {3..$#}; do
+      parameter="${parameter}+$argv[$i]"
+    done
+    parameter="http://www.google.co.jp/${parameter}&ie=UTF-8"
+
+    command w3m "${parameter}"
+  } || command w3m $@
+}

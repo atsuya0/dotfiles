@@ -1,0 +1,15 @@
+# https://zimfw.sh/docs/cheatsheet/
+
+zmodule environment
+zmodule zsh-users/zsh-completions --fpath src
+zmodule completion
+zmodule zsh-users/zsh-syntax-highlighting
+#zmodule zsh-users/zsh-autosuggestions
+zmodule input
+zmodule fzf
+zmodule exa
+zmodule git
+zmodule k
+zmodule utility
+zmodule direnv
+zmodule homebrew

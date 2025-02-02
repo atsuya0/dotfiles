@@ -1,0 +1,62 @@
+: 1716491696:0;brew install coreutils
+: 1716491696:0;bsdtar xf HackGen_NF_v2.9.0.zip
+: 1716491696:0;brew install gnu-sed
+: 1716491696:0;brew install findutils
+: 1716491696:0;git clone --depth 1 https://github.com/AstroNvim/AstroNvim ~/.config/nvim\
+nvim
+: 1716491696:0;brew install nnn
+: 1716491696:0;brew install tree
+: 1716491696:0;qlmanage -p 0_o.jpg
+: 1716491696:0;brew install vlc
+: 1716491696:0;sed -i 's/ \+/_/g' 'Fatal Fury - Shiranui Mai2.mp4'
+: 1716491696:0;vlc Final_Fantasy_â€ƒ³_Tifa.webm
+: 1716491696:0;brew uninstall 5kplayer
+: 1716491696:0;brew install 5kplayer
+: 1716491696:0;env @g NNN
+: 1716491696:0;curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs | sh
+: 1716491696:0;brew install ranger
+: 1716491696:0;git clone https://github.com/atsuya0/trs.git
+: 1716491696:0;git clone https://github.com/atsuya0/scd.git
+: 1716491696:0;brew install go
+: 1716491696:0;env @g OG
+: 1716491696:0;brew install rg
+: 1716491696:0;go install
+: 1716491696:0;brew install --cask rectangle
+: 1716491696:0;brew install raycast
+: 1716491696:0;go help mod
+: 1716491696:0;go mod init github.com/atsuya0/exiframe
+: 1716491696:0;go mod tidy
+: 1716491696:0;go run main.go @g 2
+: 1716491696:0;go run main.go
+: 1716491696:0;brew install lima docker
+: 1716491696:0;git reset HEAD
+: 1716491696:0;git reset HEAD^1
+: 1716491696:0;git config pull.rebase false
+: 1716491696:0;git pull origin master
+: 1716491696:0;docker context
+: 1716491696:0;docker context ls
+: 1716491696:0;docker ps
+: 1716491696:0;limactl stop docker
+: 1716491696:0;limactl list
+: 1716491696:0;limactl 
+: 1716491696:0;limactl start template://docker
+: 1716491696:0;limactl delete docker
+: 1716491696:0;limactl list docker
+: 1716491696:0;limactl list 
+: 1716491696:0;limactl list --help
+: 1716491696:0;limactl list -q
+: 1716491696:0;imactl list -q | head -1
+: 1716491696:0;limactl list -q | head -1
+: 1716491696:0;diskutil list
+: 1716491696:0;diskutil eraseDisk FAT32 MBRFormat /dev/disk5
+: 1716491696:0;git reset --mixed
+: 1716491696:0;git push origin master
+: 1716491696:0;open 49.webp
+: 1716491696:0;brew uninstall nvim
+: 1716491696:0;brew install nvim
+: 1716491696:0;brew install --cask visual-studio-code
+: 1716491696:0;brew update
+: 1716491696:0;env @g nvim
+: 1716491696:0;git clone --depth 1 https://github.com/AstroNvim/template ~/.config/nvim
+: 1716491696:0;git clone --depth 1 https://github.com/AstroNvim/template.git
+: 1716623022:0;brew upgrade

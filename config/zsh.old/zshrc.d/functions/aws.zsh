@@ -11,9 +11,15 @@ function paws() {
 }
 
 function tfcd() {
-  [[ -z ${AWS_PROFILE} ]] && { set_aws_profile || return }
+  set_aws_profile || return
 
   local -r wd=$(basename ${PWD})
+
+  #local -r log_dir="${HOME}/.terraform.d/log/$(date +'%Y-%m-%d')/$(date +'%H')"
+  #mkdir ${log_dir}
+  #local -r log_file="$(expr 1 + $(ls -1 ${log_dir} | wc -l))"
+  #export TF_LOG_PATH="${log_dir}/${log_file}.log"
+  #echo ${TF_LOG_PATH}
 
   case $1 in
     'init' )
