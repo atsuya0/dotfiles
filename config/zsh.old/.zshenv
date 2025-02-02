@@ -1,7 +1,13 @@
 # .zshenv is loaded for the first time in zsh config files.
 # .zshenv is the only zsh config file to load before execute shellscript.
 
-export PATH='/usr/local/bin:/usr/bin:/bin:/usr/sbin/:/sbin:/opt/homebrew/bin'
+if [[ -n ${WSL_INTEROP} ]]; then
+  export PATH='/usr/local/bin:/usr/bin:/usr/sbin'
+elif [[ ${OSTYPE} == 'linux-gnu' ]]; then
+  export PATH='/usr/bin:/usr/bin/core_perl'
+elif [[ ${OSTYPE} =~ 'darwin' ]]; then
+  export PATH='/usr/local/bin:/usr/bin:/bin:/usr/sbin/:/sbin:/opt/homebrew/bin'
+fi
 export LANG='ja_JP.UTF-8'
 #export TERM='xterm-256color'
 export XDG_CONFIG_HOME="${HOME}/.config"

@@ -1,4 +1,8 @@
-[[ -e ${_CD_HISTORY} ]] || export _CD_HISTORY=$(mktemp)
+if [[ ${OSTYPE} =~ 'darwin' ]]; then
+  [[ -e ${_CD_HISTORY} ]] || export _CD_HISTORY=$(mktemp)
+else
+  [[ -e ${_CD_HISTORY} ]] || export _CD_HISTORY=$(mktemp -p /tmp cdh_XXXXXX.tmp)
+fi
 
 { [[ -n ${commands[tmux]} ]] && tmux list-session &> /dev/null ;} || () {
   [[ -n ${commands[trs]} ]] && trs auto-remove
@@ -21,13 +25,25 @@
   tmux_management.sh && exit
 }
 
-# A list of non-alphanumeric characters considered part of a word by the line editor.
-WORDCHARS='*?_-[]~&;!#$%^(){}<>' # /\=|.,
-
 () { # https://mise.jdx.dev
   [[ -z ${commands[mise]} ]] && return
   [[ -n ${commands[brew]} ]] \
     && eval "$($(brew --prefix mise)/bin/mise activate zsh)"
 }
+
+#() { # http://asdf-vm.com/
+#  [[ -n ${commands[brew]} ]] \
+#    && local -r asdf_sh_brew="$(brew --prefix asdf)/libexec/asdf.sh" \
+#    && [[ -e ${asdf_sh_brew} ]] \
+#    && { source ${asdf_sh_brew}; return }
+#
+#  local -r asdf_sh_home="${HOME}/.asdf/asdf.sh"
+#  [[ -e ${asdf_sh_home} ]] && { source ${asdf_sh_home}; return }
+#
+#  local -r asdf_sh_opt='/opt/asdf-vm/asdf.sh'
+#  [[ -e ${asdf_sh_opt} ]] && { source ${asdf_sh_opt}; return }
+#}
+
 [[ -n ${commands[pyenv]} ]] && eval "$(pyenv init --path)"
-[[ -n ${commands[scd]} ]] && source <(scd script)
+
+# [[ -n ${commands[direnv]} ]] && eval "$(direnv hook zsh)"
