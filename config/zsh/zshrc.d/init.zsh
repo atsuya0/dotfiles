@@ -2,10 +2,6 @@
 
 { [[ -n ${commands[tmux]} ]] && tmux list-session &> /dev/null ;} || () {
   [[ -n ${commands[trs]} ]] && trs auto-remove
-
-  # https://docs.microsoft.com/ja-jp/windows/wsl/troubleshooting#bash-loses-network-connectivity-once-connected-to-a-vpn
-  #[[ -n ${WSL_INTEROP} && -w /etc/resolv.conf ]] \
-  #  && echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 }
 
 () { # tmux
