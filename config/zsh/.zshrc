@@ -31,3 +31,5 @@ source "${ZDOTDIR}/zshrc.d/history.zsh"
 source "${ZDOTDIR}/zshrc.d/keybind.zsh"
 source "${ZDOTDIR}/zshrc.d/functions.zsh"
 source "${ZDOTDIR}/zshrc.d/aliases.zsh"
+
+source <(wezterm shell-completion --shell zsh)
