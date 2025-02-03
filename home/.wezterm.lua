@@ -8,6 +8,15 @@ config.color_scheme = 'Nord (Gogh)'
 -- Since: Version nightly builds only
 -- config.color_scheme = 'Iceberg (Gogh)'
 
+config.colors = {
+  tab_bar = {
+    active_tab = {
+      bg_color = '#3B4252',
+      fg_color = '#A3BE8C',
+    },
+  }
+}
+
 config.font = wezterm.font('HackGen Console NF')
 config.font_size = 16
 
@@ -15,6 +24,8 @@ config.default_cursor_style = 'SteadyBar'
 config.audible_bell = 'Disabled'
 config.automatically_reload_config = true
 config.scrollback_lines = 100000
+config.show_new_tab_button_in_tab_bar = false
+config.window_decorations = "RESIZE"
 
 -- https://wezfurlong.org/wezterm/config/default-keys.html
 -- SUPER+t: SpawnTab="CurrentPaneDomain"
