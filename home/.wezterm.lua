@@ -8,12 +8,12 @@ config.color_scheme = 'Nord (Gogh)'
 -- Since: Version nightly builds only
 -- config.color_scheme = 'Iceberg (Gogh)'
 
-config.font = wezterm.font('HackGen35 Console NF')
-config.font_size = 14
+config.font = wezterm.font('HackGen Console NF')
+config.font_size = 16
 
+config.default_cursor_style = 'SteadyBar'
 config.audible_bell = 'Disabled'
 config.automatically_reload_config = true
-config.default_cursor_style = 'SteadyBar'
 config.scrollback_lines = 100000
 
 -- https://wezfurlong.org/wezterm/config/default-keys.html
@@ -23,7 +23,7 @@ config.scrollback_lines = 100000
 -- SUPER+2: ActivateTab=2
 -- CTRL+SHIFT+P: ActivateCommandPalette
 -- SUPER+f: Search={CaseSensitiveString=""}
-config.leader = { key = 'Space', mods = 'SUPER', timeout_milliseconds = 1000 }
+config.leader = { key = 'g', mods = 'CTRL', timeout_milliseconds = 1000 }
 local act = wezterm.action
 config.keys = {
   -- https://wezfurlong.org/wezterm/config/lua/keyassignment/index.html
@@ -31,6 +31,7 @@ config.keys = {
   { key = ']',     mods = 'LEADER', action = act.ActivateTabRelative(1) },
   { key = '{',     mods = 'LEADER', action = act.MoveTabRelative(-1) },
   { key = '}',     mods = 'LEADER', action = act.MoveTabRelative(1) },
+  -- https://wezfurlong.org/wezterm/copymode.html
   { key = 'c',     mods = 'LEADER', action = act.ActivateCopyMode },
   { key = 's',     mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
   { key = 'v',     mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
@@ -46,19 +47,32 @@ config.keys = {
     key = 'r',
     mods = 'LEADER',
     action = act.ActivateKeyTable {
-      name = 'resize_pane',
+      name = 'resize_pane_mode',
       one_shot = false,
     },
   },
 }
+
 local copy_mode = wezterm.gui.default_key_tables().copy_mode
 table.insert(
   copy_mode,
   { key = 'v', mods = 'ALT', action = act.CopyMode { SetSelectionMode = 'SemanticZone' } }
 )
+table.insert( -- search modeに遷移
+  copy_mode,
+  { key = '/', mods = 'NONE', action = act.CopyMode 'EditPattern' }
+)
+
+local search_mode = wezterm.gui.default_key_tables().search_mode
+table.insert( -- copy modeに戻る
+  search_mode,
+  { key = 'Enter', mods = 'NONE', action = act.CopyMode 'AcceptPattern' }
+)
+
 config.key_tables = {
   copy_mode = copy_mode,
-  resize_pane = {
+  search_mode = search_mode,
+  resize_pane_mode = {
     { key = 'h',      action = act.AdjustPaneSize { 'Left', 10 } },
     { key = 'l',      action = act.AdjustPaneSize { 'Right', 10 } },
     { key = 'j',      action = act.AdjustPaneSize { 'Down', 10 } },
