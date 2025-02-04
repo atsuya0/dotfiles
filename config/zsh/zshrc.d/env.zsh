@@ -32,5 +32,5 @@ typeset -ar path=(
 
 () {
   local -r env="${HOME}/.env"
-  [[ -f ${env} ]] && export $(cat ${env})
+  [[ -f ${env} ]] && source ${env}
 }
