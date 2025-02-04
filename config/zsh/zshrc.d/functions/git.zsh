@@ -5,6 +5,28 @@ function is_managed_by_git() {
     || { echo "Not managed by git"; return 1; }
 }
 
+function fga() { # git add をfilterで選択して行う。<C-v>でgit diffを表示。
+  is_managed_by_git || return 1
+
+  local file unadded_files
+  for file in "${(f)$(git status --short)}"; do
+    local header=$(echo ${file} | cut -c1-2)
+    [[ ${header} == '??' || ${header} =~ '( |M|A|R|U)(M|U|D)' ]] \
+      && local unadded_files="${unadded_files}\n$(echo ${file} | rev | cut -d' ' -f1 | rev)"
+  done
+  local selected_files=$(echo ${unadded_files} | sed /^$/d \
+    | fzf --preview='git diff --color=always {}' --preview-window='right:95%:hidden' --bind='ctrl-v:toggle-preview')
+  [[ -n ${selected_files} ]] && git add $@ $(echo ${selected_files} | tr '\n' ' ')
+}
+
+function fgsw() { # git switch の引数をfilterで選択する
+  is_managed_by_git || return 1
+  [[ -z ${commands[fzf]} ]] && return 1
+
+  local -r branch=$(git branch | tr -d ' ' | sed /^\*/d | fzf)
+  [[ -n ${branch} ]] && git switch "${branch}"
+}
+
 function gu() {
   is_managed_by_git || return 1
   local -r url=$(git config --get remote.origin.url)
@@ -77,4 +99,5 @@ function recursive_git_clone_to_path_by_group_id() {
 }
 
 alias rgc='recursive_git_clone_to_path_by_group_id'
+
 alias -g @gw='$(__git_working_tree_status__)'
