@@ -69,6 +69,14 @@ table.insert(
   copy_mode,
   { key = 'v', mods = 'ALT', action = act.CopyMode { SetSelectionMode = 'SemanticZone' } }
 )
+table.insert(
+  copy_mode,
+  { key = 'p', mods = 'NONE', action = act.ScrollToPrompt(-1) }
+)
+table.insert(
+  copy_mode,
+  { key = 'n', mods = 'NONE', action = act.ScrollToPrompt(1) }
+)
 table.insert( -- search modeに遷移
   copy_mode,
   { key = '/', mods = 'NONE', action = act.CopyMode 'EditPattern' }
