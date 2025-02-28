@@ -38,10 +38,10 @@ config.leader = { key = 'g', mods = 'CTRL', timeout_milliseconds = 1000 }
 local act = wezterm.action
 config.keys = {
   -- https://wezfurlong.org/wezterm/config/lua/keyassignment/index.html
-  { key = '[',     mods = 'LEADER', action = act.ActivateTabRelative(-1) },
-  { key = ']',     mods = 'LEADER', action = act.ActivateTabRelative(1) },
-  { key = '{',     mods = 'LEADER', action = act.MoveTabRelative(-1) },
-  { key = '}',     mods = 'LEADER', action = act.MoveTabRelative(1) },
+  { key = 'u',     mods = 'LEADER', action = act.ActivateTabRelative(-1) },
+  { key = 'i',     mods = 'LEADER', action = act.ActivateTabRelative(1) },
+  { key = 'U',     mods = 'LEADER', action = act.MoveTabRelative(-1) },
+  { key = 'I',     mods = 'LEADER', action = act.MoveTabRelative(1) },
   -- https://wezfurlong.org/wezterm/copymode.html
   { key = 'c',     mods = 'LEADER', action = act.ActivateCopyMode },
   { key = 's',     mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
