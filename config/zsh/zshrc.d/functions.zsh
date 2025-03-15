@@ -140,6 +140,15 @@ function clyrics() {
   pbpaste | sed 's@<[^>]*>@\n@g' | pbcopy
 }
 
+function timer() {
+  for i in {1..$(expr ${1:-1} \* 60)}; do
+    echo "$(expr $i / 60)m $(expr $i % 60)s"
+    sleep 1
+    echo '\x1b[2A'
+  done
+  osascript -e 'display notification "Finished"'
+}
+
 () {
   local -r dir="${ZDOTDIR}/zshrc.d/functions"
   local file
