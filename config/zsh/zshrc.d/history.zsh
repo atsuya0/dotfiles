@@ -30,7 +30,7 @@ typeset -ar __ignore_cmds__=(
 
   vim nvim tree rg
 
-  up scd trs
+  up trs
 )
 
 function __save_cmd__() {

@@ -1,7 +1,17 @@
 source "${ZDOTDIR}/zshrc.d/zim.zsh"
 
+# A list of non-alphanumeric characters considered part of a word by the line editor.
+WORDCHARS='*?_-[]~&;!#$%^(){}<>' # /\=|.,
+
 export STARSHIP_CONFIG=${DOTFILES}/config/starship/starship.toml
 eval "$(starship init zsh)"
+() { # https://mise.jdx.dev
+  [[ -z ${commands[mise]} ]] && return
+  [[ -n ${commands[brew]} ]] \
+    && eval "$($(brew --prefix mise)/bin/mise activate zsh)"
+}
+[[ -n ${commands[zoxide]} ]] && eval "$(zoxide init zsh)"
+[[ -n ${commands[pyenv]} ]] && eval "$(pyenv init --path)"
 
 () { # OSC 133
   local -r weztermsh="${ZDOTDIR}/zshrc.d/wezterm.sh"
@@ -10,6 +20,8 @@ eval "$(starship init zsh)"
   source ${weztermsh}
 }
 
+source <(wezterm shell-completion --shell zsh)
+
 source "${ZDOTDIR}/zshrc.d/env.zsh"
 source "${ZDOTDIR}/zshrc.d/init.zsh"
 source "${ZDOTDIR}/zshrc.d/history.zsh"
@@ -17,4 +29,4 @@ source "${ZDOTDIR}/zshrc.d/keybind.zsh"
 source "${ZDOTDIR}/zshrc.d/functions.zsh"
 source "${ZDOTDIR}/zshrc.d/aliases.zsh"
 
-source <(wezterm shell-completion --shell zsh)
+[[ ${WEZTERM_PANE} -eq 0 ]] && [[ -n ${commands[trs]} ]] && trs auto-remove
