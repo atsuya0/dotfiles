@@ -23,7 +23,6 @@ eval "$(starship init zsh)"
 source <(wezterm shell-completion --shell zsh)
 
 source "${ZDOTDIR}/zshrc.d/env.zsh"
-source "${ZDOTDIR}/zshrc.d/init.zsh"
 source "${ZDOTDIR}/zshrc.d/history.zsh"
 source "${ZDOTDIR}/zshrc.d/keybind.zsh"
 source "${ZDOTDIR}/zshrc.d/functions.zsh"
