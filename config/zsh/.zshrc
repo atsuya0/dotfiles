@@ -14,6 +14,7 @@ eval "$(starship init zsh)"
 [[ -n ${commands[pyenv]} ]] && eval "$(pyenv init --path)"
 
 () { # OSC 133
+  [[ -z ${WEZTERM_UNIX_SOCKET} ]] && return
   local -r weztermsh="${ZDOTDIR}/zshrc.d/wezterm.sh"
   [[ ! -f ${weztermsh} ]] \
     && curl --silent -L https://raw.githubusercontent.com/wez/wezterm/refs/heads/main/assets/shell-integration/wezterm.sh -o ${weztermsh}
