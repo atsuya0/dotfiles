@@ -10,7 +10,6 @@ $git_state\
 $git_metrics\
 $git_status\
 $aws\
-$gcloud\
 $kubernetes\
 $direnv\
 $cmd_duration\
@@ -21,13 +20,10 @@ $character"""
 truncation_length = 5
 truncate_to_repo = false
 truncation_symbol = '…/'
+read_only = " "
 
 [aws]
 format = '[($profile )(\($region\) )]($style)'
-
-[gcloud]
-disabled = true
-format = '[$$account(@$domain)(\($region\))]($style) '
 
 [direnv]
 disabled = false
