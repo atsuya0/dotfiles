@@ -21,13 +21,22 @@ eval "$(starship init zsh)"
   source ${weztermsh}
 }
 
-source <(wezterm shell-completion --shell zsh)
-[[ -n ${commands[mise]} ]] && source <(mise completion zsh)
-
 source "${ZDOTDIR}/zshrc.d/env.zsh"
 source "${ZDOTDIR}/zshrc.d/history.zsh"
 source "${ZDOTDIR}/zshrc.d/keybind.zsh"
 source "${ZDOTDIR}/zshrc.d/functions.zsh"
 source "${ZDOTDIR}/zshrc.d/aliases.zsh"
+
+[[ -n ${commands[wezterm]} ]] && source <(wezterm shell-completion --shell zsh)
+[[ -n ${commands[mise]} ]] && source <(mise completion zsh)
+[[ -n ${commands[helm]} ]] && source <(helm completion zsh)
+[[ -n ${commands[helmfile]} ]] && source <(helmfile completion zsh)
+[[ -n ${commands[istioctl]} ]] && source <(istioctl completion zsh)
+[[ -n ${commands[stern]} ]] && source <(stern --completion zsh)
+autoload -U +X bashcompinit && bashcompinit
+[[ -f "${XDG_DATA_HOME}/mise/installs/terraform/latest/bin/terraform" ]] \
+  && complete -o nospace -C "${XDG_DATA_HOME}/mise/installs/terraform/latest/bin/terraform" terraform
+[[ -f /opt/homebrew/bin/aws_completer ]] \
+  && complete -C /opt/homebrew/bin/aws_completer aws
 
 [[ ${WEZTERM_PANE} -eq 0 ]] && [[ -n ${commands[trs]} ]] && trs auto-remove

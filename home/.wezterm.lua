@@ -25,6 +25,8 @@ config.audible_bell = 'Disabled'
 config.automatically_reload_config = true
 config.scrollback_lines = 100000
 config.show_new_tab_button_in_tab_bar = false
+-- Nightly Builds Only
+-- config.show_close_tab_button_in_tabs = false
 config.window_decorations = "RESIZE"
 
 -- https://wezfurlong.org/wezterm/config/default-keys.html

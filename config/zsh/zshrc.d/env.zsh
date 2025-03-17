@@ -10,7 +10,6 @@ export TRASH_CAN_PATH="${HOME}/Trash"
 
 typeset -a path=()
 [[ -f '/opt/homebrew/bin/brew' ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
-echo $GO_PATH
 typeset -ar path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
   $([[ -d ${HOME}/.local/share/mise/shims ]] && echo ${HOME}/.local/share/mise/shims)
