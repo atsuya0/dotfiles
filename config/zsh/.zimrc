@@ -9,7 +9,6 @@ zmodule input
 zmodule fzf
 zmodule exa
 zmodule git
-zmodule k
 zmodule utility
 zmodule direnv
 zmodule homebrew

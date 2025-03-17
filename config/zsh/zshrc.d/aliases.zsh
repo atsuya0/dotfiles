@@ -18,6 +18,7 @@ alias rgon='rg --no-filename --no-line-number --no-heading'
 alias tree='tree -C'
 alias n3='nnn -caP p'
 alias lg='lazygit'
+alias k='kubectl'
 
 alias -g @g='| grep'
 alias -g @l='| less'
