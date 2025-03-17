@@ -24,7 +24,7 @@ add-zsh-hook zshaddhistory __record_cmd__
 # 履歴に記録しないコマンドを記述
 typeset -ar __ignore_cmds__=(
   ls cd mv cp rm mkdir rmdir touch man less history source '\.'
-  vi export type which file stat command builtin grep ln cat
+  vi type which file stat command builtin grep ln cat
   test '\[' '\[\[' sudoedit mount umount echo expr find chmod
   print printf
 
