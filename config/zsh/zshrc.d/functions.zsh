@@ -149,6 +149,75 @@ function timer() {
   osascript -e 'display notification "Finished"'
 }
 
+function iv() {
+  [[ -n ${KITTY_LISTEN_ON} ]] && { iv_on_kitty; return; }
+  [[ -n ${WEZTERM_UNIX_SOCKET} ]] && { iv_on_wezterm; return; }
+}
+
+function iv_on_kitty() {
+  [[ -z ${commands[kitten]} ]] && { echo 'kitten is required'; return 1; }
+  [[ -z ${commands[eza]} ]] && { echo 'eza is required'; return 1; }
+  [[ -z ${commands[identify]} ]] && { echo 'identify is required'; return 1; }
+
+  local current_index=1
+  local -a files=($(eza -1f | xargs -I{} zsh -c 'identify {} &> /dev/null && echo {}'))
+
+  while true; do
+    kitten icat --clear
+    kitten icat --place $(tput cols)x$(tput lines)@0x0 --align left --scale-up ${files[${current_index}]}
+    read -k 1 input
+    case ${input} in
+      'j' )
+        (( current_index++ ))
+      ;;
+      'k' )
+        [[ ${current_index} -ne 1 ]] && (( current_index-- ))
+      ;;
+      'q' )
+        break
+      ;;
+    esac
+  done
+  kitten icat --clear
+}
+
+function iv_on_wezterm() {
+  [[ -z ${commands[ueberzugpp]} ]] && { echo 'ueberzugpp is required'; return 1; }
+  [[ -z ${commands[eza]} ]] && { echo 'eza is required'; return 1; }
+  [[ -z ${commands[identify]} ]] && { echo 'identify is required'; return 1; }
+  [[ -z ${commands[uuidgen]} ]] && { echo 'uuidgen is required'; return 1; }
+
+  UEBERZUG_TMP_DIR=${TMPDIR}
+  local ub_pid_file="${UEBERZUG_TMP_DIR}/.$(uuidgen)"
+  ueberzugpp layer --no-stdin --silent --use-escape-codes --pid-file ${ub_pid_file} --output sixel
+  local ub_pid=$(cat ${ub_pid_file})
+  export UB_SOCKET="${UEBERZUG_TMP_DIR}"/ueberzugpp-"${ub_pid}".socket
+
+  local current_index=1
+  local -a files=($(eza -1f | xargs -I{} zsh -c 'identify {} &> /dev/null && echo {}'))
+
+  while true; do
+    ueberzugpp cmd -s ${UB_SOCKET} -i preview -a add \
+      -x 0 -y 0 \
+      --max-width $(tput cols) --max-height $(tput lines) \
+      -f ${files[${current_index}]}
+
+    read -k 1 input
+    case ${input} in
+      'j' )
+        (( current_index++ ))
+      ;;
+      'k' )
+        [[ ${current_index} -ne 1 ]] && (( current_index-- ))
+      ;;
+      'q' )
+        break
+      ;;
+    esac
+  done
+  ueberzugpp cmd -s "${UB_SOCKET}" -a exit
+}
+
 () {
   local -r dir="${ZDOTDIR}/zshrc.d/functions"
   local file
