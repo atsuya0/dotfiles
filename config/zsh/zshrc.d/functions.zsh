@@ -150,50 +150,29 @@ function timer() {
 }
 
 function iv() {
-  [[ -n ${KITTY_LISTEN_ON} ]] && { iv_on_kitty; return; }
-  [[ -n ${WEZTERM_UNIX_SOCKET} ]] && { iv_on_wezterm; return; }
-}
-
-function iv_on_kitty() {
-  [[ -z ${commands[kitten]} ]] && { echo 'kitten is required'; return 1; }
   [[ -z ${commands[eza]} ]] && { echo 'eza is required'; return 1; }
   [[ -z ${commands[identify]} ]] && { echo 'identify is required'; return 1; }
+
+  if [[ -n ${KITTY_LISTEN_ON} ]]; then
+    local __view='kitten icat --clear && kitten icat --place $(tput cols)x$(tput lines)@0x0 --align left --scale-up ${files[${current_index}]}'
+  elif [[ -n ${WEZTERM_UNIX_SOCKET} ]]; then
+    [[ -z ${commands[chafa]} ]] && { echo 'chafa is required'; return 1; }
+    local __view='chafa --clear -f sixel --scale ${1:-max} --align mid,mid ${files[${current_index}]}'
+  else
+    echo 'Unexpected terminal'
+    return 1
+  fi
 
   local current_index=1
   local -a files=($(eza -1f | xargs -I{} zsh -c 'identify {} &> /dev/null && echo {}'))
 
   while true; do
-    kitten icat --clear
-    kitten icat --place $(tput cols)x$(tput lines)@0x0 --align left --scale-up ${files[${current_index}]}
+    eval ${__view}
     read -k 1 input
     case ${input} in
-      'j' )
+      ' ' )
         (( current_index++ ))
       ;;
-      'k' )
-        [[ ${current_index} -ne 1 ]] && (( current_index-- ))
-      ;;
-      'q' )
-        break
-      ;;
-    esac
-  done
-  kitten icat --clear
-}
-
-function iv_on_wezterm() {
-  [[ -z ${commands[chafa]} ]] && { echo 'chafa is required'; return 1; }
-  [[ -z ${commands[eza]} ]] && { echo 'eza is required'; return 1; }
-  [[ -z ${commands[identify]} ]] && { echo 'identify is required'; return 1; }
-
-  local current_index=1
-  local -a files=($(eza -1f | xargs -I{} zsh -c 'identify {} &> /dev/null && echo {}'))
-
-  while true; do
-    chafa -f sixel --scale max ${files[${current_index}]}
-
-    read -k 1 input
-    case ${input} in
       'j' )
         (( current_index++ ))
       ;;
