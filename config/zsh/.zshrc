@@ -22,6 +22,7 @@ eval "$(starship init zsh)"
 }
 
 source <(wezterm shell-completion --shell zsh)
+[[ -n ${commands[mise]} ]] && source <(mise completion zsh)
 
 source "${ZDOTDIR}/zshrc.d/env.zsh"
 source "${ZDOTDIR}/zshrc.d/history.zsh"
