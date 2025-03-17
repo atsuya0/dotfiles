@@ -13,8 +13,8 @@ typeset -a path=()
 echo $GO_PATH
 typeset -ar path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
+  $([[ -d ${HOME}/.local/share/mise/shims ]] && echo ${HOME}/.local/share/mise/shims)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
-  $([[ -d ${PYENV_ROOT}/bin ]] && echo ${PYENV_ROOT}/bin)
   $([[ -d "${HOME}/.krew/bin" ]] && echo "${HOME}/.krew/bin")
   ${path}
   "${HOMEBREW_PREFIX:=/usr/local}/opt/coreutils/libexec/gnubin"
