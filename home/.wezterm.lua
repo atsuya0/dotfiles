@@ -25,6 +25,8 @@ config.audible_bell = 'Disabled'
 config.automatically_reload_config = true
 config.scrollback_lines = 100000
 config.show_new_tab_button_in_tab_bar = false
+-- Nightly Builds Only
+-- config.show_close_tab_button_in_tabs = false
 config.window_decorations = "RESIZE"
 
 -- https://wezfurlong.org/wezterm/config/default-keys.html
@@ -38,10 +40,10 @@ config.leader = { key = 'g', mods = 'CTRL', timeout_milliseconds = 1000 }
 local act = wezterm.action
 config.keys = {
   -- https://wezfurlong.org/wezterm/config/lua/keyassignment/index.html
-  { key = '[',     mods = 'LEADER', action = act.ActivateTabRelative(-1) },
-  { key = ']',     mods = 'LEADER', action = act.ActivateTabRelative(1) },
-  { key = '{',     mods = 'LEADER', action = act.MoveTabRelative(-1) },
-  { key = '}',     mods = 'LEADER', action = act.MoveTabRelative(1) },
+  { key = 'u',     mods = 'LEADER', action = act.ActivateTabRelative(-1) },
+  { key = 'i',     mods = 'LEADER', action = act.ActivateTabRelative(1) },
+  { key = 'U',     mods = 'LEADER', action = act.MoveTabRelative(-1) },
+  { key = 'I',     mods = 'LEADER', action = act.MoveTabRelative(1) },
   -- https://wezfurlong.org/wezterm/copymode.html
   { key = 'c',     mods = 'LEADER', action = act.ActivateCopyMode },
   { key = 's',     mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
