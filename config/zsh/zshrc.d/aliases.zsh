@@ -20,11 +20,11 @@ alias df='df -Th'
 alias diff='diff --color'
 alias nano='nano -$ -l -i -O -m -c' # '-$liOmc' does not work.
 
-alias rgon='rg --no-filename --no-line-number --no-heading'
-alias tree='tree -C'
-alias n3='nnn -caP p'
 alias lg='lazygit'
 alias k='kubectl'
+alias rgon='rg --no-filename --no-line-number --no-heading'
+
+alias iv='images_viewer.sh'
 
 alias -g @g='| grep'
 alias -g @l='| less'
@@ -35,5 +35,4 @@ alias -g ..2='../..'
 alias -g ..3='../../..'
 
 alias -s txt='less'
-#alias -s {html,md,pdf,mp3,mp4}='google-chrome-stable'
-alias -s {png,jpg,jpeg}='kitty +kitten icat'
+alias -s {png,jpg,jpeg}='chafa --clear -f sixel --align mid,mid'
