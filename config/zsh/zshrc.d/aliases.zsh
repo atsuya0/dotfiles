@@ -1,6 +1,12 @@
-alias ls='ls --color=auto'
-alias la='ls -A --color=auto'
-alias ll='ls -FAlhtr --color=auto --time-style="+%Y/%m/%d %H:%M:%S"'
+if [[ -n ${commands[eza]} ]]; then
+  alias ls='eza'
+  alias la='eza -A'
+  alias ll="eza -Al --time-style='+%Y/%m/%d %H:%M:%S' -s date"
+else
+  alias ls='ls --color=auto'
+  alias la='ls -A --color=auto'
+  alias ll='ls -FAlhtr --color=auto --time-style="+%Y/%m/%d %H:%M:%S"'
+fi
 alias grep='grep --color=auto'
 alias mv='mv -i'
 alias cp='cp -i'
