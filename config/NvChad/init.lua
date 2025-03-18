@@ -36,19 +36,17 @@ vim.schedule(function()
   require "mappings"
 end)
 
-
 --
 
-vim.api.nvim_create_augroup("imeoff", { clear = true })
+local ime_off = vim.api.nvim_create_augroup("ime_off", { clear = true })
 vim.api.nvim_create_autocmd("InsertLeave", {
-  desc = "Turn off IME when exiting from insert mode",
   pattern = "*",
-  group = "imeoff",
+  group = ime_off,
   callback = function()
-    if vim.fn.has("macunix") == 1 then
-      vim.fn.system("/opt/homebrew/bin/im-select com.google.inputmethod.Japanese.Roman")
-    elseif vim.fn.has("unix") == 1 then
-      vim.fn.system("fcitx5-remote -c")
+    if vim.fn.has "macunix" == 1 then
+      vim.fn.system "/opt/homebrew/bin/im-select com.google.inputmethod.Japanese.Roman"
+    elseif vim.fn.has "unix" == 1 then
+      vim.fn.system "fcitx5-remote -c"
     end
   end,
 })
