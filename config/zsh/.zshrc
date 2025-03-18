@@ -11,7 +11,6 @@ eval "$(starship init zsh)"
     && eval "$($(brew --prefix mise)/bin/mise activate zsh)"
 }
 [[ -n ${commands[zoxide]} ]] && eval "$(zoxide init zsh)"
-[[ -n ${commands[pyenv]} ]] && eval "$(pyenv init --path)"
 
 () { # OSC 133
   [[ -z ${WEZTERM_UNIX_SOCKET} ]] && return
