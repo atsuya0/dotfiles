@@ -19,15 +19,18 @@ function main() {
     read -k 1 input
     case ${input} in
       ' ' )
-        (( current_index++ ))
+        [[ ${current_index} -ne ${#files} ]] && (( current_index++ ))
       ;;
       'j' )
-        (( current_index++ ))
+        [[ ${current_index} -ne ${#files} ]] && (( current_index++ ))
       ;;
       'k' )
         [[ ${current_index} -ne 1 ]] && (( current_index-- ))
       ;;
       'q' )
+        break
+      ;;
+      'h' )
         break
       ;;
     esac
