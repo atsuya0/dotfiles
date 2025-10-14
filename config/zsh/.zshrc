@@ -28,6 +28,8 @@ source "${ZDOTDIR}/zshrc.d/aliases.zsh"
 
 [[ -n ${commands[wezterm]} ]] && source <(wezterm shell-completion --shell zsh)
 [[ -n ${commands[mise]} ]] && source <(mise completion zsh)
+[[ -n ${commands[limactl]} ]] && source <(limactl completion zsh)
+[[ -n ${commands[kubectl]} ]] && source <(kubectl completion zsh)
 [[ -n ${commands[helm]} ]] && source <(helm completion zsh)
 [[ -n ${commands[helmfile]} ]] && source <(helmfile completion zsh)
 [[ -n ${commands[istioctl]} ]] && source <(istioctl completion zsh)
