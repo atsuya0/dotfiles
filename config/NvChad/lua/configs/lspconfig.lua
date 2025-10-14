@@ -4,7 +4,7 @@ require("nvchad.configs.lspconfig").defaults()
 local lspconfig = require "lspconfig"
 
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
-local servers = { "gopls", "terraformls", "bashls", "jsonls", "yamlls" }
+local servers = { "gopls", "terraformls", "bashls", "jsonls" }
 local nvlsp = require "nvchad.configs.lspconfig"
 
 for _, lsp in ipairs(servers) do
