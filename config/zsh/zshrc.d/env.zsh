@@ -12,6 +12,7 @@ typeset -a path=()
 [[ -f '/opt/homebrew/bin/brew' ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 typeset -ar path=(
   $([[ -d ${DOTFILES}/bin ]] && echo ${DOTFILES}/bin)
+  $([[ -d ${HOME}/.local/bin ]] && echo ${HOME}/.local/bin)
   $([[ -d ${HOME}/.local/share/mise/shims ]] && echo ${HOME}/.local/share/mise/shims)
   $([[ -d ${GOPATH}/bin ]] && echo ${GOPATH}/bin)
   $([[ -d "${HOME}/.krew/bin" ]] && echo "${HOME}/.krew/bin")
